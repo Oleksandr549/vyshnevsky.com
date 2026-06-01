@@ -1,0 +1,22 @@
+# ── Dev tools ─────────────────────────────────────────────
+# Build scripts, not part of the site
+_tools/
+
+# ── PNG originals ─────────────────────────────────────────
+# All project images are served as WebP.
+# PNG originals are kept locally as source files only.
+images/*.png
+
+# Keep system PNGs that have no WebP equivalent:
+!images/favicon.ico
+!images/favicon-16x16.png
+!images/favicon-32x32.png
+!images/apple-touch-icon.png
+!images/og-preview-1200x630.png
+!images/og-preview-512.png
+
+# ── OS / editor artifacts ────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+*.code-workspace

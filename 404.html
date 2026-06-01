@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#07090A">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found · Oleksandr Vyshnevskyi</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+  </noscript>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --g:   #3DFF8F;
+      --bg:  #07090A;
+      --bg2: #0B0E0C;
+      --t:   #DCE8DC;
+      --m:   #9dbf9d;
+      --ga-10: rgba(61,255,143,.10);
+      --ga-15: rgba(61,255,143,.15);
+      --ga-20: rgba(61,255,143,.20);
+      --r-pill: 100px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--t);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--g); color: #000; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--g); border-radius: 2px; }
+
+    :focus-visible {
+      outline: 2px solid var(--g);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem clamp(1.5rem, 5vw, 5rem);
+      border-bottom: 1px solid var(--ga-10);
+      background: rgba(7,9,10,.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--g);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--m);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--t); }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem clamp(1.5rem, 5vw, 5rem) 4rem;
+      position: relative;
+    }
+
+    /* Glow background */
+    main::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(61,255,143,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .content {
+      text-align: center;
+      max-width: 560px;
+      position: relative;
+    }
+
+    .err-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(7rem, 20vw, 12rem);
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--ga-20);
+      letter-spacing: -0.04em;
+      user-select: none;
+      margin-bottom: 0.5rem;
+    }
+
+    .stag {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--g);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .sub {
+      font-size: 0.9375rem;
+      color: var(--m);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--g);
+      color: #040705;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--r-pill);
+      text-decoration: none;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--t);
+      font-size: 0.875rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--ga-20);
+      text-decoration: none;
+      transition: border-color .2s, color .2s, transform .2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--ga-40);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 1.5rem clamp(1.5rem, 5vw, 5rem);
+      border-top: 1px solid var(--ga-10);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .foot-copy {
+      font-size: 0.8125rem;
+      color: var(--m);
+    }
+
+    .foot-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .foot-links a {
+      font-size: 0.8125rem;
+      color: var(--m);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .foot-links a:hover { color: var(--g); }
+
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      footer { justify-content: center; text-align: center; }
+      .foot-links { justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="logo" href="index.html">OV.</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="content">
+      <div class="err-num">404</div>
+      <div class="stag">Page not found</div>
+      <h1>Looks like this page<br>doesn't exist.</h1>
+      <p class="sub">The page you're looking for may have been moved,<br>deleted, or never existed in the first place.</p>
+      <div class="actions">
+        <a href="index.html" class="btn-primary">
+          ← Back to Home
+        </a>
+        <a href="projects.html" class="btn-secondary">
+          View Projects ↗
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span class="foot-copy">© <script>document.write(new Date().getFullYear())</script> Oleksandr Vyshnevskyi</span>
+    <div class="foot-links">
+      <a href="https://www.fiverr.com/vyshnevsky" target="_blank" rel="noopener">Fiverr</a>
+      <a href="https://www.upwork.com/freelancers/~01569a3bc56c0a5504" target="_blank" rel="noopener">UpWork</a>
+      <a href="https://linkedin.com/in/oleksandr-vyshnevskyi-71875734a" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+</body>
+</html>

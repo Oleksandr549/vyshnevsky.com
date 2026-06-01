@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#07090A">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ─── Primary SEO ─── -->
+  <title>Projects — Oleksandr Vyshnevskyi · Front-End Developer</title>
+  <meta name="description" content="Portfolio of 28+ web projects by Oleksandr Vyshnevskyi — landing pages, business sites, web apps and platforms built for clients in the US, Canada, and Europe.">
+  <meta name="author" content="Oleksandr Vyshnevskyi">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://vyshnevsky.com/projects.html">
+
+  <!-- ─── Open Graph ─── -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vyshnevsky.com/projects.html">
+  <meta property="og:title" content="Projects — Oleksandr Vyshnevskyi · Front-End Developer">
+  <meta property="og:description" content="28+ web projects delivered for clients across the US, Canada, and Europe. Landing pages, business sites, web apps and platforms.">
+  <meta property="og:image" content="https://vyshnevsky.com/images/og-image.webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Oleksandr Vyshnevskyi">
+
+  <!-- ─── Twitter Card ─── -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Projects — Oleksandr Vyshnevskyi · Front-End Developer">
+  <meta name="twitter:description" content="28+ web projects delivered for clients across the US, Canada, and Europe.">
+  <meta name="twitter:image" content="https://vyshnevsky.com/images/og-image.webp">
+
+  <!-- ─── Favicon ─── -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+  <!-- ─── Fonts & Styles ─── -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/projects.css">
+
+  <!-- Inner page overrides -->
+  <style>
+    /* Footer entrance: run animation directly, no JS class needed */
+    #footer .foot-col,
+    #footer .foot-divider,
+    #footer .foot-bottom {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: footIn .55s cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+    #footer .foot-col:nth-child(1) { animation-delay: .05s }
+    #footer .foot-col:nth-child(2) { animation-delay: .15s }
+    #footer .foot-col:nth-child(3) { animation-delay: .25s }
+    #footer .foot-col:nth-child(4) { animation-delay: .35s }
+    #footer .foot-divider          { animation-delay: .42s }
+    #footer .foot-bottom           { animation-delay: .50s }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-content">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+  <nav id="nav">
+    <a class="logo" href="index.html">OV.</a>
+
+    <!-- scrolled state links (always visible on inner pages) -->
+    <div class="nav-scrolled-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#skills">Skills</a>
+      <a href="projects.html">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div class="nav-scrolled-time">
+      <span id="navTimeS">--:--:--</span>
+      <span class="nav-scrolled-tz">CET · PL</span>
+    </div>
+
+    <button class="nav-burger" id="navBurger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- mobile nav overlay -->
+  <div class="nav-mobile" id="navMobile">
+    <a href="index.html#about" class="nm-link">About</a>
+    <a href="index.html#skills" class="nm-link">Skills</a>
+    <a href="projects.html" class="nm-link">Work</a>
+    <a href="index.html#contact" class="nm-link">Contact</a>
+  </div>
+
+  <!-- ─── MINIMAL PAGE HEADER ─── -->
+  <div class="pg-page-header">
+    <div class="pg-page-header-inner">
+      <h1 class="pg-page-title">Work</h1>
+      <div class="pg-page-meta">
+        <span class="pg-page-count" id="pgTotalCount"></span>
+        <span class="pg-page-meta-sep"></span>
+        <span class="pg-page-year">2022 — 2025</span>
+      </div>
+    </div>
+    <div class="pg-page-border"></div>
+  </div>
+
+  <!-- ─── PROJECTS GRID ─── -->
+  <section id="proj-grid-sec">
+    <div class="proj-grid-wrap">
+      <div class="pg-grid" id="pgGrid">
+        <!-- cards injected by JS -->
+      </div>
+      <div class="pg-load-wrap" id="pgLoadWrap">
+        <div class="pg-progress" id="pgProgress">
+          <div class="pg-progress-bar" id="pgProgressBar"></div>
+        </div>
+        <div class="pg-progress-label" id="pgProgressLabel"></div>
+        <button class="pg-load-btn" id="pgLoadBtn">
+          <span class="pg-load-text">Load More</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  </div><!-- /page-content -->
+
+<!-- FOOTER -->
+  <footer id="footer">
+    <canvas class="foot-canvas" id="footCanvas"></canvas>
+    <div class="foot-grid"></div>
+
+    <!-- Variant B glow: horizontal band + double line -->
+    <div class="foot-glow-band" aria-hidden="true"></div>
+
+    <div class="foot-inner">
+
+      <!-- Col 1: Brand -->
+      <div class="foot-col foot-col--brand">
+       <a class="foot-logo" href="index.html"> OV.</a>
+        <p class="foot-tagline">Front-End Developer.<br>Clean code, real results, every time.</p>
+        <div class="foot-avail"><span class="pulse"></span>Available for work</div>
+        <div class="foot-sep"></div>
+        <span class="foot-col-label">Contact</span>
+        <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
+          oleksandr.vyshnevskyi<wbr>.work@gmail.com
+        </a>
+       
+      </div>
+
+      <!-- Col 2: Navigate -->
+      <div class="foot-col">
+        <div class="foot-col-title">Navigate</div>
+        <ul class="foot-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Work with me -->
+      <div class="foot-col">
+        <div class="foot-col-title">Work with me</div>
+        <ul class="foot-links">
+          <li><a href="https://www.fiverr.com/vyshnevsky" target="_blank" rel="noopener noreferrer">Fiverr</a></li>
+          <li><a href="https://www.upwork.com/freelancers/~01569a3bc56c0a5504" target="_blank" rel="noopener noreferrer">UpWork</a></li>
+          <li><a href="https://linkedin.com/in/oleksandr-vyshnevskyi-71875734a" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://github.com/oleksandr549" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Info -->
+      <div class="foot-col foot-col--info">
+        <div class="foot-info-item">
+          <span class="foot-col-label">Local time</span>
+          <div class="foot-time" id="footTime">--:--:--</div>
+          <div class="foot-tz">CET · PL</div>
+        </div>
+        <div class="foot-info-item">
+          <span class="foot-col-label">Region</span>
+          <div class="foot-info-val">Poland · EU</div>
+        </div>
+        <div class="foot-info-item">
+          <span class="foot-col-label">Response</span>
+          <div class="foot-info-val">within 24h</div>
+        </div>
+      </div>
+
+    </div><!-- /foot-inner -->
+
+    <div class="foot-divider"></div>
+
+    <div class="foot-bottom">
+      <span class="foot-copy">© <span id="footYear"></span> Oleksandr Vyshnevskyi — Designed &amp; built from scratch.</span>
+      <a href="#hero" class="foot-back">
+        Back to top
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M7 12V2M2 7l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+
+  </footer>
+
+  <!-- Clock + year -->
+  <script>
+    (function () {
+      var ids = ['navTimeS', 'footTime'];
+      function tick() {
+        var t = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Warsaw', hour12: false });
+        ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.textContent = t; });
+      }
+      tick(); setInterval(tick, 1000);
+      var ye = document.getElementById('footYear');
+      if (ye) ye.textContent = new Date().getFullYear();
+    })();
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <!-- Nav inner-page init -->
+  <script>
+    (function () {
+      // Always show scrolled state on inner pages
+      var nav = document.getElementById('nav');
+      if (nav) nav.classList.add('s');
+      window.addEventListener('scroll', function () {
+        nav.classList.add('s');
+      }, { passive: true });
+      // Mobile burger
+      var burger = document.getElementById('navBurger');
+      var mobile = document.getElementById('navMobile');
+      if (burger && mobile) {
+        burger.addEventListener('click', function () {
+          burger.classList.toggle('open');
+          mobile.classList.toggle('open');
+          document.body.style.overflow = mobile.classList.contains('open') ? 'hidden' : '';
+        });
+        // Close menu when a link is clicked — runs BEFORE transition.js delegation
+        mobile.addEventListener('click', function (e) {
+          var a = e.target.closest('a');
+          if (!a) return;
+          burger.classList.remove('open');
+          mobile.classList.remove('open');
+          document.body.style.overflow = '';
+        }, true); // capture phase — fires before transition.js bubble listener
+      }
+    })();
+  </script>
+
+  <script src="script/transition.js" defer></script>
+  <script src="script/projects-data.js" defer></script>
+  <script src="script/projects.js" defer></script>
+
+
+  <!-- Footer entrance animation -->
+  <script>
+    (function () {
+      var footer = document.getElementById('footer');
+      if (!footer) return;
+      var els = footer.querySelectorAll('.foot-col, .foot-divider, .foot-bottom');
+
+      function isInView(el) {
+        var r = el.getBoundingClientRect();
+        return r.top < window.innerHeight && r.bottom > 0;
+      }
+
+      function revealAll() {
+        els.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+
+      // If footer already visible on load — reveal immediately
+      if (isInView(footer)) {
+        revealAll();
+        return;
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.05 });
+      els.forEach(function (el) { io.observe(el); });
+
+      // Safety fallback — reveal after 3s regardless
+      setTimeout(revealAll, 3000);
+    })();
+  </script>
+</body>
+</html>
