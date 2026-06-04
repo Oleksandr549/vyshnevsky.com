@@ -17,60 +17,70 @@ gsap.registerPlugin(ScrollTrigger);
 //  HERO ENTRANCE
 // ═══════════════════════════════════════════════
 (function () {
+  /* Remove overflow:hidden on .line — было нужно для slide-up, теперь режет glow */
   document.querySelectorAll(".hero-name .line").forEach((line) => {
-    line.style.overflow = "hidden";
+    line.style.overflow = "visible";
     line.style.display  = "block";
   });
 
   if (REDUCE_MOTION) {
-    // Skip animations — show everything immediately
-    gsap.set(["#heroBgVideoA","#heroTag","#heroL1","#heroL2",".hero-cta",".hero-stat","#heroScroll","#heroBtns"],
+    gsap.set(["#heroTag","#heroL1","#heroL2",".hero-cta",".hero-stat","#heroScroll","#heroBtns","#globeCanvas"],
       { clearProps: "all" });
   } else {
-    gsap.set("#heroBgVideoA", { scale: 1.4, opacity: 0 });
-    gsap.set("#heroTag",      { opacity: 0, y: 20 });
-    gsap.set("#heroL1",       { y: "110%" });
-    gsap.set("#heroL2",       { y: "110%" });
-    gsap.set(".hero-cta",     { opacity: 0, x: 24 });
-    gsap.set(".hero-stat",    { opacity: 0, y: 18 });
-    gsap.set("#heroScroll",   { opacity: 0, y: -16 });
-    gsap.set("#heroBtns",     { y: 32, opacity: 0 });
+    /* Initial states */
+    gsap.set("#heroTag",       { opacity: 0, y: 15 });
+    gsap.set("#heroL1",        { opacity: 0, y: 20 });
+    gsap.set("#heroL2",        { opacity: 0, y: 20 });
+    gsap.set(".hero-cta",      { opacity: 0, x: 20 });
+    gsap.set(".hero-stat",     { opacity: 0, x: 20 });
+    gsap.set("#heroScroll",    { opacity: 0 });
+    gsap.set("#heroBtns",      { opacity: 1, y: 0 }); /* heroBtns is just a wrapper, don't animate it */
+    gsap.set("#globeCanvas",   { opacity: 0, scale: 0.6, transformOrigin: "50% 50%" });
   }
 
   function startHeroAnim() {
     if (REDUCE_MOTION) return;
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-    tl.to("#heroBgVideoA", { scale: 1, opacity: 1, duration: 1.6, ease: "power2.out" });
-    tl.to("#heroBtns",   { y: 0, opacity: 1, duration: 1 },                            "-=1.6");
-    tl.to("#heroL1",     { y: "0%", duration: 1, ease: "expo.out" },                   "-=0.6");
-    tl.to("#heroL2",     { y: "0%", duration: 1, ease: "expo.out" },                   "-=1.6");
-    tl.to("#heroTag",    { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" },      "-=0.8");
-    tl.to(".hero-cta",   { opacity: 1, x: 0, duration: 1.0, ease: "power2.out" },      "-=0.7");
-    tl.to(".hero-stat",  { opacity: 1, y: 0, stagger: 0.12, duration: 0.6, ease: "power2.out" }, "-=0.7");
-    tl.to("#heroScroll", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },      "-=0.4");
+
+    /* 1. Tagline */
+    tl.to("#heroTag",   { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "0");
+
+    /* 2. Name line 1 */
+    tl.to("#heroL1",    { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "0.3");
+
+    /* 3. Name line 2 — glow fully visible, no clip */
+    tl.to("#heroL2",    { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "0.5");
+
+    /* 4. CTA + Stats — each element staggers in from right */
+    tl.to(".hero-cta",  { opacity: 1, x: 0, duration: 0.6, ease: "power2.out" }, "0.8");
+    tl.to(".hero-stat", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", stagger: 0.1 }, "0.85");
+
+    /* 5. Scroll hint */
+    tl.to("#heroScroll", { opacity: 1, duration: 0.5, ease: "power2.out" }, "1.1");
+
+    /* 6. Globe — bounces in like a ball, elastic overshoot */
+    tl.to("#globeCanvas", {
+      opacity: 1,
+      scale: 1,
+      duration: 1.8,
+      ease: "elastic.out(1, 0.55)",
+      transformOrigin: "50% 50%"
+    }, "1.4");
   }
 
-  const video = document.getElementById("heroBgVideoA");
-  function tryPlay() {
-    if (!video) return;
-    const p = video.play();
-    if (p !== undefined) p.catch(() => { video.muted = true; video.play().catch(() => {}); });
+  /* No video — start hero animation directly (or after page transition overlay) */
+  function startHeroAnimOnce() {
+    let started = false;
+    return function() { if (started) return; started = true; startHeroAnim(); };
   }
-  function waitForVideoAndStart() {
-    if (!video) { startHeroAnim(); return; }
-    tryPlay();
-    // Guard: ensure startHeroAnim fires exactly once
-    let heroStarted = false;
-    function onceHero() { if (heroStarted) return; heroStarted = true; startHeroAnim(); }
-    if (video.readyState >= 3) { onceHero(); return; }
-    video.addEventListener("canplaythrough", onceHero, { once: true });
-    setTimeout(onceHero, 2500);
-  }
+  const onceStart = startHeroAnimOnce();
+
   const overlay = document.getElementById("ptOverlay");
   if (overlay) {
-    overlay.addEventListener("animationend", waitForVideoAndStart, { once: true });
+    overlay.addEventListener("animationend", onceStart, { once: true });
   } else {
-    waitForVideoAndStart();
+    /* Small delay to let Three.js initialize the globe canvas */
+    setTimeout(onceStart, 120);
   }
 })();
 
@@ -256,9 +266,21 @@ gsap.registerPlugin(ScrollTrigger);
   window.addEventListener('scroll', onScroll, { passive: true });
 
   let _rt;
+  let _lastMode = isMobile() ? 'mobile' : 'desktop';
   window.addEventListener('resize', () => {
     clearTimeout(_rt);
-    _rt = setTimeout(() => { init(); onScroll(); }, 150);
+    _rt = setTimeout(() => {
+      const newMode = isMobile() ? 'mobile' : 'desktop';
+      /* Only reinit when crossing the breakpoint, not on every resize tick */
+      if (newMode !== _lastMode) {
+        _lastMode = newMode;
+        init();
+      } else if (newMode === 'desktop') {
+        /* Desktop: recalculate sticky height on resize */
+        setupDesktop();
+        onScroll();
+      }
+    }, 150);
   }, { passive: true });
 
   window.addEventListener('orientationchange', () => {
@@ -282,22 +304,47 @@ gsap.registerPlugin(ScrollTrigger);
   }, { passive: true });
 })();
 
+/* ─── SCROLL LOCK — defined in transition.js as window.lockScroll / window.unlockScroll ─── */
+const lockScroll   = () => window.lockScroll?.();
+const unlockScroll = () => window.unlockScroll?.();
+
 /* ─── NAV + BURGER ─── */
 (function () {
   const burger = document.getElementById('navBurger');
   const mobile = document.getElementById('navMobile');
   if (!burger || !mobile) return;
+
+  function close() {
+    burger.classList.remove('open');
+    mobile.classList.remove('open');
+    unlockScroll();
+  }
+
   const toggle = () => {
     burger.classList.toggle('open');
     mobile.classList.toggle('open');
-    document.body.style.overflow = mobile.classList.contains('open') ? 'hidden' : '';
+    if (mobile.classList.contains('open')) {
+      lockScroll();
+    } else {
+      unlockScroll();
+    }
   };
+
   burger.addEventListener('click', toggle);
-  mobile.querySelectorAll('.nm-link').forEach(a => a.addEventListener('click', () => {
-    burger.classList.remove('open');
-    mobile.classList.remove('open');
-    document.body.style.overflow = '';
-  }));
+
+  /* Close when clicking a nav link */
+  mobile.querySelectorAll('.nm-link').forEach(a => a.addEventListener('click', close));
+
+  /* Close on Escape */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mobile.classList.contains('open')) close();
+  });
+
+  /* Close when tapping the overlay (the mobile nav itself covers the screen,
+     so we detect a tap that didn't land on any link) */
+  mobile.addEventListener('click', e => {
+    if (e.target === mobile) close();
+  });
 })();
 
 /* ─── HERO VIDEO — resume listeners ─── */
@@ -582,8 +629,17 @@ gsap.registerPlugin(ScrollTrigger);
     card.addEventListener('mouseenter', () => { if (!isMobile()) setActive(i, false); });
     card.addEventListener('click', () => {
       if (isMobile()) {
-        const link = card.dataset.link;
-        if (link) window.location.href = link;
+        /* First tap: select card (show info in video box above).
+           Second tap on same already-active card: navigate to project. */
+        if (card.classList.contains('active')) {
+          const link = card.dataset.link;
+          if (link) window.location.href = link;
+        } else {
+          setActive(i, false);
+          /* Scroll video box into view so user sees the preview */
+          const right = document.querySelector('.pjs-right');
+          if (right) right.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       } else {
         setActive(i, false);
       }
@@ -836,9 +892,13 @@ gsap.registerPlugin(ScrollTrigger);
   const nav = document.getElementById('nav');
   if (!nav) return;
 
-  const heroH = window.innerHeight;
+  let heroH = window.innerHeight;
   let lastY = window.scrollY;
   let ticking = false;
+
+  /* Recalculate on resize/orientation change so nav doesn't get stuck */
+  window.addEventListener('resize', () => { heroH = window.innerHeight; }, { passive: true });
+  window.addEventListener('orientationchange', () => { setTimeout(() => { heroH = window.innerHeight; }, 300); });
 
   function update() {
     const y = window.scrollY;
@@ -1274,7 +1334,24 @@ gsap.registerPlugin(ScrollTrigger);
     openBtn.setAttribute('aria-expanded', 'true');
     overlay.classList.add('is-open');
     drawer.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    lockScroll();
+
+    /* iOS keyboard fix: resize drawer when virtual keyboard appears */
+    if (window.visualViewport) {
+      function onVVResize() {
+        const vv = window.visualViewport;
+        drawer.style.height = vv.height + 'px';
+        drawer.style.top    = vv.offsetTop + 'px';
+      }
+      window.visualViewport.addEventListener('resize', onVVResize);
+      window.visualViewport.addEventListener('scroll', onVVResize);
+      drawer._vvCleanup = () => {
+        window.visualViewport.removeEventListener('resize', onVVResize);
+        window.visualViewport.removeEventListener('scroll', onVVResize);
+        drawer.style.height = '';
+        drawer.style.top = '';
+      };
+    }
 
     if (typeof gsap !== 'undefined') {
       const items = form.querySelectorAll('.cf-g, .cf-sub');
@@ -1298,7 +1375,10 @@ gsap.registerPlugin(ScrollTrigger);
     openBtn.setAttribute('aria-expanded', 'false');
     overlay.classList.remove('is-open');
     drawer.classList.remove('is-open');
-    document.body.style.overflow = '';
+    unlockScroll();
+
+    /* Clean up iOS keyboard listener */
+    if (drawer._vvCleanup) { drawer._vvCleanup(); drawer._vvCleanup = null; }
 
     if (prevFocus) prevFocus.focus();
   }

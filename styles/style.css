@@ -362,47 +362,40 @@ nav#nav.s .nav-scrolled-time {
 
 /* ─── HERO — bottom-anchored layout ─── */
 #hero {
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: stretch;
   padding: 0;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   z-index: 2
 }
 
-/* ── Video background ── */
-.hero-video-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden
-}
-
-.hero-video-bg video {
+/* ── Globe canvas background ── */
+#globeCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  opacity: 0.82;
-  transform: scale(1.35);
-  transform-origin: center center;
-  will-change: transform
+  z-index: 0;
+  display: block;
+  pointer-events: none;
 }
 
-/* Multi-layer overlay — lighter centre, fade only at edges */
-.hero-video-bg::after {
+/* Fade edges so globe blends into page */
+#hero::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 45%, transparent 0%, rgba(7,9,10,0.25) 65%, rgba(7,9,10,0.75) 100%),
-    linear-gradient(to bottom, rgba(7,9,10,0.45) 0%, transparent 25%, transparent 55%, rgba(7,9,10,0.96) 100%);
-  z-index: 1
+    linear-gradient(to bottom, rgba(7,9,10,0.35) 0%, transparent 18%, transparent 52%, rgba(7,9,10,0.98) 100%);
+  z-index: 1;
+  pointer-events: none
 }
+
+
 
 /* Film grain */
 .hero-noise {
@@ -1101,7 +1094,7 @@ section {
 .pjs-sticky {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1527,6 +1520,7 @@ section {
     gap: 8px;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
 
   .pjs-card {
@@ -1539,6 +1533,24 @@ section {
   .pjs-card:hover,
   .pjs-card.active {
     transform: none !important;
+  }
+
+  /* Active card on mobile: subtle green border to signal "tap again = open" */
+  .pjs-card.active {
+    outline: 1.5px solid rgba(61,255,143,0.35);
+    outline-offset: -1.5px;
+  }
+
+  /* "Tap to open" hint shown on active card */
+  .pjs-card.active .pjs-card-overlay::after {
+    content: 'Tap again to open →';
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 10px;
+    color: rgba(61,255,143,0.7);
+    letter-spacing: .04em;
+    pointer-events: none;
   }
 
   .pjs-counter {
@@ -2493,7 +2505,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.2rem var(--side-pad) 1.8rem;
+  padding: 1.2rem var(--side-pad) calc(1.8rem + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 3;
   gap: 1rem
@@ -2564,7 +2576,9 @@ footer {
   gap: 2rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .35s
+  transition: opacity .35s;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px)
 }
 
 .nav-mobile.open {
@@ -2773,7 +2787,7 @@ footer {
   .foot-divider { margin: 0 var(--side-pad) }
 
   .foot-bottom {
-    padding: .9rem var(--side-pad) 1.5rem;
+    padding: .9rem var(--side-pad) calc(1.5rem + env(safe-area-inset-bottom, 0px));
     flex-direction: column;
     align-items: flex-start;
     gap: .5rem
@@ -2791,7 +2805,7 @@ footer {
   }
 
   #hero {
-    min-height: 100svh;
+    height: 100svh;
     justify-content: flex-end;
     padding: 0
   }
@@ -2978,7 +2992,7 @@ footer {
   .foot-divider { margin: 0 var(--side-pad) }
 
   .foot-bottom {
-    padding: .8rem var(--side-pad) 1.4rem;
+    padding: .8rem var(--side-pad) calc(1.4rem + env(safe-area-inset-bottom, 0px));
     flex-direction: column;
     align-items: flex-start;
     gap: .4rem
@@ -3053,7 +3067,7 @@ footer {
 
   .foot-divider { margin: 0 1.2rem }
 
-  .foot-bottom { padding: .7rem 1.2rem 1.2rem }
+  .foot-bottom { padding: .7rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom, 0px)) }
 
   .foot-soc-row { flex-wrap: wrap }
 }
@@ -3203,7 +3217,7 @@ footer {
   display: block;
   filter: contrast(1.05) brightness(.85) saturate(1.1);
   border-radius: inherit;
-  will-change: transform, filter, opacity;
+  will-change: transform;
 }
 #aboutImgFront { opacity: 0; }
 
@@ -3604,7 +3618,7 @@ footer {
 .ct-sticky {
   position: sticky;
   top: 0;
-  min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
   display: flex;
   flex-direction: column;

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="theme-color" content="#07090A">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- ─── Primary SEO ─── -->
   <title>Oleksandr Vyshnevskyi — Front-End Developer</title>
@@ -75,8 +75,6 @@
       href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
   </noscript>
   <link rel="stylesheet" href="styles/style.css">
-  <!-- Preload hero poster (LCP element) -->
-  <link rel="preload" as="image" href="images/hero-poster.jpg">
   <!-- Preload GSAP (critical for hero animation) -->
   <link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
 
@@ -149,19 +147,10 @@
   <!-- ─── HERO ─── -->
   <section id="hero">
 
-    <!-- Video background -->
-    <div class="hero-video-bg">
-      <video id="heroBgVideoA" muted playsinline loop preload="auto" autoplay
-             poster="images/hero-poster.jpg" fetchpriority="high">
-        <source src="images/hero-bg.webm" type="video/webm">
-        <source src="images/hero-bg.mp4"  type="video/mp4">
-      </video>
-    </div>
+    <!-- 3D Globe background -->
+    <canvas id="globeCanvas"></canvas>
 
-    <!-- Noise grain overlay -->
-    <!-- <div class="hero-noise"></div> -->
-    <!-- Subtle scanlines -->
-    <!-- <div class="hero-scanlines"></div> -->
+
 
 
     <!-- Vertical scroll hint — right side -->
@@ -1152,6 +1141,36 @@
       tick(); setInterval(tick, 1000);
       var ye = document.getElementById('footYear');
       if (ye) ye.textContent = new Date().getFullYear();
+    })();
+  </script>
+
+  <!-- Three.js + post-processing for globe — all deferred, never block page render -->
+  <script>
+    /* Load Three.js chain sequentially after page is interactive */
+    (function() {
+      var CDN = 'https://cdn.jsdelivr.net/npm/three@0.134.0';
+      var scripts = [
+        CDN + '/build/three.min.js',
+        CDN + '/examples/js/shaders/LuminosityHighPassShader.js',
+        CDN + '/examples/js/shaders/CopyShader.js',
+        CDN + '/examples/js/postprocessing/EffectComposer.js',
+        CDN + '/examples/js/postprocessing/RenderPass.js',
+        CDN + '/examples/js/postprocessing/ShaderPass.js',
+        CDN + '/examples/js/postprocessing/UnrealBloomPass.js',
+        'script/globe.js'
+      ];
+      function loadNext(i) {
+        if (i >= scripts.length) return;
+        var s = document.createElement('script');
+        s.src = scripts[i];
+        s.onload = function() { loadNext(i + 1); };
+        document.head.appendChild(s);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() { loadNext(0); });
+      } else {
+        loadNext(0);
+      }
     })();
   </script>
 
