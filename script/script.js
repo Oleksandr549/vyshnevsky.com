@@ -453,7 +453,7 @@ const unlockScroll = () => window.unlockScroll?.();
   totEl.textContent = String(COUNT).padStart(2, '0');
 
   function pad(n) { return String(n).padStart(2, '0'); }
-  function isMobile() { return window.innerWidth <= 768; }
+  function isMobile() { return window.innerWidth <= 1024; }
 
   let activeIdx  = 0;
   let switchTimer = null;
@@ -656,11 +656,29 @@ const unlockScroll = () => window.unlockScroll?.();
   }
 
   let resizeTimer;
+  let _lastMobile = isMobile();
+
+  function pjsReinit() {
+    const nowMobile = isMobile();
+    wrap.style.height = nowMobile ? '' : (COUNT * 100) + 'vh';
+    if (nowMobile !== _lastMobile) {
+      _lastMobile = nowMobile;
+      setupDesktopScroll();
+      setupMobileScroll();
+    }
+  }
+
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      wrap.style.height = isMobile() ? '' : (COUNT * 100) + 'vh';
-    }, 80);
+    resizeTimer = setTimeout(pjsReinit, 150);
+  }, { passive: true });
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => { _lastMobile = isMobile(); pjsReinit(); }, 400);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !isMobile()) setupDesktopScroll();
   });
 
   setupDesktopScroll();
@@ -1514,7 +1532,7 @@ const unlockScroll = () => window.unlockScroll?.();
 
   const ctx = canvas.getContext('2d');
 
-  const isMobile = () => window.innerWidth <= 768;
+  const isMobile = () => window.innerWidth <= 1024;
 
   // ── math helpers ────────────────────────────────────────────
   const cl  = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -1821,44 +1839,7 @@ const unlockScroll = () => window.unlockScroll?.();
   resize();
   measureCy(); // измеряем cy пока элементы ещё в потоке
 
-  const W0      = tlWrap.offsetWidth;
-  const cx0     = W0 * .50;
-  const topOff0 = (_cy || tlWrap.offsetHeight * 0.42) - 60;
-
-  // Шаг 2: переводим в absolute, скрываем в центре (только на desktop)
-  if (!isMobile()) {
-    ['ctS1','ctS2','ctS3'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.style.position  = 'absolute';
-      el.style.top       = topOff0 + 'px';
-      el.style.left      = cx0 + 'px';
-      el.style.transform = 'translateX(-50%) scale(1.65)';
-      el.style.opacity   = '0';
-    });
-  }
-
-  // Скрываем лейблы (num + title) — появятся после иконки
-  ['ctNum1','ctTitle1','ctNum2','ctTitle2','ctNum3','ctTitle3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.opacity = '0';
-  });
-
-  // Скрываем заголовок, описания, кнопку
-  const ctHeadEl = document.getElementById('ctHead');
-  if (ctHeadEl) { ctHeadEl.style.opacity = '0'; ctHeadEl.style.transform = 'translateY(-14px)'; ctHeadEl.style.willChange = 'opacity,transform'; }
-  const ctCtaEl = document.getElementById('ctCta');
-  if (ctCtaEl)  { ctCtaEl.style.opacity  = '0'; ctCtaEl.style.transform  = 'translateY(12px)';  ctCtaEl.style.willChange = 'opacity,transform'; }
-  ['ctDesc1','ctDesc2','ctDesc3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.opacity = '0';
-  });
-  // Скрываем низ секции
-  const ctAvailEl = document.getElementById('ctAvailRow');
-  if (ctAvailEl) { ctAvailEl.style.opacity = '0'; ctAvailEl.style.transform = 'translateY(10px)'; ctAvailEl.style.willChange = 'opacity,transform'; }
-
-  // ── CSS sticky scroll — как Projects, без ScrollTrigger pin ────
-  // Никогда не снимает секцию с потока → ноль скачков при открепе
+  // ── CSS sticky scroll ────────────────────────────────────────
   const ctScroll = document.getElementById('ctScroll');
 
   const SCROLL_MULT = 2.2; // множитель высоты viewport = длина скролла
@@ -1885,14 +1866,8 @@ const unlockScroll = () => window.unlockScroll?.();
     state.p = Math.max(0, Math.min(1, scrolled / total));
   }
 
-  // Инициализация высоты — после первого layout чтобы offsetHeight был точным
-  requestAnimationFrame(() => {
-    setScrollHeight();
-    readProgress();
-  });
-
-  // На мобиле — сразу показываем всё
-  if (isMobile()) {
+  // ── mobile init — показываем всё сразу ──────────────────────
+  function initMobile() {
     state.p = 1;
     ['ctHead','ctCta','ctAvailRow'].forEach(id => {
       const el = document.getElementById(id);
@@ -1912,30 +1887,87 @@ const unlockScroll = () => window.unlockScroll?.();
       el.style.top       = '';
       el.style.transform = 'none';
     });
+    if (ctScroll) ctScroll.style.height = '';
   }
 
-  // Читаем прогресс из scroll — пассивный listener, не вешаем на каждый кадр
-  window.addEventListener('scroll', readProgress, { passive: true });
-  readProgress(); // начальное значение
+  // ── desktop init — скрываем, готовим анимацию ───────────────
+  function initDesktop() {
+    const W0      = tlWrap.offsetWidth;
+    const cx0     = W0 * .50;
+    const topOff0 = (_cy || tlWrap.offsetHeight * 0.42) - 60;
 
-  // Resize
-  let _resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(_resizeTimer);
-    _resizeTimer = setTimeout(() => {
-      setScrollHeight();
-      resize();
-      measureCy();
-      readProgress();
-    }, 60);
+    ['ctS1','ctS2','ctS3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.position  = 'absolute';
+      el.style.top       = topOff0 + 'px';
+      el.style.left      = cx0 + 'px';
+      el.style.transform = 'translateX(-50%) scale(1.65)';
+      el.style.opacity   = '0';
+    });
+
+    ['ctNum1','ctTitle1','ctNum2','ctTitle2','ctNum3','ctTitle3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '0';
+    });
+
+    const ctHeadEl = document.getElementById('ctHead');
+    if (ctHeadEl) { ctHeadEl.style.opacity = '0'; ctHeadEl.style.transform = 'translateY(-14px)'; }
+    const ctCtaEl = document.getElementById('ctCta');
+    if (ctCtaEl)  { ctCtaEl.style.opacity  = '0'; ctCtaEl.style.transform  = 'translateY(12px)'; }
+    ['ctDesc1','ctDesc2','ctDesc3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '0';
+    });
+    const ctAvailEl = document.getElementById('ctAvailRow');
+    if (ctAvailEl) { ctAvailEl.style.opacity = '0'; ctAvailEl.style.transform = 'translateY(10px)'; }
+
+    setScrollHeight();
+    readProgress();
+  }
+
+  // ── первичный запуск ─────────────────────────────────────────
+  requestAnimationFrame(() => {
+    if (isMobile()) {
+      initMobile();
+    } else {
+      initDesktop();
+    }
   });
-  window.addEventListener('orientationchange', () => {
-    setTimeout(() => {
+
+  // Читаем прогресс из scroll
+  window.addEventListener('scroll', readProgress, { passive: true });
+  readProgress();
+
+  // ── единый паттерн resize / orientationchange / visibility ───
+  let _ctLastMode = isMobile() ? 'mobile' : 'desktop';
+  let _ctResizeTimer;
+
+  function ctReinit() {
+    const newMode = isMobile() ? 'mobile' : 'desktop';
+    resize();
+    measureCy();
+    if (newMode !== _ctLastMode) {
+      _ctLastMode = newMode;
+      if (newMode === 'mobile') initMobile();
+      else initDesktop();
+    } else {
       setScrollHeight();
-      resize();
-      measureCy();
       readProgress();
-    }, 350);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    clearTimeout(_ctResizeTimer);
+    _ctResizeTimer = setTimeout(ctReinit, 150);
+  }, { passive: true });
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(ctReinit, 400);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) { setScrollHeight(); readProgress(); }
   });
 
 })();
