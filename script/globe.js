@@ -598,14 +598,28 @@
   window.addEventListener('mousemove',  e => onDragMove(e.clientX));
   window.addEventListener('mouseup',    () => onDragEnd());
 
-  /* Touch — single finger Y-axis */
+  /* Touch — single finger, horizontal swipe only */
+  let touchStartX = 0, touchStartY = 0, touchIntent = null;
+
   heroEl.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) onDragStart(e.touches[0].clientX);
+    if (e.touches.length !== 1) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchIntent = null;
   }, { passive: true });
+
   heroEl.addEventListener('touchmove', e => {
-    if (e.touches.length === 1) onDragMove(e.touches[0].clientX);
+    if (e.touches.length !== 1) return;
+    const dx = Math.abs(e.touches[0].clientX - touchStartX);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY);
+    if (touchIntent === null && (dx > 6 || dy > 6)) {
+      touchIntent = dx >= dy ? 'horizontal' : 'vertical';
+      if (touchIntent === 'horizontal') onDragStart(e.touches[0].clientX);
+    }
+    if (touchIntent === 'horizontal') onDragMove(e.touches[0].clientX);
   }, { passive: true });
-  heroEl.addEventListener('touchend', () => onDragEnd(), { passive: true });
+
+  heroEl.addEventListener('touchend', () => { touchIntent = null; onDragEnd(); }, { passive: true });
 
   /* Cursor style on hero */
   heroEl.style.cursor = 'grab';
