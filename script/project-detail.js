@@ -21,22 +21,7 @@ window.addEventListener('scroll', () =>
   document.getElementById('nav').classList.toggle('s', window.scrollY > 60)
 );
 
-/* ─── Mobile nav ─── */
-(function () {
-  const burger = document.getElementById('navBurger');
-  const mobile = document.getElementById('navMobile');
-  if (!burger || !mobile) return;
-  burger.addEventListener('click', () => {
-    burger.classList.toggle('open');
-    mobile.classList.toggle('open');
-    document.body.style.overflow = mobile.classList.contains('open') ? 'hidden' : '';
-  });
-  mobile.querySelectorAll('.nm-link').forEach(a => a.addEventListener('click', () => {
-    burger.classList.remove('open');
-    mobile.classList.remove('open');
-    document.body.style.overflow = '';
-  }));
-})();
+/* ─── Mobile nav — handled by transition.js ─── */
 
 /* ─── Read id from URL ─── */
 const params  = new URLSearchParams(window.location.search);
@@ -96,7 +81,7 @@ function renderPage(p) {
       </a>`;
   }
   actionsHtml += `
-    <a href="index.html?contact=1" class="pd-hero-btn ghost">
+    <a href="index.html?section=contact" class="pd-hero-btn ghost">
       Start a Similar Project →
     </a>`;
   heroActions.innerHTML = actionsHtml;
@@ -187,7 +172,7 @@ function renderPage(p) {
     <div class="pd-sb-head">Get in touch</div>
     <div class="pd-sb-body">
       <div class="pd-sb-cta">
-        <a href="index.html?contact=1" class="pd-sb-btn primary">Start a Similar Project →</a>
+        <a href="index.html?section=contact" class="pd-sb-btn primary">Start a Similar Project →</a>
         <a href="projects.html" class="pd-sb-btn secondary">← All Projects</a>
       </div>
     </div>

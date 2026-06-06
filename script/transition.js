@@ -17,18 +17,71 @@
   overlay.id = 'ptOverlay';
   document.body.appendChild(overlay);
 
-  /* ── On page load: play enter animation (overlay exits upward) ── */
-  window.addEventListener('DOMContentLoaded', () => {
-    // Small delay so browser has painted the page first
+  /* ── Play enter animation: overlay slides out upward ── */
+  function playEnterAnimation() {
+    // Reset state in case we came from bfcache
+    overlay.classList.remove('pt-in', 'pt-out');
+    overlay.style.transform = '';
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         overlay.classList.add('pt-in');
         overlay.addEventListener('animationend', () => {
           overlay.classList.remove('pt-in');
           overlay.style.transform = 'translateY(100%)';
+          // After overlay is gone, handle deep-link scroll
+          handleSectionParam();
         }, { once: true });
       });
     });
+  }
+
+  /* ── Handle ?section=NAME deep-link scroll ── */
+  function handleSectionParam() {
+    const params = new URLSearchParams(window.location.search);
+    const section = params.get('section');
+    if (!section) return;
+
+    // Clean URL immediately
+    history.replaceState(null, '', window.location.pathname);
+
+    const target = document.getElementById(section);
+    if (!target) return;
+
+    // For sections with a pin/sticky animation, scroll to the END of the
+    // animation so the user lands on a fully-revealed section, not mid-animation.
+    // Scroll container lookup: contact uses #ctScroll; about uses .about-sticky-wrap
+    const scrollContainerMap = {
+      contact: () => document.getElementById('ctScroll'),
+      about:   () => document.querySelector('.about-sticky-wrap'),
+    };
+
+    const getContainer = scrollContainerMap[section];
+    if (getContainer) {
+      const container = getContainer();
+      if (container) {
+        const top = container.getBoundingClientRect().top + window.pageYOffset;
+        // Scroll to the very end of the pin zone
+        const scrollTarget = top + container.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'instant' });
+        return;
+      }
+    }
+
+    // Fallback: scroll to top of section
+    const top = target.getBoundingClientRect().top + window.pageYOffset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+  }
+
+  /* ── On page load: play enter animation ── */
+  window.addEventListener('DOMContentLoaded', playEnterAnimation);
+
+  /* ── bfcache fix: browser restored page from cache ── */
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      // Page was restored from bfcache — re-run enter animation
+      playEnterAnimation();
+    }
   });
 
   /* ── Navigate with transition ── */
@@ -53,16 +106,35 @@
     if (a.target === '_blank') return false;
     if (a.hasAttribute('download')) return false;
     if (href.startsWith('mailto:') || href.startsWith('tel:')) return false;
-    // Pure anchor — same-page scroll, skip
-    if (href.startsWith('#')) return false;
+    // Pure anchor — check if it's a pin-section we should handle
+    if (href.startsWith('#')) return PIN_SECTIONS.includes(href.slice(1));
     // External URL
     try {
       const url = new URL(href, window.location.href);
       if (url.hostname !== window.location.hostname) return false;
-      // Same page with anchor (e.g. index.html#about from projects.html) — allow transition
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /* ── Sections with pin animations — links to these scroll to end of pin ── */
+  const PIN_SECTIONS = ['about', 'contact'];
+
+  /* ── Rewrite cross-page anchor links to use ?section= ── */
+  function rewriteHref(href) {
+    try {
+      const url = new URL(href, window.location.href);
+      // Only rewrite same-hostname links that have a hash (cross-page anchors)
+      if (url.hostname !== window.location.hostname) return href;
+      if (!url.hash) return href;
+      // e.g. index.html#contact  →  index.html?section=contact
+      const sectionName = url.hash.slice(1); // strip '#'
+      url.hash = '';
+      url.searchParams.set('section', sectionName);
+      return url.toString();
+    } catch {
+      return href;
     }
   }
 
@@ -71,15 +143,66 @@
     let target = e.target;
     while (target && target !== document) {
       if (target.tagName === 'A' && isInternal(target)) {
+        const href = target.getAttribute('href');
+
+        // Same-page pin section anchor (e.g. #about, #contact on index.html)
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const sectionName = href.slice(1);
+          scrollToPinEnd(sectionName);
+          return;
+        }
+
         e.preventDefault();
-        navigateTo(target.href);
+        const rewritten = rewriteHref(target.href);
+        navigateTo(rewritten);
         return;
       }
       target = target.parentElement;
     }
   });
 
+  /* ── Scroll to end of pin section (same-page) ── */
+  function scrollToPinEnd(sectionName) {
+    const containerMap = {
+      contact: () => document.getElementById('ctScroll'),
+      about:   () => document.querySelector('.about-sticky-wrap'),
+    };
+    const getContainer = containerMap[sectionName];
+    if (getContainer) {
+      const container = getContainer();
+      if (container) {
+        const top = container.getBoundingClientRect().top + window.pageYOffset;
+        const scrollTarget = top + container.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
+        return;
+      }
+    }
+    // Fallback: scroll to section top
+    const el = document.getElementById(sectionName);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
   /* ── Programmatic navigation helper (used by projects.js) ── */
   window.ptNavigate = navigateTo;
 
+})();
+
+/* ── Scroll lock — used by mobile nav & contact drawer ── */
+(function () {
+  var _locks = 0;
+
+  window.lockScroll = function () {
+    if (_locks++ > 0) return; /* already locked */
+    var sb = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.setProperty('--scroll-lock-sb', sb + 'px');
+    document.body.classList.add('scroll-locked');
+  };
+
+  window.unlockScroll = function () {
+    if (--_locks > 0) return; /* still locked by another caller */
+    if (_locks < 0) _locks = 0;
+    document.body.classList.remove('scroll-locked');
+    document.documentElement.style.removeProperty('--scroll-lock-sb');
+  };
 })();

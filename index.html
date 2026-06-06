@@ -140,8 +140,13 @@
   <div class="nav-mobile" id="navMobile">
     <a href="#about" class="nm-link">About</a>
     <a href="#skills" class="nm-link">Skills</a>
-    <a href="projects.html" class="nm-link">Work</a>
+    <a href="projects.html" class="nm-link">Projects</a>
     <a href="#contact" class="nm-link">Contact</a>
+    <div class="nm-time-block">
+      <span class="nm-time-label">Local time</span>
+      <span id="nmTime">--:--:--</span>
+      <span class="nm-time-tz">CET · PL</span>
+    </div>
   </div>
 
   <!-- ─── HERO ─── -->
@@ -1133,7 +1138,7 @@
   <!-- Unified clock: nav hero, nav scrolled, footer -->
   <script>
     (function () {
-      var ids = ['navTime', 'navTimeS', 'footTime'];
+      var ids = ['navTime', 'navTimeS', 'footTime', 'nmTime'];
       function tick() {
         var t = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Warsaw', hour12: false });
         ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.textContent = t; });
@@ -1183,47 +1188,7 @@
 
 
 
-  <!-- Auto-scroll to end of contact section when coming from project page -->
-  <script>
-    (function () {
-      if (!/[?&]contact=1/.test(location.search)) return;
-
-      // 1. Hide page instantly — before any paint
-      document.documentElement.style.cssText = 'opacity:0!important;pointer-events:none';
-
-      // 2. Clean URL
-      history.replaceState(null, '', location.pathname);
-
-      function scrollToContactEnd() {
-        var ctScroll = document.getElementById('ctScroll');
-        if (!ctScroll) return;
-        var top = ctScroll.getBoundingClientRect().top + window.pageYOffset;
-        var scrollTarget = top + ctScroll.offsetHeight - window.innerHeight;
-        window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'instant' });
-      }
-
-      // 3. After full load + layout: scroll then reveal
-      window.addEventListener('load', function () {
-        // Extra rAF loop to let GSAP/ScrollTrigger finish init
-        var ticks = 0;
-        function tryScroll() {
-          scrollToContactEnd();
-          ticks++;
-          if (ticks < 6) {
-            requestAnimationFrame(tryScroll);
-          } else {
-            // All done — fade in smoothly
-            document.documentElement.style.transition = 'opacity .25s ease';
-            document.documentElement.style.opacity = '1';
-            setTimeout(function () {
-              document.documentElement.style.cssText = '';
-            }, 300);
-          }
-        }
-        requestAnimationFrame(tryScroll);
-      });
-    })();
-  </script>
+  <!-- Section deep-link scroll is handled by transition.js (?section=NAME) -->
 </body>
 
 </html>

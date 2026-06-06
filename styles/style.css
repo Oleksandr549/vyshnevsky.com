@@ -100,6 +100,14 @@ body {
   overflow-x: hidden
 }
 
+/* Scroll lock — prevents page scroll under mobile nav / drawer.
+   Uses overflow:hidden so scroll position never changes,
+   padding-right compensates for scrollbar width to prevent layout shift. */
+body.scroll-locked {
+  overflow: hidden;
+  padding-right: var(--scroll-lock-sb, 0px)
+}
+
 ::selection {
   background: var(--g);
   color: #000
@@ -217,30 +225,23 @@ nav#nav.s .nav-scrolled-time {
   display: none;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-end;
   gap: 5px;
   width: 36px;
   height: 36px;
   cursor: pointer;
-  background: rgba(61,255,143,.06);
-  border: 1px solid rgba(61,255,143,.15);
-  border-radius: var(--r-sm);
+  background: transparent;
+  border: none;
+  border-radius: 0;
   padding: 9px 8px;
-  transition: background .25s, border-color .25s;
   flex-shrink: 0
 }
 
 .nav-burger:hover {
-  background: rgba(61,255,143,.12);
-  border-color: rgba(61,255,143,.3)
+  opacity: .7
 }
 
-.nav-burger span {
-  display: block;
-  height: 1.5px;
-  background: var(--g);
-  border-radius: 2px;
-  transition: transform .3s, opacity .3s
-}
+/* ── burger span styles — see mobile nav block below ── */
 
 .logo {
   font-family: 'Syne', sans-serif;
@@ -1856,12 +1857,6 @@ section {
 .reviews-hint.is-hidden {
   opacity: 0;
 }
- /* ═══════════════════════════════════════════════════════════════
-   REVIEWS — Адаптив патч
-   Добавь в конец блока reviews в style.css
-   (после всех существующих @media для reviews)
-   ═══════════════════════════════════════════════════════════════ */
-
 /* ── Заголовок секции на мобильном ── */
 @media (max-width: 640px) {
   #reviews .sh {
@@ -2540,7 +2535,7 @@ footer {
 /* burger base уже определён выше в nav block */
 
 .nav-burger span {
-  width: 18px;
+  display: block;
   height: 1.5px;
   background: var(--g);
   border-radius: 2px;
@@ -2548,9 +2543,14 @@ footer {
   transform-origin: center
 }
 
+.nav-burger span:nth-child(1) { width: 18px }
+.nav-burger span:nth-child(2) { width: 12px }
+.nav-burger span:nth-child(3) { width: 18px }
+
 /* Иконка × при открытом меню */
 .nav-burger.open span:nth-child(1) {
-  transform: translateY(6.5px) rotate(45deg)
+  transform: translateY(6.5px) rotate(45deg);
+  width: 18px
 }
 
 .nav-burger.open span:nth-child(2) {
@@ -2559,7 +2559,8 @@ footer {
 }
 
 .nav-burger.open span:nth-child(3) {
-  transform: translateY(-6.5px) rotate(-45deg)
+  transform: translateY(-6.5px) rotate(-45deg);
+  width: 18px
 }
 
 .nav-mobile {
@@ -2573,10 +2574,10 @@ footer {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .35s;
+  transition: opacity .3s ease;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px)
 }
@@ -2586,20 +2587,93 @@ footer {
   pointer-events: all
 }
 
-.nav-mobile a {
+/* Links stagger in when open */
+.nav-mobile .nm-link {
   font-family: 'Syne', sans-serif;
   font-size: clamp(2rem, 10vw, 3.5rem);
   font-weight: 800;
   color: var(--m);
   text-decoration: none;
   letter-spacing: -.02em;
-  transition: color .2s;
-  -webkit-text-stroke: 1px rgba(61, 255, 143, .15)
+  transition: color .2s, opacity .35s, transform .45s cubic-bezier(.16,1,.3,1);
+  -webkit-text-stroke: 1px rgba(61, 255, 143, .15);
+  opacity: 0;
+  transform: translateY(24px);
+  padding: .35em 0
 }
 
-.nav-mobile a:hover {
+.nav-mobile.open .nm-link:nth-child(1) { transition-delay: .06s }
+.nav-mobile.open .nm-link:nth-child(2) { transition-delay: .12s }
+.nav-mobile.open .nm-link:nth-child(3) { transition-delay: .18s }
+.nav-mobile.open .nm-link:nth-child(4) { transition-delay: .24s }
+
+.nav-mobile.open .nm-link {
+  opacity: 1;
+  transform: translateY(0)
+}
+
+.nav-mobile .nm-link:hover,
+.nav-mobile .nm-link.nm-active {
   color: var(--g);
   -webkit-text-stroke-color: transparent
+}
+
+/* Active dot indicator */
+.nav-mobile .nm-link.nm-active::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--g);
+  margin-left: .4em;
+  vertical-align: middle;
+  position: relative;
+  top: -.1em
+}
+
+/* Time block at bottom */
+.nm-time-block {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity .35s .3s;
+}
+
+.nav-mobile.open .nm-time-block {
+  opacity: 1
+}
+
+.nm-time-label {
+  font-size: 9px;
+  color: rgba(157,191,157,.38);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  line-height: 1;
+}
+
+#nmTime {
+  font-size: .95rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .03em;
+  color: var(--t);
+  line-height: 1.1;
+}
+
+
+.nm-time-tz {
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(157,191,157,.4);
+  line-height: 1;
 }
 
 /* ─── ABOUT WRAP ─── */
@@ -3153,10 +3227,42 @@ footer {
   border-radius: var(--r);
   position: relative;
   overflow: hidden;
-  transition: border-color .35s, transform .35s;
+  transition: border-color .4s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25), 0 1px 2px rgba(0,0,0,.3);
 }
 .ab-card:hover {
   border-color: rgba(61,255,143,.18);
+}
+
+/* Photo card — most prominent, deepest shadow */
+.ab-photo {
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.5),
+    0 2px 8px rgba(0,0,0,.4),
+    0 0 0 1px rgba(61,255,143,.06);
+}
+
+/* Headline — secondary depth */
+.ab-headline {
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.35),
+    0 1px 4px rgba(0,0,0,.3);
+}
+
+/* ph-1 / ph-2 — recessed, slightly darker feel */
+.ab-ph-1,
+.ab-ph-2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 2px 8px rgba(0,0,0,.3);
+}
+
+/* CV card — accent glow reinforces the green top-line */
+.ab-cv {
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.35),
+    0 0 0 1px rgba(61,255,143,.08),
+    0 -1px 0 0 rgba(61,255,143,.12);
 }
  
 /* placements */
@@ -3217,11 +3323,10 @@ footer {
   display: block;
   filter: contrast(1.05) brightness(.85) saturate(1.1);
   border-radius: inherit;
-  will-change: transform;
 }
 #aboutImgFront { opacity: 0; }
 
-.ab-photo:hover .ab-photo-img-wrap img { transform: scale(1.04); }
+/* photo hover scale removed — static, heavy feel */
  
 /* green glow ring behind photo */
 .ab-photo-ring {
@@ -3296,7 +3401,7 @@ footer {
    HEADLINE CARD — gradient mesh bg
 ════════════════════════════════════ */
 .ab-headline {
-  padding: 36px 38px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -3331,7 +3436,7 @@ footer {
    BIO CARD
 ════════════════════════════════════ */
 .ab-bio {
-  padding: 30px 38px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -3404,12 +3509,13 @@ footer {
     gap: 12px;
   }
 
-  /* фото: левая колонка, оба ряда — фиксированная высота чтобы не растягивалось */
+  /* фото: левая колонка, оба ряда — растягивается по высоте соседей */
   .ab-photo {
     grid-column: 1 / 2;
     grid-row: 1 / 3;
-    height: 480px;
+    height: unset;
     min-height: unset;
+    align-self: stretch;
   }
 
   .ab-headline { grid-column: 2 / 4; grid-row: 1 / 2; }
@@ -3422,33 +3528,31 @@ footer {
   .ab-ph-1, .ab-ph-2 { display: none; }
 }
 
-/* ── 860px ── */
+/* ── 860px: фото слева на два ряда, headline+CV справа ── */
 @media (max-width: 860px) {
   #about .about-bento-inner { padding-left: var(--side-pad); padding-right: var(--side-pad); }
   #about .about-stag-wrap   { padding-left: var(--side-pad); padding-right: var(--side-pad); }
 
   .about-bento {
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     gap: 10px;
+    align-items: stretch;
   }
 
-  /* фото слева, 2 ряда по высоте */
   .ab-photo {
     grid-column: 1 / 2;
     grid-row: 1 / 3;
-    height: unset;
-    min-height: 420px;
+  }
+  .ab-photo .ab-photo-img-wrap img {
+    object-position: center 15%;
   }
 
-  /* headline сверху справа, CV снизу справа */
   .ab-headline { grid-column: 2 / 3; grid-row: 1 / 2; }
-  .ab-cv       { grid-column: 2 / 3; grid-row: 2 / 3; }
+  .ab-cv       { grid-column: 2 / 3; grid-row: 2 / 3; display: flex; flex-direction: column; justify-content: center; }
 
-  /* bio на всю ширину */
   .ab-bio { grid-column: 1 / 3; grid-row: 3 / 4; }
-
-  /* exp на всю ширину */
   .ab-exp { grid-column: 1 / 3; grid-row: 4 / 5; }
 
   .ab-ph-1, .ab-ph-2 { display: none; }
@@ -3563,9 +3667,10 @@ footer {
    CV CARD
 ════════════════════════════════════ */
 .ab-cv {
-  padding: 28px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
   justify-content: space-between;
   background:
     radial-gradient(ellipse 90% 60% at 50% 0%, rgba(61,255,143,.08) 0%, transparent 65%),
@@ -3586,6 +3691,7 @@ footer {
   text-transform: uppercase;
   color: var(--m);
   font-weight: 500;
+  margin-bottom: 4px;
 }
 .ab-cv-title {
   font-family: 'Syne', sans-serif;
@@ -3593,6 +3699,17 @@ footer {
   font-size: 1.15rem;
   color: var(--t);
   line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+/* CV кнопка: на средних экранах растягиваем на всю ширину карточки */
+@media (max-width: 1100px) {
+  .ab-cv .btn-g {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    justify-content: center;
+  }
 }
 
 /* ab-photo-img-wrap styles are defined above in PHOTO CARD section */
@@ -4258,7 +4375,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 ════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  .ct-timeline { height: 160px; }
+  .ct-timeline { height: 160px; margin-bottom: 2.4rem; }
   .ct-tl-title, .ct-tl-desc { font-size: 11px; }
   .cf-2col { grid-template-columns: 1fr; }
 
@@ -4276,7 +4393,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   }
 
   /* Timeline компактнее на маленьких экранах */
-  .ct-timeline { height: 130px; }
+  .ct-timeline { height: 130px; margin-bottom: 2.8rem; }
   .ct-dot-wrap { width: 52px; height: 52px; }
   .ct-dot-main { width: 44px; height: 44px; }
   .ct-dot-main svg { width: 18px; height: 18px; }

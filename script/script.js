@@ -108,14 +108,16 @@ gsap.registerPlugin(ScrollTrigger);
   const hasGlitch = imgBack && imgFront;
 
   // Each card: progress window [from, to] within 0..1 scroll through section
+  // All cards animate bottom-up only — consistent, calm entrance
+  // Staggered by column: col1 (photo) → col2 (headline/bio) → col3 (ph1/ph2) → row3 (exp/cv)
   const cards = [
-    { el: photo,    from: 0.00, to: 0.18, opacity: [0,1], scale: [0.88,1], y: [30,0] },
-    { el: headline, from: 0.08, to: 0.24, opacity: [0,1], x: [-50,0] },
-    { el: ph1,      from: 0.12, to: 0.26, opacity: [0,1], x: [50,0] },
-    { el: bio,      from: 0.16, to: 0.30, opacity: [0,1], x: [-40,0] },
-    { el: ph2,      from: 0.20, to: 0.32, opacity: [0,1], x: [50,0] },
+    { el: photo,    from: 0.00, to: 0.18, opacity: [0,1], y: [40,0] },
+    { el: headline, from: 0.06, to: 0.22, opacity: [0,1], y: [36,0] },
+    { el: ph1,      from: 0.10, to: 0.26, opacity: [0,1], y: [36,0] },
+    { el: bio,      from: 0.10, to: 0.26, opacity: [0,1], y: [36,0] },
+    { el: ph2,      from: 0.14, to: 0.30, opacity: [0,1], y: [36,0] },
     { el: exp,      from: 0.60, to: 0.76, opacity: [0,1], y: [40,0] },
-    { el: cv,       from: 0.65, to: 0.80, opacity: [0,1], y: [40,0] },
+    { el: cv,       from: 0.64, to: 0.80, opacity: [0,1], y: [40,0] },
   ].filter(c => c.el);
 
   // ── Photo transition window in scroll progress ──
@@ -124,7 +126,8 @@ gsap.registerPlugin(ScrollTrigger);
 
   function lerpCl(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }
   function prog(val, from, to) { return Math.max(0, Math.min(1, (val - from) / (to - from))); }
-  function eio(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  // power2.out — fast start, smooth deceleration (replaces symmetric eio)
+  function eio(t) { return 1 - (1 - t) * (1 - t); }
 
   function resetCards() {
     cards.forEach(c => {
@@ -227,11 +230,9 @@ gsap.registerPlugin(ScrollTrigger);
       const io = new IntersectionObserver(entries => {
         if (!entries[0].isIntersecting) return;
         gsap.to(c.el, {
-          opacity: c.opacity ? c.opacity[1] : 1,
-          x:       c.x       ? c.x[1]       : 0,
-          y:       c.y       ? c.y[1]       : 0,
-          scale:   c.scale   ? c.scale[1]   : 1,
-          duration: 0.7, ease: 'power3.out'
+          opacity: 1,
+          y:       0,
+          duration: 0.65, ease: 'power2.out'
         });
         io.disconnect();
       }, { threshold: 0.15 });
@@ -323,46 +324,18 @@ const unlockScroll = () => window.unlockScroll?.();
   const toggle = () => {
     burger.classList.toggle('open');
     mobile.classList.toggle('open');
-    if (mobile.classList.contains('open')) {
-      lockScroll();
-    } else {
-      unlockScroll();
-    }
+    mobile.classList.contains('open') ? lockScroll() : unlockScroll();
   };
 
   burger.addEventListener('click', toggle);
-
-  /* Close when clicking a nav link */
   mobile.querySelectorAll('.nm-link').forEach(a => a.addEventListener('click', close));
-
-  /* Close on Escape */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && mobile.classList.contains('open')) close();
   });
+  mobile.addEventListener('click', e => { if (e.target === mobile) close(); });
 
-  /* Close when tapping the overlay (the mobile nav itself covers the screen,
-     so we detect a tap that didn't land on any link) */
-  mobile.addEventListener('click', e => {
-    if (e.target === mobile) close();
-  });
-})();
-
-/* ─── HERO VIDEO — resume listeners ─── */
-// Note: initial play() is handled inside the HERO ENTRANCE IIFE above.
-// This block only handles tab-switch resume and bfcache restore.
-(function () {
-  const vid = document.getElementById('heroBgVideoA');
-  if (!vid) return;
-
-  function resumePlay() {
-    if (vid.paused) vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
-  }
-
-  // Resume after tab switch
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) resumePlay(); });
-
-  // Resume after bfcache restore (browser Back/Forward)
-  window.addEventListener('pageshow', (e) => { if (e.persisted) resumePlay(); });
+  // bfcache: ensure menu is closed on back/forward
+  window.addEventListener('pageshow', e => { if (e.persisted) close(); });
 })();
 
 /* ─── SKILLS ACCORDION ─── */
@@ -1173,7 +1146,7 @@ const unlockScroll = () => window.unlockScroll?.();
       }
 
       if (touchIntent === 'col') {
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
 
         const now = performance.now();
         const dt = now - lastT || 16;
@@ -1541,6 +1514,8 @@ const unlockScroll = () => window.unlockScroll?.();
 
   const ctx = canvas.getContext('2d');
 
+  const isMobile = () => window.innerWidth <= 768;
+
   // ── math helpers ────────────────────────────────────────────
   const cl  = (v, a, b) => Math.max(a, Math.min(b, v));
   const lp  = (a, b, t) => a + (b - a) * t;
@@ -1587,6 +1562,7 @@ const unlockScroll = () => window.unlockScroll?.();
 
   // ── position items absolutely ────────────────────────────────
   function positionItems(lyt) {
+    if (isMobile()) return; // на мобиле items остаются в потоке (position:relative)
     // ct-tl-item имеет padding-top: 28px, dot-wrap = 64px
     // чтобы центр dot-wrap был на cy: top = cy - 28 - 32
     [['ctS1'], ['ctS2'], ['ctS3']].forEach(([id]) => {
@@ -1780,9 +1756,12 @@ const unlockScroll = () => window.unlockScroll?.();
     // ── item 1 ───────────────────────────────────────────────────
     const s1 = document.getElementById('ctS1');
     if (s1) {
-      s1.style.opacity   = i1dot;
-      s1.style.left      = lp(lyt.cx, lyt.s1.x, eo3(i1move)) + 'px';
-      s1.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i1move)).toFixed(3)})`;
+      if (isMobile()) { s1.style.left = ''; s1.style.transform = ''; }
+      else {
+        s1.style.opacity   = i1dot;
+        s1.style.left      = lp(lyt.cx, lyt.s1.x, eo3(i1move)) + 'px';
+        s1.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i1move)).toFixed(3)})`;
+      }
     }
     document.getElementById('ctD1')?.classList.toggle('lit', i1move > .92);
     pulseRings('1', lT, 0, allSettled);
@@ -1795,9 +1774,12 @@ const unlockScroll = () => window.unlockScroll?.();
     // ── item 2 ───────────────────────────────────────────────────
     const s2 = document.getElementById('ctS2');
     if (s2) {
-      s2.style.opacity   = i2dot;
-      s2.style.left      = lp(lyt.cx, lyt.s2.x, eo3(i2move)) + 'px';
-      s2.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i2move)).toFixed(3)})`;
+      if (isMobile()) { s2.style.left = ''; s2.style.transform = ''; }
+      else {
+        s2.style.opacity   = i2dot;
+        s2.style.left      = lp(lyt.cx, lyt.s2.x, eo3(i2move)) + 'px';
+        s2.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i2move)).toFixed(3)})`;
+      }
     }
     document.getElementById('ctD2')?.classList.toggle('lit', i2move > .92);
     pulseRings('2', lT, 0.9, allSettled);
@@ -1809,9 +1791,12 @@ const unlockScroll = () => window.unlockScroll?.();
     // ── item 3 ───────────────────────────────────────────────────
     const s3 = document.getElementById('ctS3');
     if (s3) {
-      s3.style.opacity   = i3dot;
-      s3.style.left      = lp(lyt.cx, lyt.s3.x, eo3(i3move)) + 'px';
-      s3.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i3move)).toFixed(3)})`;
+      if (isMobile()) { s3.style.left = ''; s3.style.transform = ''; }
+      else {
+        s3.style.opacity   = i3dot;
+        s3.style.left      = lp(lyt.cx, lyt.s3.x, eo3(i3move)) + 'px';
+        s3.style.transform = `translateX(-50%) scale(${lp(1.65, 1.0, eo3(i3move)).toFixed(3)})`;
+      }
     }
     document.getElementById('ctD3')?.classList.toggle('lit', i3move > .92);
     pulseRings('3', lT, 1.8, allSettled);
@@ -1840,16 +1825,18 @@ const unlockScroll = () => window.unlockScroll?.();
   const cx0     = W0 * .50;
   const topOff0 = (_cy || tlWrap.offsetHeight * 0.42) - 60;
 
-  // Шаг 2: переводим в absolute, скрываем в центре
-  ['ctS1','ctS2','ctS3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.style.position  = 'absolute';
-    el.style.top       = topOff0 + 'px';
-    el.style.left      = cx0 + 'px';
-    el.style.transform = 'translateX(-50%) scale(1.65)';
-    el.style.opacity   = '0';
-  });
+  // Шаг 2: переводим в absolute, скрываем в центре (только на desktop)
+  if (!isMobile()) {
+    ['ctS1','ctS2','ctS3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.position  = 'absolute';
+      el.style.top       = topOff0 + 'px';
+      el.style.left      = cx0 + 'px';
+      el.style.transform = 'translateX(-50%) scale(1.65)';
+      el.style.opacity   = '0';
+    });
+  }
 
   // Скрываем лейблы (num + title) — появятся после иконки
   ['ctNum1','ctTitle1','ctNum2','ctTitle2','ctNum3','ctTitle3'].forEach(id => {
@@ -1872,7 +1859,6 @@ const unlockScroll = () => window.unlockScroll?.();
 
   // ── CSS sticky scroll — как Projects, без ScrollTrigger pin ────
   // Никогда не снимает секцию с потока → ноль скачков при открепе
-  const isMobile = () => window.innerWidth <= 768;
   const ctScroll = document.getElementById('ctScroll');
 
   const SCROLL_MULT = 2.2; // множитель высоты viewport = длина скролла

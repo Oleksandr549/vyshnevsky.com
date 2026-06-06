@@ -65,8 +65,8 @@
     const gctx = glowCanvas.getContext('2d');
     const grad = gctx.createRadialGradient(256,256,0, 256,256,256);
     grad.addColorStop(0,   'rgba(61,255,143,0.10)');
-    grad.addColorStop(0.2, 'rgba(61,255,143,0.07)');
-    grad.addColorStop(0.45,'rgba(61,255,143,0.04)');
+    grad.addColorStop(0.2, 'rgba(61,255,143,0.1)');
+    grad.addColorStop(0.3,'rgba(61,255,143,0.1)');
     grad.addColorStop(0.7, 'rgba(61,255,143,0.015)');
     grad.addColorStop(1,   'rgba(61,255,143,0)');
     gctx.fillStyle = grad;
