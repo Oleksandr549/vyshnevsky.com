@@ -924,46 +924,45 @@ const unlockScroll = () => window.unlockScroll?.();
 
 
 /* ═══════════════════════════════════════════════════════════════
-   REVIEWS — True infinite scroll via DOM recycling  v7
-   + hover-пауза на десктопе
-   Заменяет блок «REVIEWS INFINITE SCROLL COLUMNS» в script.js
+   REVIEWS — единая база отзывов + динамическое распределение по колонкам
+   Бесшовный infinite scroll через modulo-wrap translateY (без getBoundingClientRect
+   и DOM-recycling в цикле анимации — дорого и лагало на 60fps).
+
+   Раньше каждый отзыв был жёстко привязан к своей колонке (data-col),
+   поэтому на мобильном (1 колонка) было видно только 2 из 6 отзывов —
+   остальные 4 просто лежали в скрытых колонках.
+   Теперь все карточки — единый список; при смене брейкпоинта колонки
+   пересобираются, и список раздаётся по ним round-robin, так что
+   на мобильном виден полный набор отзывов, просто в одну ленту.
    ═══════════════════════════════════════════════════════════════ */
-/* ─── REVIEWS INFINITE SCROLL COLUMNS ─── */
 (function () {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  const buckets = [[], [], []];
-  grid.querySelectorAll('.review-card').forEach(card => {
-    const c = Math.min(parseInt(card.dataset.col) || 0, 2);
-    buckets[c].push(card);
-  });
-
+  // Мастер-список отзывов — порядок в HTML = порядок показа.
+  // Сохраняем один раз как «эталон», дальше колонки клонируют из него.
+  const masterCards = Array.from(grid.querySelectorAll('.review-card'));
+  if (!masterCards.length) return;
   grid.innerHTML = '';
 
-  // Pause all rAF loops when reviews section is off-screen (battery / CPU saving)
+  // Пауза всех rAF-циклов, когда секция вне экрана (экономия CPU/батареи)
   let reviewsVisible = false;
   new IntersectionObserver(([e]) => { reviewsVisible = e.isIntersecting; }, { threshold: 0 }).observe(grid);
 
   const autoSpeeds = [0.55, 0.42, 0.50];
+  const GAP = 24;
 
-  /* Определяем сколько колонок показывать */
   function visibleCols() {
     if (window.innerWidth <= 640)  return 1;
     if (window.innerWidth <= 1100) return 2;
     return 3;
   }
 
-  buckets.forEach((cards, ci) => {
-    if (!cards.length) return;
-
+  function buildColumn(cardsForCol, ci) {
     const col = document.createElement('div');
     col.className = `reviews-col col-${ci}`;
-
-    const show = ci < visibleCols();
-
     col.style.cssText = `
-      display: ${show ? 'flex' : 'none'};
+      display: flex;
       flex-direction: column;
       gap: 1.5rem;
       will-change: transform;
@@ -971,93 +970,65 @@ const unlockScroll = () => window.unlockScroll?.();
       user-select: none;
       -webkit-user-select: none;
       position: relative;
-      animation: none;
     `;
 
-    cards.forEach(c => {
-      c.style.flexShrink = '0';
-      col.appendChild(c);
+    const originals = cardsForCol.map(c => {
+      const clone = c.cloneNode(true);
+      clone.style.flexShrink = '0';
+      col.appendChild(clone);
+      return clone;
     });
     grid.appendChild(col);
 
-    /* Если колонка скрыта — не запускаем логику скролла */
-    if (!show) return;
+    // «Период» цикла — суммарная высота одного полного набора карточек колонки
+    const setHeight = originals.reduce((s, el) => s + el.offsetHeight + GAP, 0); // 1 замер, не в цикле
 
-    // Клонируем карточки пока колонка не покроет грид дважды.
-    // col.scrollHeight ненадёжен до layout — считаем высоту вручную по offsetHeight.
-    {
-      const gridH = grid.offsetHeight || 520;
-      const gap   = 24;
-      const minH  = gridH * 2.5;
-      let safety  = 0;
-
-      function colHeight() {
-        const children = Array.from(col.children);
-        if (!children.length) return 0;
-        return children.reduce((s, el) => s + el.offsetHeight + gap, 0) - gap;
-      }
-
-      while (colHeight() < minH && safety++ < 40) {
-        cards.forEach(c => {
-          const clone = c.cloneNode(true);
-          clone.style.flexShrink = '0';
-          col.appendChild(clone);
-        });
-      }
+    // Дублируем набор, пока колонка не покроет грид минимум 2.5 раза
+    const gridH = grid.offsetHeight || 520;
+    const minH  = gridH * 2.5;
+    let totalH  = setHeight;
+    let safety  = 0;
+    while (totalH < minH && safety++ < 40) {
+      cardsForCol.forEach(c => {
+        const clone = c.cloneNode(true);
+        clone.style.flexShrink = '0';
+        col.appendChild(clone);
+      });
+      totalH += setHeight;
     }
 
     let offset = 0;
     let vel = 0;
     let dragging = false;
-    let hovered = false;      // ← новый флаг
+    let hovered = false;
     let prevY = 0;
     let lastY = 0;
     let lastT = 0;
     let initialized = false;
-    const speed = autoSpeeds[ci];
+    let destroyed = false;
+    const speed = autoSpeeds[ci % autoSpeeds.length];
 
     function apply() {
       col.style.transform = `translateY(${offset}px)`;
     }
 
-    function recycle() {
-      const gap = parseFloat(getComputedStyle(col).gap) || 24;
-      const gridRect = grid.getBoundingClientRect();
-
-      let first = col.firstElementChild;
-      while (first) {
-        const r = first.getBoundingClientRect();
-        if (r.bottom < gridRect.top - gap) {
-          const h = r.height + gap;
-          col.appendChild(first);
-          offset += h;
-          apply();
-          first = col.firstElementChild;
-        } else break;
-      }
-
-      let last = col.lastElementChild;
-      while (last) {
-        const r = last.getBoundingClientRect();
-        if (r.top > gridRect.bottom + gap) {
-          const h = r.height + gap;
-          col.prepend(last);
-          offset -= h;
-          apply();
-          last = col.lastElementChild;
-        } else break;
-      }
+    // Держим offset в диапазоне (-setHeight, 0] — чисто арифметика, без DOM/layout.
+    function wrap() {
+      if (setHeight <= 0) return;
+      if (offset <= -setHeight) offset += setHeight * Math.ceil(-offset / setHeight);
+      else if (offset > 0) offset -= setHeight * Math.ceil(offset / setHeight);
     }
 
     function tick() {
+      if (destroyed) return;
       if (reviewsVisible && !dragging) {
         if (hovered) {
           /* Пауза — плавно тормозим до нуля */
           vel *= 0.85;
           if (Math.abs(vel) > 0.05) {
             offset += vel;
+            wrap();
             apply();
-            recycle();
           }
         } else {
           /* Автоскролл — разгоняемся или держим скорость */
@@ -1067,8 +1038,8 @@ const unlockScroll = () => window.unlockScroll?.();
             vel = -speed;
           }
           offset += vel;
+          wrap();
           apply();
-          recycle();
         }
       }
       requestAnimationFrame(tick);
@@ -1077,7 +1048,6 @@ const unlockScroll = () => window.unlockScroll?.();
     function init() {
       if (initialized) return;
       initialized = true;
-      col.style.animationName = 'none';
       vel = -speed;
       requestAnimationFrame(tick);
     }
@@ -1085,12 +1055,8 @@ const unlockScroll = () => window.unlockScroll?.();
     setTimeout(init, 100);
 
     /* ── Hover пауза (только не во время drag) ── */
-    col.addEventListener('mouseenter', () => {
-      hovered = true;
-    });
-    col.addEventListener('mouseleave', () => {
-      hovered = false;
-    });
+    col.addEventListener('mouseenter', () => { hovered = true; });
+    col.addEventListener('mouseleave', () => { hovered = false; });
 
     /* ── Скрываем hint после первого drag ── */
     function hideHint() {
@@ -1099,7 +1065,7 @@ const unlockScroll = () => window.unlockScroll?.();
     }
 
     /* ══ MOUSE ══ */
-    col.addEventListener('mousedown', e => {
+    function onMouseDown(e) {
       init();
       hideHint();
       dragging = true;
@@ -1108,9 +1074,9 @@ const unlockScroll = () => window.unlockScroll?.();
       lastT = performance.now();
       vel = 0;
       col.style.cursor = 'grabbing';
-    });
+    }
 
-    window.addEventListener('mousemove', e => {
+    function onMouseMove(e) {
       if (!dragging) return;
       const dy = e.clientY - prevY;
       prevY = e.clientY;
@@ -1122,21 +1088,25 @@ const unlockScroll = () => window.unlockScroll?.();
       lastT = now;
 
       offset += dy;
+      wrap();
       apply();
-      recycle();
-    });
+    }
 
-    window.addEventListener('mouseup', () => {
+    function onMouseUp() {
       if (!dragging) return;
       dragging = false;
       col.style.cursor = 'grab';
-    });
+    }
+
+    col.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
 
     /* ══ TOUCH ══ */
     let touchStartX = 0;
     let touchIntent = null;
 
-    col.addEventListener('touchstart', e => {
+    function onTouchStart(e) {
       init();
       hideHint();
       prevY = e.touches[0].clientY;
@@ -1146,9 +1116,9 @@ const unlockScroll = () => window.unlockScroll?.();
       vel = 0;
       touchIntent = null;
       dragging = true;
-    }, { passive: true });
+    }
 
-    col.addEventListener('touchmove', e => {
+    function onTouchMove(e) {
       if (!dragging) return;
       const curY = e.touches[0].clientY;
       const dy = curY - prevY;
@@ -1174,58 +1144,69 @@ const unlockScroll = () => window.unlockScroll?.();
 
         prevY = curY;
         offset += dy;
+        wrap();
         apply();
-        recycle();
       }
-    }, { passive: false });
+    }
 
-    col.addEventListener('touchend', () => {
+    function onTouchEnd() {
       if (!dragging) return;
       dragging = false;
-    }, { passive: true });
+    }
 
-  });
+    col.addEventListener('touchstart', onTouchStart, { passive: true });
+    col.addEventListener('touchmove', onTouchMove, { passive: false });
+    col.addEventListener('touchend', onTouchEnd, { passive: true });
 
-})();
-
-// Resize-обработчик: пересчитываем количество видимых колонок при изменении размера окна
-(function () {
-  const grid = document.getElementById('reviewsGrid');
-  if (!grid) return;
-
-  let lastVisibleCols = null;
-
-  function visibleCols() {
-    if (window.innerWidth <= 640)  return 1;
-    if (window.innerWidth <= 1100) return 2;
-    return 3;
+    return {
+      destroy() {
+        destroyed = true;
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      }
+    };
   }
 
-  function updateColVisibility() {
-    const nv = visibleCols();
-    if (nv === lastVisibleCols) return;
-    lastVisibleCols = nv;
+  let activeCols = [];
+  let currentN = 0;
 
-    const cols = grid.querySelectorAll('.reviews-col');
-    cols.forEach((col, ci) => {
-      const shouldShow = ci < nv;
-      col.style.display = shouldShow ? 'flex' : 'none';
-    });
+  function rebuild() {
+    const n = visibleCols();
+    currentN = n;
+
+    activeCols.forEach(c => c.destroy());
+    activeCols = [];
+    grid.innerHTML = '';
+
+    const buckets = Array.from({ length: n }, () => []);
+    masterCards.forEach((card, i) => buckets[i % n].push(card));
+
+    activeCols = buckets
+      .filter(cards => cards.length)
+      .map((cards, ci) => buildColumn(cards, ci));
   }
 
+  rebuild();
+
+  /* ── единый ресайз-обработчик: пересобираем колонки только при смене брейкпоинта ── */
   let _rvResizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(_rvResizeTimer);
-    _rvResizeTimer = setTimeout(updateColVisibility, 120);
+    _rvResizeTimer = setTimeout(() => {
+      const n = visibleCols();
+      if (n !== currentN) rebuild();
+    }, 150);
   }, { passive: true });
 
   window.addEventListener('orientationchange', () => {
-    setTimeout(updateColVisibility, 400);
+    setTimeout(() => {
+      const n = visibleCols();
+      if (n !== currentN) rebuild();
+    }, 400);
   });
 
-  // Инициализация
-  updateColVisibility();
 })();
+
 
 
 /* ─── CONTACT DRAWER ─── */

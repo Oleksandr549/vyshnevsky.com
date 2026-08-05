@@ -1634,34 +1634,12 @@ section {
   -webkit-user-select: none;
 }
 
-/* Состояние «захвачено мышью» */
-.reviews-col.is-dragging {
-  cursor: grabbing;
-  animation-play-state: paused !important;
-}
+/* Состояние «захвачено мышью» — курсор меняется через inline-style в JS (col.style.cursor) */
 
-/* Пауза при наведении (hover) — hover-only, не мешает drag */
-.reviews-col:hover {
-  animation-play-state: paused;
-}
-
-/* ── CSS-анимации колонок ── */
-.reviews-col.col-0 {
-  animation: reviewsUp 18s linear infinite;
-}
-.reviews-col.col-1 {
-  animation: reviewsUp 24s linear infinite;
-  animation-delay: -8s;
-}
-.reviews-col.col-2 {
-  animation: reviewsUp 20s linear infinite;
-  animation-delay: -14s;
-}
-
-@keyframes reviewsUp {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
-}
+/* Скролл колонок полностью управляется из script.js через translateY(),
+   с бесшовным wrap по модулю периода. Старая CSS-анимация reviewsUp
+   и связанный с ней pause-on-hover были мёртвым кодом: JS всегда
+   перекрывал их через inline animation:none — убрано, чтобы не путать. */
 
 /* ── Карточка ── */
 .review-card {
