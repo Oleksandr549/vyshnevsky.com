@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="theme-color" content="#07090A">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -47,6 +48,7 @@
 </head>
 
 <body data-page="project">
+  <a class="skip-link" href="#pdMain">Skip to content</a>
 
   <div class="page-content">
 
@@ -68,7 +70,7 @@
       <span class="nav-scrolled-tz">CET · PL</span>
     </div>
 
-    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
+    <button type="button" class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -139,14 +141,14 @@
 
     <!-- LIGHTBOX -->
     <div class="pd-lightbox" id="pdLightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
-      <button class="pd-lb-close" id="pdLbClose" aria-label="Close">
+      <button type="button" class="pd-lb-close" id="pdLbClose" aria-label="Close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
-      <button class="pd-lb-prev" id="pdLbPrev" aria-label="Previous image">
+      <button type="button" class="pd-lb-prev" id="pdLbPrev" aria-label="Previous image">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <div class="pd-lb-media" id="pdLbMedia"></div>
-      <button class="pd-lb-next" id="pdLbNext" aria-label="Next image">
+      <button type="button" class="pd-lb-next" id="pdLbNext" aria-label="Next image">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </button>
       <div class="pd-lb-counter" id="pdLbCounter"></div>
@@ -180,7 +182,7 @@
         <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
           oleksandr.vyshnevskyi<wbr>.work@gmail.com
         </a>
-       
+
       </div>
 
       <!-- Col 2: Navigate -->

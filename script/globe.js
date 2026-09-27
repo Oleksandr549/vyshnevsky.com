@@ -32,7 +32,14 @@
   const canvas = document.getElementById('globeCanvas');
 
   /* ── Renderer ── */
-  const renderer = new THREE.WebGLRenderer({ antialias: true, canvas, alpha: true });
+  /* WebGL can still fail here (context limit, driver blocklist) — fall back to the static image */
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, canvas, alpha: true });
+  } catch (e) {
+    canvas.classList.add('globe-fallback');
+    return;
+  }
   const dpr = isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2);
   renderer.setPixelRatio(dpr);
   renderer.setSize(canvas.clientWidth, canvas.clientHeight);

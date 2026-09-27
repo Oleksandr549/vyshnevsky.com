@@ -229,7 +229,7 @@ nav#nav.s .nav-scrolled-time {
 
 .nav-scrolled-tz {
   font-size: 9px;
-  color: rgba(157,191,157,.4);
+  color: var(--m-70);
   text-transform: uppercase;
   letter-spacing: .08em
 }
@@ -285,7 +285,7 @@ nav#nav.s .nav-scrolled-time {
 
 .nav-col-head {
   font-size: var(--fs-micro);
-  color: rgba(157,191,157,.38);
+  color: var(--m-70);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   margin-bottom: .3rem;
@@ -319,7 +319,7 @@ nav#nav.s .nav-scrolled-time {
 
 .nav-time-label {
   font-size: 9px;
-  color: rgba(157,191,157,.38);
+  color: var(--m-70);
   text-transform: uppercase;
   letter-spacing: .1em;
   line-height: 1
@@ -336,7 +336,7 @@ nav#nav.s .nav-scrolled-time {
 
 .nav-tz {
   font-size: 9px;
-  color: rgba(157,191,157,.4);
+  color: var(--m-70);
   letter-spacing: .08em;
   text-transform: uppercase
 }
@@ -397,6 +397,12 @@ nav#nav.s .nav-scrolled-time {
   z-index: 0;
   display: block;
   pointer-events: none;
+}
+
+/* Static globe when WebGL is unavailable (hardware acceleration off, old devices).
+   Sized by height like the 3D camera, so framing matches the live globe. */
+#globeCanvas.globe-fallback {
+  background: var(--bg) url('../images/globe-fallback.webp') center / auto 100% no-repeat;
 }
 
 /* Fade edges so globe blends into page */
@@ -838,7 +844,7 @@ section {
 .sk-num {
   font-family: 'Syne', sans-serif;
   font-size: var(--fs-micro);
-  color: var(--ga-30);
+  color: var(--ga-65); /* ≥4.5:1 contrast */
   letter-spacing: var(--ls-wide);
   font-weight: 700;
   width: 36px;
@@ -890,7 +896,7 @@ section {
 
 .sk-lvl {
   font-size: var(--fs-micro);
-  color: rgba(157,191,157,.4);
+  color: var(--m-80);
   text-transform: uppercase;
   letter-spacing: var(--ls-tight);
   border: 1px solid var(--ga-10);
@@ -1071,14 +1077,14 @@ section {
 
 .pjs-sep {
   font-size: 1rem;
-  color: rgba(157,191,157,0.2);
+  color: var(--m-70);
   margin: 0 2px;
 }
 
 .pjs-tot {
   font-size: 1.1rem;
   font-weight: 700;
-  color: rgba(157,191,157,0.22);
+  color: var(--m-70);
 }
 
 .pjs-body {
@@ -1176,7 +1182,7 @@ section {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
   letter-spacing: .1em;
-  color: rgba(157,191,157,0.3);
+  color: var(--m-70);
   z-index: 3;
   transition: color .2s;
 }
@@ -1336,7 +1342,7 @@ section {
 .pjs-info-year {
   font-size: var(--fs-micro);
   letter-spacing: var(--ls-tight);
-  color: rgba(157,191,157,0.3);
+  color: var(--m-70);
 }
 
 .pjs-info-name {
@@ -1354,7 +1360,7 @@ section {
 
 .pjs-info-desc {
   font-size: var(--fs-small);
-  color: rgba(157,191,157,0.5);
+  color: var(--m-70);
   line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1786,7 +1792,7 @@ section {
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--m);
-  opacity: .5;
+  opacity: .8;
   transition: opacity .3s;
   pointer-events: none;
   user-select: none;
@@ -2064,6 +2070,14 @@ textarea.cf-in {
   background: var(--bg)
 }
 
+.js footer:not(.is-near) {
+  visibility: hidden;
+}
+
+/* "Curtain" footer: sticks to the viewport bottom behind the page.
+   It stays visibility:hidden until the reader scrolls near the end of the page
+   (common.js). While hidden, font swaps inside it are not counted as layout
+   shift — the covered footer used to cost CLS 0.4–0.7. */
 footer {
   position: sticky;
   bottom: 0;
@@ -2205,7 +2219,7 @@ footer {
 
 .foot-col-label {
   font-size: 9px;
-  color: rgba(157, 191, 157, .38);
+  color: var(--m-70);
   text-transform: uppercase;
   letter-spacing: .1em
 }
@@ -2308,7 +2322,7 @@ footer {
 
 .foot-tz {
   font-size: 8.5px;
-  color: rgba(157, 191, 157, .38);
+  color: var(--m-70);
   text-transform: uppercase;
   letter-spacing: .08em
 }
@@ -2483,7 +2497,7 @@ footer {
 
 .nm-time-label {
   font-size: 9px;
-  color: rgba(157,191,157,.38);
+  color: var(--m-70);
   text-transform: uppercase;
   letter-spacing: .1em;
   line-height: 1;
@@ -2503,7 +2517,7 @@ footer {
   font-size: 9px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.4);
+  color: var(--m-70);
   line-height: 1;
 }
 
@@ -3786,7 +3800,7 @@ footer {
 
 .ct-avail-text {
   font-size: var(--fs-small);
-  color: rgba(157,191,157,.45);
+  color: var(--m-70);
   letter-spacing: .05em;
 }
 
@@ -3798,7 +3812,7 @@ footer {
 }
 .ct-socials a {
   font-size: var(--fs-small);
-  color: rgba(157,191,157,0.38);
+  color: var(--m-70);
   text-decoration: none;
   letter-spacing: var(--ls-tight);
   transition: color 0.2s;
@@ -3915,8 +3929,9 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  flex: 1;
-  min-height: 0;
+  /* grow to fill, but never shrink below content — otherwise the last items
+     overflow past .drawer-inner's bottom padding when the screen is short */
+  flex: 1 0 auto;
 }
 
 /* Regular group */
@@ -3957,7 +3972,7 @@ footer {
   transition: border-color 0.22s, background 0.22s, box-shadow 0.22s;
   -webkit-appearance: none;
 }
-.cf-in::placeholder { color: rgba(157,191,157,0.25); }
+.cf-in::placeholder { color: var(--m-70); }
 .cf-in:hover:not(:focus) { border-color: rgba(var(--g-rgb), 0.17); }
 .cf-in:focus {
   border-color: rgba(var(--g-rgb), 0.42);
@@ -3995,7 +4010,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 /* Counter badge on label */
 .cf-counter {
   font-size: 9px;
-  color: rgba(157,191,157,.3);
+  color: var(--m-70);
   margin-left: auto;
   letter-spacing: .04em;
   font-weight: 400;
@@ -4008,7 +4023,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 /* Optional badge */
 .cf-optional {
   font-size: 9px;
-  color: rgba(157,191,157,.3);
+  color: var(--m-70);
   letter-spacing: .06em;
   border: 1px solid rgba(157,191,157,.15);
   border-radius: var(--r-lg);
@@ -4021,7 +4036,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 /* Hint text under field */
 .cf-hint {
   font-size: 10px;
-  color: rgba(157,191,157,.3);
+  color: var(--m-70);
   line-height: 1.5;
   margin-top: 2px;
 }
@@ -4330,7 +4345,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   font-size: .6rem;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.5);
+  color: var(--m-70);
 }
 
 /* subtle green border glow on hover */
@@ -4347,7 +4362,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   font-size: .65rem;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--m-50);
+  color: var(--m-70);
   margin-bottom: .75rem;
 }
 /* ── avail-status wrapper: dot + text always inline ── */
@@ -4386,9 +4401,27 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 .cf-legal {
   font-size: var(--fs-micro);
   line-height: 1.5;
-  color: var(--m-60);
+  color: var(--m-70);
   text-align: center;
   margin-top: -.2rem;
 }
 .cf-legal a { color: var(--m); text-decoration: underline; text-underline-offset: 2px; }
 .cf-legal a:hover { color: var(--g); }
+
+/* ── Skip link: hidden until focused with the keyboard ── */
+.skip-link {
+  position: fixed;
+  top: .75rem;
+  left: .75rem;
+  z-index: var(--z-transition);
+  padding: .6rem 1rem;
+  border-radius: var(--r-pill);
+  background: var(--g);
+  color: var(--g-btn);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform .2s ease;
+}
+.skip-link:focus-visible { transform: none; }

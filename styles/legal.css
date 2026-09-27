@@ -23,7 +23,7 @@
 .legal-updated {
   font-size: var(--fs-small);
   letter-spacing: var(--ls-tight);
-  color: var(--m-60);
+  color: var(--m-80);
   margin-bottom: 3rem;
 }
 
@@ -54,6 +54,7 @@
 .legal strong { color: var(--t); font-weight: 500; }
 
 .legal a {
+  overflow-wrap: anywhere;
   color: var(--g);
   text-decoration: underline;
   text-decoration-color: var(--ga-35);

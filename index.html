@@ -3,12 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="theme-color" content="#07090A">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- ─── Primary SEO ─── -->
   <title>Oleksandr Vyshnevskyi — Front-End Developer</title>
-  <meta name="description" content="Front-end developer with 3+ years and 28+ projects delivered for clients in the US, Canada, and Europe. HTML, CSS, JavaScript, PHP — clean code, on-time delivery, 5.0 Fiverr rating.">
+  <meta name="description" content="Front-end developer from Poland: 28+ projects for clients in the US, Canada and Europe. Clean code, pixel-perfect design, on-time delivery, 5.0 rating.">
   <meta name="keywords" content="front-end developer, web developer, freelance developer, HTML CSS JavaScript, Fiverr developer, UpWork developer, landing page, web design, Oleksandr Vyshnevskyi">
   <meta name="author" content="Oleksandr Vyshnevskyi">
   <meta name="robots" content="index, follow">
@@ -72,10 +73,11 @@
 
 
 
-  
+
 </head>
 
 <body data-page="home">
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="page-content">
 
@@ -123,7 +125,7 @@
       <span class="nav-scrolled-tz">CET · PL</span>
     </div>
 
-    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
+    <button type="button" class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -140,6 +142,8 @@
       <span class="nm-time-tz">CET · PL</span>
     </div>
   </div>
+
+  <main id="main">
 
   <!-- ─── HERO ─── -->
   <section id="hero">
@@ -220,12 +224,12 @@
 
     <!-- ③ VISUAL CARDS — right column -->
     <div class="ab-card ab-ph ab-ph-1 ab-visual-card" id="abCard1">
-    
+
         <div class="ab-vc-glow ab-vc-glow--code"></div>
       <img class="ab-vc-img ab-vc-img--code" src="images/ab-code.webp" alt="Code" width="1024" height="1024" loading="lazy" draggable="false">
       <div class="ab-vc-label ab-vc-label--br">
         <span class="ab-vc-tag">28+ Projects</span>
-        <span class="ab-vc-text">Shipped & delivered</span>
+        <span class="ab-vc-text">Shipped &amp; delivered</span>
       </div>
     </div>
 
@@ -238,7 +242,7 @@
       </div>
     </div>
 
- 
+
     <!-- ④ BIO -->
     <div class="ab-card ab-bio">
       <div class="ab-bio-content">
@@ -252,13 +256,13 @@
         <a href="https://linkedin.com/in/oleksandr-vyshnevskyi-71875734a" target="_blank" rel="noopener noreferrer" class="ab-bio-platform">LinkedIn</a>
       </div>
     </div>
- 
 
- 
+
+
     <!-- ⑧ EXPERIENCE -->
     <div class="ab-card ab-exp">
-      <div class="ab-exp-label">Experience & Education</div>
- 
+      <div class="ab-exp-label">Experience &amp; Education</div>
+
       <div class="exp-row">
         <div class="exp-ico">
           <img src="images/dreamerstudio.webp" alt="Dreamer Studio" width="200" height="200" loading="lazy">
@@ -269,7 +273,7 @@
         </div>
         <span class="exp-yr">2023 – 2024</span>
       </div>
- 
+
       <div class="exp-row">
         <div class="exp-ico">
           <img src="images/fiverr.webp" alt="Fiverr / UpWork" width="200" height="200" loading="lazy">
@@ -280,7 +284,7 @@
         </div>
         <span class="exp-yr">2022 – Present</span>
       </div>
- 
+
       <div class="exp-row">
         <div class="exp-ico">
           <img src="images/wsiz.webp" alt="UITM Rzeszów" width="200" height="200" loading="lazy">
@@ -292,11 +296,11 @@
         <span class="exp-yr">2023 – Present</span>
       </div>
     </div>
- 
+
     <!-- ⑨ CV -->
     <div class="ab-card ab-cv">
       <div class="ab-cv-eyebrow">Download</div>
-      <div class="ab-cv-title">My full résumé & portfolio</div>
+      <div class="ab-cv-title">My full résumé &amp; portfolio</div>
       <a href="cv/cv.pdf" download class="btn-g">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
@@ -318,7 +322,7 @@
     <div class="wrap">
       <div class="skills-intro-row">
         <div>
-          <div class="stag" id="skStag">Skills & Stack</div>
+          <div class="stag" id="skStag">Skills &amp; Stack</div>
           <h2 class="sh" id="skTitle">What I bring<br>to the <span class="glow">table</span></h2>
         </div>
         <p class="skills-sub" id="skSub">Not just a list of technologies — each one shipped in a real project, for a real client.</p>
@@ -492,7 +496,7 @@
           <div class="pjs-left">
             <div class="pjs-list" id="pjsList">
 
-              <div tabindex="0" role="button" aria-label="Preview QBL Platform" class="pjs-card active"
+              <div tabindex="0" role="button" class="pjs-card active"
                 data-index="0"
                 data-name="QBL Platform"
                 data-type="B2B Website"
@@ -517,7 +521,7 @@
                 </div>
               </div>
 
-              <div tabindex="0" role="button" aria-label="Preview Dream Apart" class="pjs-card"
+              <div tabindex="0" role="button" class="pjs-card"
                 data-index="1"
                 data-name="Dream Apart"
                 data-type="Booking Platform"
@@ -542,7 +546,7 @@
                 </div>
               </div>
 
-              <div tabindex="0" role="button" aria-label="Preview VR Lounge" class="pjs-card"
+              <div tabindex="0" role="button" class="pjs-card"
                 data-index="2"
                 data-name="VR Lounge"
                 data-type="Landing"
@@ -567,7 +571,7 @@
                 </div>
               </div>
 
-              <div tabindex="0" role="button" aria-label="Preview Nations on Fire" class="pjs-card"
+              <div tabindex="0" role="button" class="pjs-card"
                 data-index="3"
                 data-name="Nations on Fire"
                 data-type="Multi-page Site"
@@ -681,7 +685,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -704,7 +708,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -727,7 +731,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -749,7 +753,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -771,7 +775,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -792,7 +796,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -814,7 +818,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -837,7 +841,7 @@
 
         <div class="review-card">
    <div class="review-stars">
-  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" aria-label="5 out of 5 stars">
+  <svg class="stars-svg" viewBox="0 0 114 22" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5 out of 5 stars">
     <use href="#star" x="0"  y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="23" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
     <use href="#star" x="46" y="1" width="20" height="20" fill="url(#starGrad)" filter="url(#starGlow)"/>
@@ -949,7 +953,7 @@
 
     <!-- Actions -->
     <div class="ct-actions" id="ctCta">
-      <button class="ct-cta" id="drawerOpen" aria-expanded="false" aria-controls="contactDrawer">
+      <button type="button" class="ct-cta" id="drawerOpen" aria-expanded="false" aria-controls="contactDrawer">
         Start a project
         <span class="ct-cta-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -984,11 +988,13 @@
   </div><!-- /ct-scroll -->
 </section>
 
+</main>
+
 <!-- ─── DRAWER OVERLAY ─── -->
 <div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
 
 <!-- ─── DRAWER PANEL ─── -->
-<aside class="contact-drawer" id="contactDrawer" role="dialog" aria-modal="true" aria-label="Contact form" aria-hidden="true">
+<aside class="contact-drawer" id="contactDrawer" role="dialog" aria-modal="true" aria-label="Contact form" aria-hidden="true" inert>
   <div class="drawer-inner">
 
     <div class="drawer-head">
@@ -996,7 +1002,7 @@
         <div class="drawer-eyebrow">New Project</div>
         <div class="drawer-title">What are we building?</div>
       </div>
-      <button class="drawer-close" id="drawerClose" aria-label="Close">
+      <button type="button" class="drawer-close" id="drawerClose" aria-label="Close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 6 6 18M6 6l12 12"/>
         </svg>
@@ -1095,7 +1101,7 @@
       <div class="ds-body">I'll get back to you within 24 hours with a clear plan.</div>
     </div>
 
-    
+
 
   </div>
 </aside>
@@ -1121,7 +1127,7 @@
         <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
           oleksandr.vyshnevskyi<wbr>.work@gmail.com
         </a>
-       
+
       </div>
 
       <!-- Col 2: Navigate -->
@@ -1202,10 +1208,26 @@
         s.onload = function() { loadNext(i + 1); };
         document.head.appendChild(s);
       }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { loadNext(0); });
-      } else {
+      /* No WebGL (hardware acceleration off, old device) → static globe image,
+         and skip downloading Three.js entirely. */
+      function hasWebGL() {
+        try {
+          var c = document.createElement('canvas');
+          return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+        } catch (e) { return false; }
+      }
+      function start() {
+        if (!hasWebGL()) {
+          var gc = document.getElementById('globeCanvas');
+          if (gc) gc.classList.add('globe-fallback');
+          return;
+        }
         loadNext(0);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
       }
     })();
   </script>

@@ -74,7 +74,6 @@ function buildCard(p, idx) {
     </div>
   `;
 
-  card.setAttribute('aria-label', `View project: ${p.title}`);
   /* Real <a href> — crawlable, middle-click/new-tab works; transition.js animates the navigation */
   return card;
 }

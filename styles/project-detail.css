@@ -311,7 +311,7 @@
   font-size: .58rem;
   font-weight: 700;
   letter-spacing: .08em;
-  color: rgba(157,191,157,.2);
+  color: var(--m-70);
   text-align: right;
   padding-top: .15rem; /* optical align with first line of text */
   transition: color .2s;
@@ -410,7 +410,7 @@
 
 .pd-review-location {
   font-size: .58rem;
-  color: rgba(157,191,157,.5);
+  color: var(--m-70);
   letter-spacing: .04em;
 }
 
@@ -441,7 +441,7 @@
 }
 
 .pd-review-platform--direct {
-  color: rgba(157,191,157,.5);
+  color: var(--m-70);
   border-color: rgba(255,255,255,.07);
 }
 
@@ -601,7 +601,7 @@
   font-size: .55rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.35);
+  color: var(--m-70);
 }
 
 .pd-sb-field-val {
@@ -666,7 +666,7 @@
   font-size: .58rem;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.4);
+  color: var(--m-70);
 }
 
 /* Grid — CSS columns for clean masonry */
@@ -854,7 +854,7 @@
   font-size: .58rem;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.45);
+  color: var(--m-70);
 }
 
 /* ══════════════════════════════════════════════
@@ -915,7 +915,7 @@
   font-size: .58rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: rgba(157,191,157,.5);
+  color: var(--m-70);
   margin-bottom: .5rem;
   transition: color .25s;
 }
@@ -1034,7 +1034,7 @@
   }
 
   .pd-sb-head {
-    color: rgba(157,191,157,.55);
+    color: var(--m-70);
   }
 }
 
@@ -1047,4 +1047,9 @@
 
   .pd-lb-prev { left: .5rem; }
   .pd-lb-next { right: .5rem; }
+}
+
+/* Content is rendered by JS — keep the footer below the fold until it is (no layout shift) */
+#pdMain {
+  min-height: 100vh;
 }

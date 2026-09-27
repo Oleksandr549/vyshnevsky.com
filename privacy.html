@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="theme-color" content="#07090A">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -29,6 +30,7 @@
 </head>
 
 <body data-page="privacy">
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="page-content">
 
@@ -50,7 +52,7 @@
       <span class="nav-scrolled-tz">CET · PL</span>
     </div>
 
-    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
+    <button type="button" class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -68,7 +70,7 @@
     </div>
   </div>
 
-  <main class="legal wrap">
+  <main class="legal wrap" id="main">
     <div class="stag">Legal</div>
     <h1 class="legal-title">Privacy Policy</h1>
     <p class="legal-updated">Last updated: <time datetime="2026-09-25">25 September 2026</time></p>
@@ -150,7 +152,7 @@
         <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
           oleksandr.vyshnevskyi<wbr>.work@gmail.com
         </a>
-       
+
       </div>
 
       <!-- Col 2: Navigate -->

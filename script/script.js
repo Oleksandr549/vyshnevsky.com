@@ -412,7 +412,7 @@ const unlockScroll = () => window.unlockScroll?.();
     });
     row.addEventListener('mouseleave', function () {
       if (!row.classList.contains('open')) {
-        gsap.to(num, { color: 'rgba(61,255,143,0.3)', duration: .3, ease: 'power2.out' });
+        gsap.to(num, { color: 'rgba(61,255,143,0.65)', duration: .3, ease: 'power2.out' });
       }
     });
   });
@@ -1264,6 +1264,7 @@ const unlockScroll = () => window.unlockScroll?.();
     prevFocus = document.activeElement;
 
     drawer.removeAttribute('aria-hidden');
+    drawer.inert = false; /* closed drawer is inert: no Tab stops inside an invisible form */
     openBtn.setAttribute('aria-expanded', 'true');
     overlay.classList.add('is-open');
     drawer.classList.add('is-open');
@@ -1305,6 +1306,7 @@ const unlockScroll = () => window.unlockScroll?.();
     isOpen = false;
 
     drawer.setAttribute('aria-hidden', 'true');
+    drawer.inert = true;
     openBtn.setAttribute('aria-expanded', 'false');
     overlay.classList.remove('is-open');
     drawer.classList.remove('is-open');

@@ -15,6 +15,10 @@ const project = PROJECTS.find(p => p.id === id);
 
 /* ─── 404 ─── */
 if (!project) {
+  /* Unknown id: tell search engines not to index this "not found" view */
+  const robots = document.querySelector('meta[name="robots"]');
+  if (robots) robots.setAttribute('content', 'noindex, follow');
+  document.title = 'Project not found — Oleksandr Vyshnevskyi';
   document.getElementById('pd404').style.display = 'flex';
   document.getElementById('pdMain').style.display = 'none';
 } else {

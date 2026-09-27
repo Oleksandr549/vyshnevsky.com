@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="theme-color" content="#07090A">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -46,6 +47,7 @@
 </head>
 
 <body data-page="projects">
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="page-content">
 
@@ -67,7 +69,7 @@
       <span class="nav-scrolled-tz">CET · PL</span>
     </div>
 
-    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
+    <button type="button" class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -85,6 +87,7 @@
     </div>
   </div>
 
+  <main id="main">
   <!-- ─── MINIMAL PAGE HEADER ─── -->
   <div class="pg-page-header">
     <div class="pg-page-header-inner">
@@ -109,7 +112,7 @@
           <div class="pg-progress-bar" id="pgProgressBar"></div>
         </div>
         <div class="pg-progress-label" id="pgProgressLabel"></div>
-        <button class="pg-load-btn" id="pgLoadBtn">
+        <button type="button" class="pg-load-btn" id="pgLoadBtn">
           <span class="pg-load-text">Load More</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
         </button>
@@ -118,6 +121,7 @@
   </section>
 
 
+  </main>
   </div><!-- /page-content -->
 
 <!-- FOOTER -->
@@ -140,7 +144,7 @@
         <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
           oleksandr.vyshnevskyi<wbr>.work@gmail.com
         </a>
-       
+
       </div>
 
       <!-- Col 2: Navigate -->

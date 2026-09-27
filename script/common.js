@@ -84,10 +84,12 @@
       burger.classList.toggle('open', open);
       menu.classList.toggle('open', open);
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.inert = !open; /* closed menu links are not focusable */
       open ? lock() : unlock();
     }
 
     burger.setAttribute('aria-expanded', 'false');
+    menu.inert = true;
     burger.addEventListener('click', () => setOpen(!isOpen()));
     /* Tap on the backdrop, or on any link inside, closes the menu */
     menu.addEventListener('click', e => {
@@ -102,6 +104,20 @@
   (function () {
     const footer = document.getElementById('footer');
     if (!footer) return;
+
+    /* Reveal the sticky "curtain" footer only when the end of the page is
+       within one screen (see style.css for why it starts hidden). */
+    const content = document.querySelector('.page-content');
+    if (content && 'IntersectionObserver' in window) {
+      const sentinel = document.createElement('div');
+      sentinel.setAttribute('aria-hidden', 'true');
+      content.appendChild(sentinel);
+      new IntersectionObserver(entries => {
+        footer.classList.toggle('is-near', entries[0].isIntersecting);
+      }, { rootMargin: '0px 0px 100% 0px' }).observe(sentinel);
+    } else {
+      footer.classList.add('is-near');
+    }
     const els = footer.querySelectorAll('.foot-col, .foot-divider, .foot-bottom');
     const revealAll = () => els.forEach(el => el.classList.add('is-visible'));
 

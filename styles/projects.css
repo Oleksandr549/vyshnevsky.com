@@ -357,3 +357,9 @@
   .pg-card { aspect-ratio: 4 / 3; }
   .pg-page-header-inner { flex-direction: column; align-items: flex-start; gap: .5rem; }
 }
+
+/* Reserve space while cards are injected by JS — prevents the footer
+   from jumping up and back down (layout shift / CLS). */
+.pg-grid {
+  min-height: 100vh;
+}
