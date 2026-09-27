@@ -22,7 +22,7 @@
    review      object      { text, author, initials, stars, platform, country }
                               stars: 1-5 (optional), platform: "Fiverr"|"UpWork"|"Direct"
                               initials: 2-char avatar e.g. "SK" (optional)
-   liveUrl     string      live site URL (omit or "#" to hide button)
+   liveUrl     string      demo URL — the delivered version hosted on GitHub Pages (omit or "#" to hide the "View Demo" button)
    ═══════════════════════════════════════════════════════════════ */
 
 const PROJECTS = [
@@ -33,9 +33,8 @@ const PROJECTS = [
     type: "Church / Event Landing Page",
     stack: ["HTML", "CSS", "JavaScript", "GSAP"],
     year: "2024",
-    country: "🇵🇱 Poland",
+    country: "Poland",
     client: "Christian Ministry · Nations On Fire",
-    platform: "Personal",
     image: "images/NationsOnFire.webp",
     gallery: [
       { type: "image", src: "images/NationsOnFire1.webp" },
@@ -58,14 +57,6 @@ const PROJECTS = [
       "Support & donation CTA",
       "Responsive multi-page structure"
     ],
-    review: {
-      text: "Great use of animation. Smooth and engaging experience.",
-      author: "Design Feedback",
-      initials: "DF",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/Nations-On-Fire-git.io/"
   },
 
@@ -75,9 +66,8 @@ const PROJECTS = [
     type: "Business Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇰🇿 Kazakhstan",
+    country: "Kazakhstan",
     client: "Furniture & Kitchen Business",
-    platform: "Personal",
     image: "images/KAAS.webp",
     gallery: [
       { type: "image", src: "images/KAAS8.webp" },
@@ -96,14 +86,6 @@ const PROJECTS = [
       "Social media integration (WhatsApp, Instagram, TikTok)",
       "Responsive layout"
     ],
-    review: {
-      text: "Professional and clear. Works great for a local furniture business.",
-      author: "Client Feedback",
-      initials: "CF",
-      stars: 5,
-      platform: "Direct",
-      country: "Kazakhstan"
-    },
     liveUrl: "https://oleksandr549.github.io/KAAS.github.io/"
   },
 
@@ -113,9 +95,8 @@ const PROJECTS = [
     type: "Corporate Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇺🇸 United States",
+    country: "United States",
     client: "High Tech Pros Group Inc.",
-    platform: "Personal",
     image: "images/HTP.webp",
     gallery: [
       { type: "image", src: "images/HTP1.webp" },
@@ -132,14 +113,6 @@ const PROJECTS = [
       "Payrolling & billing services sections",
       "Phone CTA & LinkedIn integration"
     ],
-    review: {
-      text: "Clear and structured. Good for business presentation.",
-      author: "Client Feedback",
-      initials: "CF",
-      stars: 5,
-      platform: "UpWork",
-      country: "USA"
-    },
     liveUrl: "https://oleksandr549.github.io/HTP.github.io/"
   },
 
@@ -149,9 +122,8 @@ const PROJECTS = [
     type: "Gaming / E-commerce Landing",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🌍 Global",
+    country: "Global",
     client: "CS2 Skin Trading Platform",
-    platform: "Personal",
     image: "images/CaseHyg.webp",
     gallery: [
       { type: "image", src: "images/CaseHyg1.webp" },
@@ -168,14 +140,6 @@ const PROJECTS = [
       "Live support & instant platform UI",
       "Steam login integration link"
     ],
-    review: {
-      text: "Very clean and professional. Builds trust immediately.",
-      author: "Client Feedback",
-      initials: "CF",
-      stars: 5,
-      platform: "Fiverr",
-      country: "United Kingdom"
-    },
     liveUrl: "https://oleksandr549.github.io/CaseHyg.github.io/"
   },
 
@@ -185,8 +149,7 @@ const PROJECTS = [
     type: "Web App",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇵🇱 Poland",
-    client: "AI Productivity Tool",
+    client: "Concept project",
     platform: "Personal",
     image: "images/TaskFlow.webp",
     gallery: [
@@ -205,14 +168,6 @@ const PROJECTS = [
       "Weekly AI productivity report",
       "Data export"
     ],
-    review: {
-      text: "Simple and effective. Great base for a SaaS product.",
-      author: "Product Feedback",
-      initials: "PF",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/TaskFlow.github.io/"
   },
 
@@ -222,8 +177,7 @@ const PROJECTS = [
     type: "Restaurant Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🌍 Global",
-    client: "Restaurant",
+    client: "Concept project",
     platform: "Personal",
     image: "images/Restaurant.webp",
     gallery: [
@@ -241,14 +195,6 @@ const PROJECTS = [
       "Table booking form",
       "Responsive design"
     ],
-    review: {
-      text: "Clean and appetizing design. Works great for a restaurant.",
-      author: "UI Feedback",
-      initials: "UF",
-      stars: 5,
-      platform: "Direct",
-      country: "Global"
-    },
     liveUrl: "https://oleksandr549.github.io/Restaurant-Busienss.github.io/"
   },
 
@@ -258,9 +204,8 @@ const PROJECTS = [
     type: "Editorial / Interactive Article",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇪🇺 Europe",
+    country: "Europe",
     client: "Academic Project · Journalism",
-    platform: "Personal",
     image: "images/SexualAssault.webp",
     gallery: [
       { type: "image", src: "images/SexualAssault2.webp" },
@@ -276,14 +221,6 @@ const PROJECTS = [
       "Responsive typography & content hierarchy",
       "Data & research sections"
     ],
-    review: {
-      text: "A powerful and well-structured digital experience. The content is presented clearly and professionally.",
-      author: "Academic Reviewer",
-      initials: "AR",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/SexualAssault.github.io/"
   },
 
@@ -293,9 +230,8 @@ const PROJECTS = [
     type: "Editorial / Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇬🇧 United Kingdom",
+    country: "United Kingdom",
     client: "Cultural Creative Collective · London",
-    platform: "Personal",
     image: "images/LevantineCollective.webp",
     gallery: [
       { type: "image", src: "images/LevantineCollective3.webp" },
@@ -311,14 +247,6 @@ const PROJECTS = [
       "Responsive layout",
       "Multi-page navigation structure"
     ],
-    review: {
-      text: "Elegant and modern design. Strong visual identity and great attention to detail.",
-      author: "Design Feedback",
-      initials: "DF",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/LevantineCollective.github.io/"
   },
 
@@ -328,7 +256,7 @@ const PROJECTS = [
     type: "Landing Page",
     stack: ["HTML", "CSS", "JavaScript", "GSAP"],
     year: "2025",
-    country: "🇺🇸 United States",
+    country: "United States",
     client: "VR Entertainment Business",
     platform: "Fiverr",
     image: "images/VRLounge.webp",
@@ -347,14 +275,6 @@ const PROJECTS = [
       "Waiver subpage",
       "Responsive layout"
     ],
-    review: {
-      text: "Modern, smooth, and very engaging. Exactly what we needed.",
-      author: "Client · USA",
-      initials: "CU",
-      stars: 5,
-      platform: "UpWork",
-      country: "USA"
-    },
     liveUrl: "https://oleksandr549.github.io/VRLounge2.github.io/"
   },
 
@@ -364,9 +284,8 @@ const PROJECTS = [
     type: "Web App",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2024",
-    country: "🌍 Global",
-    client: "Social App Concept",
-    platform: "Personal",
+    country: "Global",
+    client: "Social Chat App",
     image: "images/Chat0.webp",
     gallery: [
       { type: "image", src: "images/Chat1.webp" },
@@ -383,14 +302,6 @@ const PROJECTS = [
       "Subscription / pricing plans",
       "Authentication modals (Sign In / Register)"
     ],
-    review: {
-      text: "Simple, clean, and very usable interface. Feels like a real product.",
-      author: "UI Feedback",
-      initials: "UI",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/Chat.github.io/"
   },
 
@@ -400,7 +311,7 @@ const PROJECTS = [
     type: "Business / Product Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2024",
-    country: "🇵🇱 Poland",
+    country: "Poland",
     client: "Matrix Technology · VR/5D Attractions",
     platform: "Direct",
     image: "images/Matrix.webp",
@@ -419,14 +330,6 @@ const PROJECTS = [
       "Bilingual navigation (EN / PL)",
       "Contact page"
     ],
-    review: {
-      text: "Unique and visually striking concept. Feels very experimental and modern.",
-      author: "Creative Feedback",
-      initials: "CR",
-      stars: 5,
-      platform: "Direct",
-      country: "Global"
-    },
     liveUrl: "http://matrix.dreamerstudio.pl/"
   },
 
@@ -436,9 +339,8 @@ const PROJECTS = [
     type: "B2B Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2024",
-    country: "🇵🇱 Poland",
+    country: "Poland",
     client: "Industrial Equipment Manufacturer",
-    platform: "Personal",
     image: "images/QBL.webp",
     gallery: [
       { type: "image", src: "images/QBL1.webp" },
@@ -458,14 +360,6 @@ const PROJECTS = [
       "Bilingual support (EN / PL)",
       "Contact & login UI"
     ],
-    review: {
-      text: "Clean and professional. Well-structured for business use.",
-      author: "Client Feedback",
-      initials: "CF",
-      stars: 5,
-      platform: "Fiverr",
-      country: "USA"
-    },
     liveUrl: "https://oleksandr549.github.io/QBL.github.io/"
   },
 
@@ -475,9 +369,8 @@ const PROJECTS = [
     type: "Apartment Booking Platform",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2024",
-    country: "🇵🇱 Poland",
+    country: "Poland",
     client: "Vacation Rental Platform",
-    platform: "Personal",
     image: "images/DreamApart.webp",
     gallery: [
       { type: "image", src: "images/DreamApart1.webp" },
@@ -502,14 +395,6 @@ const PROJECTS = [
       "Bilingual support (PL / EN)",
       "Promo code & discount banner"
     ],
-    review: {
-      text: "Beautiful and atmospheric design. Strong visual mood.",
-      author: "Design Feedback",
-      initials: "DF",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/DreamApart/"
   },
 
@@ -519,9 +404,8 @@ const PROJECTS = [
     type: "Service Booking Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇵🇱 Poland",
+    country: "Poland",
     client: "Ski School & Equipment Rental",
-    platform: "Personal",
     image: "images/Ski.webp",
     gallery: [
       { type: "image", src: "images/Ski1.webp" },
@@ -541,14 +425,6 @@ const PROJECTS = [
       "Social media links",
       "Responsive layout"
     ],
-    review: {
-      text: "Dynamic and energetic design. Matches the product well.",
-      author: "Design Feedback",
-      initials: "DF",
-      stars: 5,
-      platform: "Direct",
-      country: "Global"
-    },
     liveUrl: "https://oleksandr549.github.io/Ski-Carv.github.io/"
   },
 
@@ -558,7 +434,7 @@ const PROJECTS = [
     type: "Medical / Business Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🇩🇪 Germany",
+    country: "Germany",
     client: "KARMA Hair · Munich Hair Transplant Clinic",
     platform: "Fiverr",
     image: "images/KARMA.webp",
@@ -580,14 +456,6 @@ const PROJECTS = [
       "Contact & map section",
       "Multi-page blog structure"
     ],
-    review: {
-      text: "Great showcase piece. Professional medical presentation.",
-      author: "Fiverr Client · Germany",
-      initials: "GE",
-      stars: 5,
-      platform: "Fiverr",
-      country: "Germany"
-    },
     liveUrl: "https://oleksandr549.github.io/fiverdemo.github.io/"
   },
 
@@ -597,8 +465,7 @@ const PROJECTS = [
     type: "NGO / Non-Profit Landing Page",
     stack: ["HTML", "CSS", "JavaScript"],
     year: "2025",
-    country: "🌍 Global",
-    client: "Environmental Organization Concept",
+    client: "Concept project",
     platform: "Personal",
     image: "images/Finsweet.webp",
     gallery: [
@@ -625,14 +492,6 @@ const PROJECTS = [
       "Blog with multi-layout support",
       "Volunteer & donate CTA"
     ],
-    review: {
-      text: "Looks like a premium agency website. Clean and modern.",
-      author: "Design Feedback",
-      initials: "DF",
-      stars: 5,
-      platform: "Direct",
-      country: "Poland"
-    },
     liveUrl: "https://oleksandr549.github.io/finsweetwebsiteoleksandr.github.io/home.html"
   }
 

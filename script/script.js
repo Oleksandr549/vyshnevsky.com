@@ -8,8 +8,9 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0);
 
-// ── Accessibility: prefers-reduced-motion ──
-const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// ── Accessibility: prefers-reduced-motion (detected once in common.js) ──
+const REDUCE_MOTION = window.SITE ? window.SITE.REDUCE_MOTION
+  : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 //  HERO ENTRANCE
 // ═══════════════════════════════════════════════
 (function () {
-  /* Remove overflow:hidden on .line — было нужно для slide-up, теперь режет glow */
+  /* Remove overflow:hidden on .line — was needed for the slide-up, now it clips the glow */
   document.querySelectorAll(".hero-name .line").forEach((line) => {
     line.style.overflow = "visible";
     line.style.display  = "block";
@@ -294,63 +295,44 @@ gsap.registerPlugin(ScrollTrigger);
 
 })();
 
-/* ─── SCROLL PROGRESS BAR ─── */
-(function () {
-  const bar = document.getElementById('scrollProgress');
-  if (!bar) return;
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-  }, { passive: true });
-})();
-
 /* ─── SCROLL LOCK — defined in transition.js as window.lockScroll / window.unlockScroll ─── */
 const lockScroll   = () => window.lockScroll?.();
 const unlockScroll = () => window.unlockScroll?.();
 
-/* ─── NAV + BURGER ─── */
-(function () {
-  const burger = document.getElementById('navBurger');
-  const mobile = document.getElementById('navMobile');
-  if (!burger || !mobile) return;
-
-  function close() {
-    burger.classList.remove('open');
-    mobile.classList.remove('open');
-    unlockScroll();
-  }
-
-  const toggle = () => {
-    burger.classList.toggle('open');
-    mobile.classList.toggle('open');
-    mobile.classList.contains('open') ? lockScroll() : unlockScroll();
-  };
-
-  burger.addEventListener('click', toggle);
-  mobile.querySelectorAll('.nm-link').forEach(a => a.addEventListener('click', close));
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && mobile.classList.contains('open')) close();
-  });
-  mobile.addEventListener('click', e => { if (e.target === mobile) close(); });
-
-  // bfcache: ensure menu is closed on back/forward
-  window.addEventListener('pageshow', e => { if (e.persisted) close(); });
-})();
+/* Scroll progress, burger menu, clock, footer reveal — handled by common.js */
 
 /* ─── SKILLS ACCORDION ─── */
 (function () {
   const rows = document.querySelectorAll('.sk-row');
   if (!rows.length) return;
 
-  // ── Accordion click logic ──
-  rows.forEach(function (row) {
-    row.addEventListener('click', function () {
-      const wasOpen = row.classList.contains('open');
-      rows.forEach(function (r) { r.classList.remove('open'); });
-      if (!wasOpen) row.classList.add('open');
+  // ── Accordion: header acts as a button (click, Enter, Space) ──
+  function syncAria() {
+    rows.forEach(r => {
+      const head = r.querySelector('.sk-acc-head');
+      if (head) head.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
     });
+  }
+  function toggleRow(row) {
+    const wasOpen = row.classList.contains('open');
+    rows.forEach(r => r.classList.remove('open'));
+    if (!wasOpen) row.classList.add('open');
+    syncAria();
+  }
+  rows.forEach(function (row, i) {
+    const head = row.querySelector('.sk-acc-head');
+    const body = row.querySelector('.sk-body');
+    if (head) {
+      head.setAttribute('role', 'button');
+      head.setAttribute('tabindex', '0');
+      if (body) { body.id = body.id || 'skBody' + i; head.setAttribute('aria-controls', body.id); }
+      head.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
+      });
+    }
+    row.addEventListener('click', () => toggleRow(row));
   });
+  syncAria();
 
   // ── Intro: stag line + title + sub scrub in ──
   const stag  = document.getElementById('skStag');
@@ -413,6 +395,7 @@ const unlockScroll = () => window.unlockScroll?.();
         setTimeout(function () {
           if (!document.querySelector('.sk-row.open')) {
             rows[0].classList.add('open');
+            syncAria();
           }
         }, 700);
       },
@@ -441,6 +424,7 @@ const unlockScroll = () => window.unlockScroll?.();
   const wrap   = document.getElementById('pjsWrap');
   const sticky = document.getElementById('pjsSticky');
   const list   = document.getElementById('pjsList');
+  if (!list) return;
   const cards  = Array.from(list.querySelectorAll('.pjs-card'));
   const video  = document.getElementById('pjsVideo');
   const info   = document.getElementById('pjsInfo');
@@ -459,7 +443,9 @@ const unlockScroll = () => window.unlockScroll?.();
   let switchTimer = null;
 
   function setActive(idx, fromScroll) {
-    if (idx === activeIdx && cards[idx].classList.contains('active')) return;
+    /* Skip only if this card is already active AND its video is already loaded.
+       (Card 0 is marked .active in the HTML, so the old check skipped the first video forever.) */
+    if (idx === activeIdx && _currentSrc === cards[idx].dataset.video) return;
     activeIdx = idx;
     cards.forEach((c, i) => c.classList.toggle('active', i === idx));
     if (fromScroll) scrollListToCard(idx);
@@ -533,8 +519,12 @@ const unlockScroll = () => window.unlockScroll?.();
       gsap.killTweensOf(video);
       gsap.to(video, { opacity: 1, duration: 0.45, ease: 'power2.inOut' });
       if (posterEl) {
+        /* The presentation videos open with a ~1s fade-in from an empty backdrop
+           (needed for a seamless loop). Keep the poster — a frame with the site
+           already visible — on top a little longer, so switching projects never
+           flashes an empty frame. No seeking: it's unreliable before full buffering. */
         gsap.killTweensOf(posterEl);
-        gsap.to(posterEl, { opacity: 0, duration: 0.45, ease: 'power2.inOut' });
+        gsap.to(posterEl, { opacity: 0, duration: 0.5, delay: 0.9, ease: 'power2.inOut' });
       }
     }
 
@@ -600,6 +590,13 @@ const unlockScroll = () => window.unlockScroll?.();
 
   cards.forEach((card, i) => {
     card.addEventListener('mouseenter', () => { if (!isMobile()) setActive(i, false); });
+    /* Keyboard: Tab focuses & previews, Enter/Space opens the project */
+    card.addEventListener('focus', () => setActive(i, false));
+    card.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      if (card.dataset.link) window.location.href = card.dataset.link;
+    });
     card.addEventListener('click', () => {
       if (isMobile()) {
         /* First tap: select card (show info in video box above).
@@ -619,70 +616,52 @@ const unlockScroll = () => window.unlockScroll?.();
     });
   });
 
-  function setupDesktopScroll() {
+  /* Desktop: the section is N×100vh tall, scroll position picks the active card.
+     Handlers are registered ONCE and check the current mode themselves
+     (previously they were re-added on every resize / tab switch → listener leak). */
+  function onDesktopScroll() {
     if (isMobile()) return;
-    wrap.style.height = (COUNT * 100) + 'vh';
-    function onScroll() {
-      if (isMobile()) return;
-      const wRect    = wrap.getBoundingClientRect();
-      const scrolled = -wRect.top;
-      if (scrolled < 0) { setActive(0, true); return; }
-      const totalScroll = wrap.offsetHeight - window.innerHeight;
-      if (totalScroll <= 0) return;
-      const step = totalScroll / (COUNT - 1);
-      setActive(Math.min(COUNT - 1, Math.round(scrolled / step)), true);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    const scrolled = -wrap.getBoundingClientRect().top;
+    if (scrolled < 0) { setActive(0, true); return; }
+    const totalScroll = wrap.offsetHeight - window.innerHeight;
+    if (totalScroll <= 0) return;
+    const step = totalScroll / (COUNT - 1);
+    setActive(Math.min(COUNT - 1, Math.round(scrolled / step)), true);
   }
 
-  function setupMobileScroll() {
+  /* Mobile: horizontal card strip — the card closest to the left edge becomes active */
+  let listScrollTimer;
+  function onMobileListScroll() {
     if (!isMobile()) return;
-    wrap.style.height = '';
-    let scrollTimer;
-    list.addEventListener('scroll', () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        const listRect = list.getBoundingClientRect();
-        let best = 0, bestDist = Infinity;
-        cards.forEach((c, i) => {
-          const r = c.getBoundingClientRect();
-          const dist = Math.abs(r.left - listRect.left);
-          if (dist < bestDist) { bestDist = dist; best = i; }
-        });
-        setActive(best, true);
-      }, 60);
-    }, { passive: true });
+    clearTimeout(listScrollTimer);
+    listScrollTimer = setTimeout(() => {
+      const listLeft = list.getBoundingClientRect().left;
+      let best = 0, bestDist = Infinity;
+      cards.forEach((c, i) => {
+        const dist = Math.abs(c.getBoundingClientRect().left - listLeft);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      setActive(best, true);
+    }, 60);
   }
+
+  function applyLayout() {
+    wrap.style.height = isMobile() ? '' : (COUNT * 100) + 'vh';
+  }
+
+  window.addEventListener('scroll', onDesktopScroll, { passive: true });
+  list.addEventListener('scroll', onMobileListScroll, { passive: true });
 
   let resizeTimer;
-  let _lastMobile = isMobile();
-
-  function pjsReinit() {
-    const nowMobile = isMobile();
-    wrap.style.height = nowMobile ? '' : (COUNT * 100) + 'vh';
-    if (nowMobile !== _lastMobile) {
-      _lastMobile = nowMobile;
-      setupDesktopScroll();
-      setupMobileScroll();
-    }
-  }
-
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(pjsReinit, 150);
+    resizeTimer = setTimeout(() => { applyLayout(); onDesktopScroll(); }, 150);
   }, { passive: true });
-
   window.addEventListener('orientationchange', () => {
-    setTimeout(() => { _lastMobile = isMobile(); pjsReinit(); }, 400);
+    setTimeout(() => { applyLayout(); onDesktopScroll(); }, 400);
   });
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !isMobile()) setupDesktopScroll();
-  });
-
-  setupDesktopScroll();
-  setupMobileScroll();
+  applyLayout();
 
   // Delay initial video load until the section is actually visible.
   // Calling video.play() before the user has scrolled to the section
@@ -709,6 +688,7 @@ const unlockScroll = () => window.unlockScroll?.();
   const lbl     = document.getElementById('revealLabel');
   const canvas  = document.getElementById('revealCanvas');
   if (!section || !canvas) return;
+  if (REDUCE_MOTION) { canvas.style.display = 'none'; return; } /* decorative only */
 
   const ctx = canvas.getContext('2d');
   let W, H, sparks = [];
@@ -718,7 +698,8 @@ const unlockScroll = () => window.unlockScroll?.();
     H = canvas.height = section.offsetHeight;
   }
   resize();
-  window.addEventListener('resize', () => { clearTimeout(window._rvt); window._rvt = setTimeout(resize, 150); });
+  let resizeTm;
+  window.addEventListener('resize', () => { clearTimeout(resizeTm); resizeTm = setTimeout(resize, 150); });
 
   function spawnSparks(n) {
     const cx = W / 2, cy = H * .45;
@@ -775,13 +756,17 @@ const unlockScroll = () => window.unlockScroll?.();
       ctx.globalAlpha = 1;
       return s.life < s.maxLife;
     });
-    requestAnimationFrame(draw);
   }
 
-  let revealVisible = false;
-  new IntersectionObserver(e => { revealVisible = e[0].isIntersecting; }, { threshold: 0 }).observe(section);
-  function drawLoop() { if (revealVisible) draw(); requestAnimationFrame(drawLoop); }
-  drawLoop();
+  /* Single rAF loop that runs only while the section is on screen.
+     (Previously draw() re-scheduled itself AND drawLoop() called it every frame,
+     spawning a new never-ending loop each frame → growing lag.) */
+  let revealRaf = 0;
+  function drawLoop() { draw(); revealRaf = requestAnimationFrame(drawLoop); }
+  new IntersectionObserver(e => {
+    if (e[0].isIntersecting) { if (!revealRaf) revealRaf = requestAnimationFrame(drawLoop); }
+    else if (revealRaf) { cancelAnimationFrame(revealRaf); revealRaf = 0; }
+  }, { threshold: 0 }).observe(section);
 
   ScrollTrigger.create({
     trigger: section, start: 'top 90%', end: 'top 35%', scrub: 1.8,
@@ -805,6 +790,7 @@ const unlockScroll = () => window.unlockScroll?.();
   const footer = document.getElementById('footer');
   const fc     = document.getElementById('footCanvas');
   if (!footer || !fc) return;
+  if (REDUCE_MOTION) { fc.style.display = 'none'; return; } /* decorative only */
   const fctx = fc.getContext('2d');
   let fW, fH, fp = [];
 
@@ -819,7 +805,8 @@ const unlockScroll = () => window.unlockScroll?.();
     fctx.setTransform(dpr, 0, 0, dpr, 0, 0); // reset + set (prevents scale accumulation on resize)
   }
   fResize();
-  window.addEventListener('resize', () => { clearTimeout(window._frt); window._frt = setTimeout(fResize, 150); });
+  let fResizeTm;
+  window.addEventListener('resize', () => { clearTimeout(fResizeTm); fResizeTm = setTimeout(fResize, 150); });
 
   class FP {
     constructor() { this.reset(true); }
@@ -846,36 +833,22 @@ const unlockScroll = () => window.unlockScroll?.();
   }
   for (let i = 0; i < 40; i++) fp.push(new FP());
 
-  let footerVisible = false;
-  new IntersectionObserver(e => { footerVisible = e[0].isIntersecting; }, { threshold: 0 }).observe(footer);
+  /* Run the particle loop only while the footer is visible */
+  let fRaf = 0;
   function fLoop() {
     fctx.clearRect(0, 0, fW, fH);
     fctx.globalAlpha = 1;
-    if (footerVisible) fp.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(fLoop);
+    fp.forEach(p => { p.update(); p.draw(); });
+    fRaf = requestAnimationFrame(fLoop);
   }
-  fLoop();
+  new IntersectionObserver(e => {
+    if (e[0].isIntersecting) { if (!fRaf) fRaf = requestAnimationFrame(fLoop); }
+    else if (fRaf) { cancelAnimationFrame(fRaf); fRaf = 0; }
+  }, { threshold: 0 }).observe(footer);
 })();
 
 
 /* ─── FOOTER ENTRANCE ANIMATION ─── */
-(function () {
-  const footer = document.getElementById('footer');
-  if (!footer) return;
-
-  const els = footer.querySelectorAll('.foot-col, .foot-divider, .foot-bottom');
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
-
-  els.forEach(el => io.observe(el));
-})();
 
 
 
@@ -895,7 +868,7 @@ const unlockScroll = () => window.unlockScroll?.();
     const y = window.scrollY;
     const pastHero = y > heroH * 0.6;
 
-    // Переключаем position: absolute → fixed
+    // Switch position: absolute → fixed
     nav.classList.toggle('s', pastHero);
 
     if (pastHero) {
@@ -924,32 +897,32 @@ const unlockScroll = () => window.unlockScroll?.();
 
 
 /* ═══════════════════════════════════════════════════════════════
-   REVIEWS — единая база отзывов + динамическое распределение по колонкам
-   Бесшовный infinite scroll через modulo-wrap translateY (без getBoundingClientRect
-   и DOM-recycling в цикле анимации — дорого и лагало на 60fps).
+   REVIEWS — single review list + dynamic distribution across columns
+   Seamless infinite scroll via modulo-wrapped translateY (no getBoundingClientRect
+   or DOM recycling in the animation loop — expensive and janky at 60fps).
 
-   Раньше каждый отзыв был жёстко привязан к своей колонке (data-col),
-   поэтому на мобильном (1 колонка) было видно только 2 из 6 отзывов —
-   остальные 4 просто лежали в скрытых колонках.
-   Теперь все карточки — единый список; при смене брейкпоинта колонки
-   пересобираются, и список раздаётся по ним round-robin, так что
-   на мобильном виден полный набор отзывов, просто в одну ленту.
+   Previously each review was hard-wired to its column (data-col),
+   so on mobile (1 column) only 2 of 6 reviews were visible —
+   the other 4 just sat in hidden columns.
+   Now all cards are one list; when the breakpoint changes the columns
+   are rebuilt and the list is dealt out round-robin, so
+   mobile shows the full set of reviews, just in one strip.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   const grid = document.getElementById('reviewsGrid');
   if (!grid) return;
 
-  // Мастер-список отзывов — порядок в HTML = порядок показа.
-  // Сохраняем один раз как «эталон», дальше колонки клонируют из него.
+  // Master list of reviews — HTML order = display order.
+  // Stored once as the "source of truth"; columns clone from it.
   const masterCards = Array.from(grid.querySelectorAll('.review-card'));
   if (!masterCards.length) return;
   grid.innerHTML = '';
 
-  // Пауза всех rAF-циклов, когда секция вне экрана (экономия CPU/батареи)
+  // Pause all rAF loops while the section is off-screen (saves CPU/battery)
   let reviewsVisible = false;
   new IntersectionObserver(([e]) => { reviewsVisible = e.isIntersecting; }, { threshold: 0 }).observe(grid);
 
-  const autoSpeeds = [0.55, 0.42, 0.50];
+  const autoSpeeds = REDUCE_MOTION ? [0, 0, 0] : [0.55, 0.42, 0.50];
   const GAP = 24;
 
   function visibleCols() {
@@ -980,10 +953,10 @@ const unlockScroll = () => window.unlockScroll?.();
     });
     grid.appendChild(col);
 
-    // «Период» цикла — суммарная высота одного полного набора карточек колонки
-    const setHeight = originals.reduce((s, el) => s + el.offsetHeight + GAP, 0); // 1 замер, не в цикле
+    // "Period" of the loop — total height of one full set of the column's cards
+    const setHeight = originals.reduce((s, el) => s + el.offsetHeight + GAP, 0); // 1 measurement, not in the loop
 
-    // Дублируем набор, пока колонка не покроет грид минимум 2.5 раза
+    // Duplicate the set until the column covers the grid at least 2.5 times
     const gridH = grid.offsetHeight || 520;
     const minH  = gridH * 2.5;
     let totalH  = setHeight;
@@ -992,6 +965,7 @@ const unlockScroll = () => window.unlockScroll?.();
       cardsForCol.forEach(c => {
         const clone = c.cloneNode(true);
         clone.style.flexShrink = '0';
+        clone.setAttribute('aria-hidden', 'true'); /* loop filler — screen readers read each review once */
         col.appendChild(clone);
       });
       totalH += setHeight;
@@ -1012,7 +986,7 @@ const unlockScroll = () => window.unlockScroll?.();
       col.style.transform = `translateY(${offset}px)`;
     }
 
-    // Держим offset в диапазоне (-setHeight, 0] — чисто арифметика, без DOM/layout.
+    // Keep offset within (-setHeight, 0] — pure arithmetic, no DOM/layout.
     function wrap() {
       if (setHeight <= 0) return;
       if (offset <= -setHeight) offset += setHeight * Math.ceil(-offset / setHeight);
@@ -1023,7 +997,7 @@ const unlockScroll = () => window.unlockScroll?.();
       if (destroyed) return;
       if (reviewsVisible && !dragging) {
         if (hovered) {
-          /* Пауза — плавно тормозим до нуля */
+          /* Paused — smoothly decelerate to zero */
           vel *= 0.85;
           if (Math.abs(vel) > 0.05) {
             offset += vel;
@@ -1031,7 +1005,7 @@ const unlockScroll = () => window.unlockScroll?.();
             apply();
           }
         } else {
-          /* Автоскролл — разгоняемся или держим скорость */
+          /* Auto-scroll — accelerate or hold speed */
           if (Math.abs(vel) > speed) {
             vel *= 0.93;
           } else {
@@ -1054,11 +1028,11 @@ const unlockScroll = () => window.unlockScroll?.();
 
     setTimeout(init, 100);
 
-    /* ── Hover пауза (только не во время drag) ── */
+    /* ── Hover pause (not while dragging) ── */
     col.addEventListener('mouseenter', () => { hovered = true; });
     col.addEventListener('mouseleave', () => { hovered = false; });
 
-    /* ── Скрываем hint после первого drag ── */
+    /* ── Hide the hint after the first drag ── */
     function hideHint() {
       const hint = grid.parentElement.querySelector('.reviews-hint');
       if (hint) hint.classList.add('is-hidden');
@@ -1188,7 +1162,7 @@ const unlockScroll = () => window.unlockScroll?.();
 
   rebuild();
 
-  /* ── единый ресайз-обработчик: пересобираем колонки только при смене брейкпоинта ── */
+  /* ── single resize handler: rebuild columns only when the breakpoint changes ── */
   let _rvResizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(_rvResizeTimer);
@@ -1228,12 +1202,12 @@ const unlockScroll = () => window.unlockScroll?.();
   const fieldMsg   = document.getElementById('d-msg');
   const counterEl  = document.getElementById('d-counter');
 
-  // Счётчик символов для textarea
+  // Character counter for the textarea
   if (fieldMsg && counterEl) {
     fieldMsg.addEventListener('input', function () {
       const n = this.value.length;
-      counterEl.textContent = n + ' / 100+';
-      counterEl.className = 'cf-counter' + (n >= 100 ? ' ok' : '');
+      counterEl.textContent = n + (n === 1 ? ' char' : ' chars');
+      counterEl.className = 'cf-counter' + (n >= 50 ? ' ok' : '');
     });
   }
 
@@ -1241,12 +1215,12 @@ const unlockScroll = () => window.unlockScroll?.();
   let prevFocus = null;
 
   /* ══════════════════════════════════════
-     ВАЛИДАЦИЯ
+     VALIDATION
   ══════════════════════════════════════ */
 
   function validate(field, groupId, errId, ruleFn) {
     const group = document.getElementById(groupId);
-    const errEl = document.getElementById(errId);
+    const errEl = document.getElementById(errId) || { textContent: '' };
     const error = ruleFn(field.value.trim());
 
     if (error) {
@@ -1273,22 +1247,9 @@ const unlockScroll = () => window.unlockScroll?.();
 
     const typeEl     = document.getElementById('d-type');
     const deadlineEl = document.getElementById('d-deadline');
-    const grpType     = document.getElementById('grp-type');
-    const grpDeadline = document.getElementById('grp-deadline');
 
-    let okType = true;
-    if (typeEl && grpType) {
-      okType = typeEl.value !== '';
-      grpType.classList.toggle('has-error', !okType);
-      grpType.classList.toggle('is-valid',   okType);
-    }
-
-    let okDeadline = true;
-    if (deadlineEl && grpDeadline) {
-      okDeadline = deadlineEl.value !== '';
-      grpDeadline.classList.toggle('has-error', !okDeadline);
-      grpDeadline.classList.toggle('is-valid',   okDeadline);
-    }
+    const okType     = !typeEl     || validate(typeEl,     'grp-type',     'err-type',     v => !v ? 'Choose a project type' : null);
+    const okDeadline = !deadlineEl || validate(deadlineEl, 'grp-deadline', 'err-deadline', v => !v ? 'Choose a deadline' : null);
 
     return okName && okEmail && okMsg && okType && okDeadline;
   }
@@ -1358,32 +1319,32 @@ const unlockScroll = () => window.unlockScroll?.();
   function resetDrawer() {
     form.reset();
 
-    /* Убираем все состояния валидации */
-    ['grp-name','grp-email','grp-msg'].forEach(id => {
+    /* Clear all validation states */
+    ['grp-name','grp-email','grp-msg','grp-type','grp-deadline'].forEach(id => {
       const g = document.getElementById(id);
       if (g) g.classList.remove('has-error','is-valid');
     });
-    ['err-name','err-email','err-msg'].forEach(id => {
+    ['err-name','err-email','err-msg','err-type','err-deadline'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = '';
     });
 
-    /* Скрываем send-error */
+    /* Hide send-error */
     const sendErr = form.querySelector('.cf-send-error');
     if (sendErr) sendErr.classList.remove('is-visible');
 
-    /* Сбрасываем кнопку */
+    /* Reset the button */
     submitBtn.classList.remove('is-loading');
     submitBtn.disabled = false;
 
-    /* Прячем success, показываем форму */
+    /* Hide success, show the form */
     successEl.classList.remove('is-visible');
     form.style.display = '';
     form.style.opacity = '';
   }
 
   /* ══════════════════════════════════════
-     СОБЫТИЯ
+     EVENTS
   ══════════════════════════════════════ */
 
   openBtn.addEventListener('click', () => {
@@ -1414,13 +1375,13 @@ const unlockScroll = () => window.unlockScroll?.();
   });
 
   /* ══════════════════════════════════════
-     ОТПРАВКА ФОРМЫ
+     FORM SUBMIT
   ══════════════════════════════════════ */
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    /* Убираем предыдущий send-error */
+    /* Clear the previous send-error */
     const sendErr = form.querySelector('.cf-send-error');
     if (sendErr) sendErr.classList.remove('is-visible');
 
@@ -1447,7 +1408,8 @@ const unlockScroll = () => window.unlockScroll?.();
         message:      msg,
         project_type: type,
         deadline,
-        messenger
+        messenger,
+        _gotcha: (document.getElementById('d-website') || {}).value || ''
       })
     })
     .then(function (r) {
@@ -1535,7 +1497,7 @@ const unlockScroll = () => window.unlockScroll?.();
   }
 
   // ── layout ───────────────────────────────────────────────────
-  // cy измеряется один раз при инициализации (пока элементы в потоке)
+  // cy measured once at init (while elements are in flow)
   let _cy = null;
   function measureCy() {
     const dw = document.getElementById('ctD1')?.closest('.ct-tl-item')?.querySelector('.ct-dot-wrap');
@@ -1561,9 +1523,9 @@ const unlockScroll = () => window.unlockScroll?.();
 
   // ── position items absolutely ────────────────────────────────
   function positionItems(lyt) {
-    if (isMobile()) return; // на мобиле items остаются в потоке (position:relative)
-    // ct-tl-item имеет padding-top: 28px, dot-wrap = 64px
-    // чтобы центр dot-wrap был на cy: top = cy - 28 - 32
+    if (isMobile()) return; // on mobile items stay in flow (position:relative)
+    // ct-tl-item has padding-top: 28px, dot-wrap = 64px
+    // so the dot-wrap centre sits on cy: top = cy - 28 - 32
     [['ctS1'], ['ctS2'], ['ctS3']].forEach(([id]) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -1680,30 +1642,30 @@ const unlockScroll = () => window.unlockScroll?.();
     const lyt = getLayout();
     positionItems(lyt);
 
-    // ── breakpoints согласно ТЗ ────────────────────────────────
-    // p 0.00→0.08  иконка 1 появляется
+    // ── breakpoints per spec ────────────────────────────────
+    // p 0.00→0.08  icon 1 appears
     const i1dot   = cl((p - .00) / .08, 0, 1);
-    // p 0.08→0.16  лейбл 1 появляется
+    // p 0.08→0.16  label 1 appears
     const i1label = cl((p - .08) / .08, 0, 1);
-    // p 0.16→0.32  иконка 1 летит на место
+    // p 0.16→0.32  icon 1 flies into place
     const i1move  = cl((p - .16) / .16, 0, 1);
 
-    // p 0.26→0.66  змейка рисуется
+    // p 0.26→0.66  the snake line draws
     const lineDraw = cl((p - .26) / .40, 0, 1);
     const wormOn   = cl((p - .26) / .34, 0, 1);
 
-    // p 0.30→0.38  иконка 2 появляется
+    // p 0.30→0.38  icon 2 appears
     const i2dot   = cl((p - .30) / .08, 0, 1);
-    // p 0.38→0.46  лейбл 2 появляется
+    // p 0.38→0.46  label 2 appears
     const i2label = cl((p - .38) / .08, 0, 1);
-    // p 0.46→0.60  иконка 2 летит на место
+    // p 0.46→0.60  icon 2 flies into place
     const i2move  = cl((p - .46) / .14, 0, 1);
 
-    // p 0.52→0.60  иконка 3 появляется
+    // p 0.52→0.60  icon 3 appears
     const i3dot   = cl((p - .52) / .08, 0, 1);
-    // p 0.60→0.68  лейбл 3 появляется
+    // p 0.60→0.68  label 3 appears
     const i3label = cl((p - .60) / .08, 0, 1);
-    // p 0.68→0.82  иконка 3 летит на место
+    // p 0.68→0.82  icon 3 flies into place
     const i3move  = cl((p - .68) / .14, 0, 1);
 
     const wormOff  = cl((p - .84) / .10, 0, 1);
@@ -1713,35 +1675,35 @@ const unlockScroll = () => window.unlockScroll?.();
     const pulsePos   = allSettled ? ((lT / 2.4) % 1) : 0;
     const pulseOp    = allSettled ? eo3(cl((p - .80) / .10, 0, 1)) * 0.8 : 0;
 
-    // ── финал: p 0.82→0.84 свет → p 0.84→0.94 заголовок → p 0.88→0.98 описания → p 0.93→1.0 кнопка → низ
+    // ── finale: p 0.82→0.84 light → p 0.84→0.94 heading → p 0.88→0.98 descriptions → p 0.93→1.0 button → bottom
     const glowP   = cl((p - .82) / .02, 0, 1);
     const headP   = cl((p - .84) / .10, 0, 1);
     const descP   = eo3(cl((p - .88) / .10, 0, 1));
     const ctaP    = cl((p - .93) / .07, 0, 1);
-    // низ секции (avail-row) — появляется после кнопки
+    // section bottom (avail-row) — appears after the button
     const availP  = eo3(cl((p - .96) / .04, 0, 1));
 
-    // фоновый свет
+    // background light
     document.querySelector('.ct-bg-glow')?.classList.toggle('show', glowP > 0.1);
 
-    // заголовок
+    // heading
     const ctHead = document.getElementById('ctHead');
     if (ctHead) {
       ctHead.style.opacity   = headP.toFixed(3);
       ctHead.style.transform = `translateY(${lp(-14, 0, eo3(headP)).toFixed(2)}px)`;
     }
-    // описания под иконками
+    // descriptions under the icons
     ['ctDesc1','ctDesc2','ctDesc3'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.opacity = descP.toFixed(3);
     });
-    // кнопка
+    // button
     const ctCta = document.getElementById('ctCta');
     if (ctCta) {
       ctCta.style.opacity   = ctaP.toFixed(3);
       ctCta.style.transform = `translateY(${lp(12, 0, eo3(ctaP)).toFixed(2)}px)`;
     }
-    // availability row — низ секции
+    // availability row — section bottom
     const ctAvail = document.getElementById('ctAvailRow');
     if (ctAvail) {
       ctAvail.style.opacity   = availP.toFixed(3);
@@ -1764,7 +1726,7 @@ const unlockScroll = () => window.unlockScroll?.();
     }
     document.getElementById('ctD1')?.classList.toggle('lit', i1move > .92);
     pulseRings('1', lT, 0, allSettled);
-    // лейбл 1 (num + title) появляется отдельно
+    // label 1 (num + title) appears separately
     ['ctNum1','ctTitle1'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.opacity = i1label.toFixed(3);
@@ -1818,12 +1780,12 @@ const unlockScroll = () => window.unlockScroll?.();
 
   // ── initial state ─────────────────────────────────────────────
   resize();
-  measureCy(); // измеряем cy пока элементы ещё в потоке
+  measureCy(); // measure cy while elements are still in flow
 
   // ── CSS sticky scroll ────────────────────────────────────────
   const ctScroll = document.getElementById('ctScroll');
 
-  const SCROLL_MULT = 2.2; // множитель высоты viewport = длина скролла
+  const SCROLL_MULT = 2.2; // viewport height multiplier = scroll length
 
   function setScrollHeight() {
     if (!ctScroll) return;
@@ -1831,8 +1793,8 @@ const unlockScroll = () => window.unlockScroll?.();
       ctScroll.style.height = '';
       return;
     }
-    // ct-sticky теперь min-height:100vh — её реальная высота может быть больше vh
-    // Высота контейнера = высота sticky + scroll-дистанция (SCROLL_MULT * vh)
+    // ct-sticky is now min-height:100vh — its real height can exceed vh
+    // Container height = sticky height + scroll distance (SCROLL_MULT * vh)
     const stickyH = ctScroll.querySelector('#ctSticky')?.offsetHeight || window.innerHeight;
     ctScroll.style.height = (stickyH + Math.round(window.innerHeight * SCROLL_MULT)) + 'px';
   }
@@ -1841,13 +1803,13 @@ const unlockScroll = () => window.unlockScroll?.();
     if (!ctScroll) return;
     if (isMobile()) { state.p = 1; return; }
     const rect      = ctScroll.getBoundingClientRect();
-    const scrolled  = -rect.top;                          // px прокручено внутри секции
-    const total     = ctScroll.offsetHeight - window.innerHeight; // макс. скролл
+    const scrolled  = -rect.top;                          // px scrolled within the section
+    const total     = ctScroll.offsetHeight - window.innerHeight; // max scroll
     if (total <= 0) { state.p = 1; return; }
     state.p = Math.max(0, Math.min(1, scrolled / total));
   }
 
-  // ── mobile init — показываем всё сразу ──────────────────────
+  // ── mobile init — show everything at once ──────────────────────
   function initMobile() {
     state.p = 1;
     ['ctHead','ctCta','ctAvailRow'].forEach(id => {
@@ -1871,7 +1833,7 @@ const unlockScroll = () => window.unlockScroll?.();
     if (ctScroll) ctScroll.style.height = '';
   }
 
-  // ── desktop init — скрываем, готовим анимацию ───────────────
+  // ── desktop init — hide and prepare the animation ───────────────
   function initDesktop() {
     const W0      = tlWrap.offsetWidth;
     const cx0     = W0 * .50;
@@ -1907,7 +1869,7 @@ const unlockScroll = () => window.unlockScroll?.();
     readProgress();
   }
 
-  // ── первичный запуск ─────────────────────────────────────────
+  // ── initial run ─────────────────────────────────────────
   requestAnimationFrame(() => {
     if (isMobile()) {
       initMobile();
@@ -1916,11 +1878,11 @@ const unlockScroll = () => window.unlockScroll?.();
     }
   });
 
-  // Читаем прогресс из scroll
+  // Read progress from scroll
   window.addEventListener('scroll', readProgress, { passive: true });
   readProgress();
 
-  // ── единый паттерн resize / orientationchange / visibility ───
+  // ── single resize pattern / orientationchange / visibility ───
   let _ctLastMode = isMobile() ? 'mobile' : 'desktop';
   let _ctResizeTimer;
 

@@ -7,6 +7,7 @@
 :root {
   /* ── Brand ── */
   --g:        #3DFF8F;
+  --g-rgb:    61,255,143;  /* same colour as --g, for rgba(var(--g-rgb), a) */
   --g-btn:    #040705;
   --bg:       #07090A;
   --bg2:      #0B0E0C;
@@ -15,25 +16,25 @@
   --m:        #9dbf9d;
 
   /* ── Green alpha scale ── */
-  --gd:   rgba(61,255,143,.07);   /* legacy alias */
-  --b:    rgba(61,255,143,.10);   /* legacy alias */
-  --b2:   rgba(61,255,143,.20);   /* legacy alias */
-  --ga-04: rgba(61,255,143,.04);
-  --ga-06: rgba(61,255,143,.06);
-  --ga-07: rgba(61,255,143,.07);
-  --ga-08: rgba(61,255,143,.08);
-  --ga-10: rgba(61,255,143,.10);
-  --ga-12: rgba(61,255,143,.12);
-  --ga-15: rgba(61,255,143,.15);
-  --ga-18: rgba(61,255,143,.18);
-  --ga-20: rgba(61,255,143,.20);
-  --ga-25: rgba(61,255,143,.25);
-  --ga-30: rgba(61,255,143,.30);
-  --ga-35: rgba(61,255,143,.35);
-  --ga-40: rgba(61,255,143,.40);
-  --ga-50: rgba(61,255,143,.50);
-  --ga-55: rgba(61,255,143,.55);
-  --ga-65: rgba(61,255,143,.65);
+  --gd:   rgba(var(--g-rgb), .07);   /* legacy alias */
+  --b:    rgba(var(--g-rgb), .10);   /* legacy alias */
+  --b2:   rgba(var(--g-rgb), .20);   /* legacy alias */
+  --ga-04: rgba(var(--g-rgb), .04);
+  --ga-06: rgba(var(--g-rgb), .06);
+  --ga-07: rgba(var(--g-rgb), .07);
+  --ga-08: rgba(var(--g-rgb), .08);
+  --ga-10: rgba(var(--g-rgb), .10);
+  --ga-12: rgba(var(--g-rgb), .12);
+  --ga-15: rgba(var(--g-rgb), .15);
+  --ga-18: rgba(var(--g-rgb), .18);
+  --ga-20: rgba(var(--g-rgb), .20);
+  --ga-25: rgba(var(--g-rgb), .25);
+  --ga-30: rgba(var(--g-rgb), .30);
+  --ga-35: rgba(var(--g-rgb), .35);
+  --ga-40: rgba(var(--g-rgb), .40);
+  --ga-50: rgba(var(--g-rgb), .50);
+  --ga-55: rgba(var(--g-rgb), .55);
+  --ga-65: rgba(var(--g-rgb), .65);
 
   /* ── Muted alpha scale ── */
   --m-15: rgba(157,191,157,.15);
@@ -48,6 +49,19 @@
   --m-60: rgba(157,191,157,.60);
   --m-70: rgba(157,191,157,.70);
   --m-80: rgba(157,191,157,.80);
+
+  /* ── Layers (z-index scale) — use these instead of magic numbers ── */
+  --z-nav-menu:       190;
+  --z-nav:            200;
+  --z-drawer-overlay: 300;
+  --z-drawer:         310;
+  --z-progress:       500;
+  --z-lightbox:       600;
+  --z-transition:     1000;
+
+  /* ── Breakpoints (reference — CSS vars can't be used in @media) ──
+     390 xs · 640 sm (mobile) · 768 md · 900 · 1024 lg (JS layout switch) · 1100 xl · 1280
+     JS mirror: window.SITE.BP in script/common.js */
 
   /* ── Spacing ── */
   --section-pad:      clamp(5rem, 9vw, 9rem);
@@ -86,7 +100,7 @@ button:focus-visible {
 
 .cf-in:focus-visible {
   outline: none;
-  border-color: rgba(61, 255, 143, .5)
+  border-color: var(--ga-50)
 }
 
 html {
@@ -132,7 +146,7 @@ nav#nav {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 200;
+  z-index: var(--z-nav);
   padding: 1.8rem clamp(2rem, 5vw, 5rem);
   display: flex;
   justify-content: space-between;
@@ -150,7 +164,7 @@ nav#nav.s {
   background: rgba(7, 9, 10, .92);
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(61,255,143,.06);
+  border-bottom: 1px solid var(--ga-06);
   padding-top: .6rem;
   padding-bottom: .6rem;
   align-items: center;
@@ -399,16 +413,6 @@ nav#nav.s .nav-scrolled-time {
 
 
 /* Film grain */
-.hero-noise {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  opacity: 0.032;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-  animation: grain 0.4s steps(1) infinite
-}
 
 @keyframes grain {
   0%  { background-position: 0 0 }
@@ -419,19 +423,6 @@ nav#nav.s .nav-scrolled-time {
 }
 
 /* Scanlines */
-.hero-scanlines {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 3px,
-    rgba(0,0,0,0.035) 3px,
-    rgba(0,0,0,0.035) 4px
-  )
-}
 
 /* Corner brackets */
 /* name-glow removed — glow handled by text-shadow on .inner.accent */
@@ -526,7 +517,7 @@ nav#nav.s .nav-scrolled-time {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(61,255,143,.35);
+  border: 1px solid var(--ga-35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -535,8 +526,8 @@ nav#nav.s .nav-scrolled-time {
 }
 
 .hero-cta:hover .hero-cta-arrow {
-  background: rgba(61,255,143,.08);
-  border-color: rgba(61,255,143,.65)
+  background: var(--ga-08);
+  border-color: var(--ga-65)
 }
 
 .hero-stats {
@@ -603,9 +594,7 @@ nav#nav.s .nav-scrolled-time {
 
 /* ─── BUTTON SYSTEM ─── */
 /* Shared base */
-.btn-g,
-.btn-o,
-.soc-btn {
+.btn-g {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -625,9 +614,7 @@ nav#nav.s .nav-scrolled-time {
 }
 
 /* Shared shimmer pseudo-element */
-.btn-g::before,
-.btn-o::before,
-.soc-btn::before {
+.btn-g::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -643,43 +630,18 @@ nav#nav.s .nav-scrolled-time {
   color: var(--g-btn);
   padding: .9rem 2.2rem;
   border: none;
-  box-shadow: 0 0 0 rgba(61,255,143,0)
+  box-shadow: 0 0 0 rgba(var(--g-rgb), 0)
 }
 .btn-g::before {
   background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.35) 0%, transparent 65%)
 }
 .btn-g:hover {
-  box-shadow: 0 8px 40px rgba(61,255,143,.35), 0 0 0 1px rgba(61,255,143,.2);
+  box-shadow: 0 8px 40px var(--ga-35), 0 0 0 1px var(--ga-20);
 }
 .btn-g:hover::before { opacity: 1 }
 .btn-g:active { transform: scale(.97) }
 
 /* Outline */
-.btn-o,
-.btn-o::before,
-.btn-o:hover,
-.btn-o:hover::before,
-.btn-o:active,
-
-/* Small pill — social/tag buttons */
-.soc-btn {
-  gap: .55rem;
-  background: var(--bg2);
-  color: var(--m);
-  font-size: var(--fs-micro);
-  padding: .6rem 1.2rem;
-  border: 1px solid rgba(61,255,143,.12)
-}
-.soc-btn::before {
-  background: radial-gradient(circle at 50% 100%, rgba(61,255,143,.07) 0%, transparent 70%)
-}
-.soc-btn:hover {
-  border-color: rgba(61,255,143,.35);
-  color: var(--g);
-  box-shadow: 0 4px 20px rgba(61,255,143,.06)
-}
-.soc-btn:hover::before { opacity: 1 }
-.soc-btn:active { transform: scale(.97) }
 
 /* hero-scroll-hint handled in hero section above */
 
@@ -762,26 +724,6 @@ section {
   padding: var(--sticky-inner-pad) var(--side-pad) var(--section-pad);
 }
 
-.divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, var(--g), transparent);
-  margin: 2.5rem 0;
-  opacity: .3
-}
-
-.exp-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.3rem 0;
-  border-bottom: 1px solid var(--b)
-}
-
-.exp-item:last-child {
-  border: none
-}
-
 .exp-name {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
@@ -838,14 +780,14 @@ section {
 
 .sk-list {
   --line-w: 0%;
-  border-top: 1px solid rgba(61,255,143,.12);
+  border-top: 1px solid var(--ga-12);
   /* GSAP animates --line-w 0%→100% to draw the top border line */
   -webkit-mask-image: linear-gradient(to right, black var(--line-w), transparent var(--line-w));
   mask-image: linear-gradient(to right, black var(--line-w), transparent var(--line-w));
 }
 
 .sk-row {
-  border-bottom: 1px solid rgba(61,255,143,.08);
+  border-bottom: 1px solid var(--ga-08);
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -860,7 +802,7 @@ section {
   width: 2px;
   height: 0;
   background: var(--g);
-  box-shadow: 0 0 14px rgba(61,255,143,.7);
+  box-shadow: 0 0 14px rgba(var(--g-rgb), .7);
   transition: height .5s cubic-bezier(.16,1,.3,1);
 }
 .sk-row.open .sk-bar,
@@ -872,7 +814,7 @@ section {
 .sk-bg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 50% 100% at 0% 50%, rgba(61,255,143,.04), transparent 65%);
+  background: radial-gradient(ellipse 50% 100% at 0% 50%, var(--ga-04), transparent 65%);
   opacity: 0;
   transition: opacity .4s;
   pointer-events: none;
@@ -896,7 +838,7 @@ section {
 .sk-num {
   font-family: 'Syne', sans-serif;
   font-size: var(--fs-micro);
-  color: rgba(61,255,143,.3);
+  color: var(--ga-30);
   letter-spacing: var(--ls-wide);
   font-weight: 700;
   width: 36px;
@@ -951,7 +893,7 @@ section {
   color: rgba(157,191,157,.4);
   text-transform: uppercase;
   letter-spacing: var(--ls-tight);
-  border: 1px solid rgba(61,255,143,.1);
+  border: 1px solid var(--ga-10);
   padding: .22rem .65rem;
   border-radius: var(--r-pill);
   white-space: nowrap;
@@ -964,7 +906,7 @@ section {
   position: relative;
   width: 30px;
   height: 30px;
-  border: 1px solid rgba(61,255,143,.18);
+  border: 1px solid var(--ga-18);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -989,8 +931,8 @@ section {
   transform: translate(-50%, -50%) rotate(0deg);
 }
 .sk-row.open .sk-plus {
-  border-color: rgba(61,255,143,.4);
-   background: rgba(61,255,143,.08);
+  border-color: var(--ga-40);
+   background: var(--ga-08);
 }
 .sk-row.open .sk-plus span{
   transform: translate(-50%, -50%) rotate(45deg);
@@ -1172,7 +1114,7 @@ section {
   border-radius: var(--r-sm);
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid rgba(61,255,143,0.06);
+  border: 1px solid var(--ga-06);
   transition: border-color .22s, transform .22s;
   background: var(--bg2);
   flex-shrink: 0;
@@ -1180,12 +1122,12 @@ section {
 
 .pjs-card:hover,
 .pjs-card.active {
-  border-color: rgba(61,255,143,0.38);
+  border-color: rgba(var(--g-rgb), 0.38);
   transform: translateX(5px);
 }
 
 .pjs-card.active {
-  border-color: rgba(61,255,143,0.55);
+  border-color: var(--ga-55);
 }
 
 .pjs-card-bar {
@@ -1310,15 +1252,18 @@ section {
   position: relative;
   height: 100%;
   overflow: hidden;
-  background: #040806;
+  background: var(--bg); /* same tone as the videos' edges — letterbox is invisible */
 }
 
+/* Presentation videos are 16:9 with edges that fade to --bg, so they are shown
+   whole (contain) and pinned to the top; the info overlay sits in the space below. */
 .pjs-video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center top;
   display: block;
 }
 
@@ -1328,7 +1273,8 @@ section {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center top;
   display: block;
   z-index: 1;
   opacity: 1;
@@ -1381,7 +1327,7 @@ section {
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   color: var(--g);
-  border: 1px solid rgba(61,255,143,0.28);
+  border: 1px solid rgba(var(--g-rgb), 0.28);
   padding: 3px 9px;
   border-radius: var(--r-pill);
   white-space: nowrap;
@@ -1429,15 +1375,15 @@ section {
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  border: 1px solid rgba(61,255,143,0.22);
+  border: 1px solid rgba(var(--g-rgb), 0.22);
   padding: .55rem 1.1rem;
   border-radius: var(--r-pill);
   transition: background .2s, border-color .2s;
 }
 
 .pjs-info-cta:hover {
-  background: rgba(61,255,143,0.07);
-  border-color: rgba(61,255,143,0.45);
+  background: var(--ga-07);
+  border-color: rgba(var(--g-rgb), 0.45);
 }
 
 .pjs-info-cta svg {
@@ -1487,16 +1433,38 @@ section {
     height: auto;
   }
 
+  /* Mobile: video on top at full 16:9, project info BELOW it (not over it),
+     so the presentation video is never covered. */
   .pjs-video-ratio {
+    height: auto;
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pjs-video {
+    position: relative;
+    inset: auto;
     height: auto;
     aspect-ratio: 16 / 9;
   }
 
+  .pjs-poster {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .pjs-video-overlay {
+    display: none;
+  }
+
   .pjs-info {
+    position: relative;
+    inset: auto;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
     gap: .9rem;
-    padding: 1rem 1.25rem 1.1rem;
+    padding: .9rem 1.25rem 1.1rem;
   }
 
   .pjs-info-name {
@@ -1538,7 +1506,7 @@ section {
 
   /* Active card on mobile: subtle green border to signal "tap again = open" */
   .pjs-card.active {
-    outline: 1.5px solid rgba(61,255,143,0.35);
+    outline: 1.5px solid var(--ga-35);
     outline-offset: -1.5px;
   }
 
@@ -1546,10 +1514,10 @@ section {
   .pjs-card.active .pjs-card-overlay::after {
     content: 'Tap again to open →';
     position: absolute;
-    bottom: 8px;
-    right: 10px;
+    top: 8px;
+    left: 10px;
     font-size: 10px;
-    color: rgba(61,255,143,0.7);
+    color: rgba(var(--g-rgb), 0.7);
     letter-spacing: .04em;
     pointer-events: none;
   }
@@ -1578,21 +1546,21 @@ section {
 }
 
 /* ═══════════════════════════════════════════════
-   REVIEWS — полный патч
-   Заменяет блок от #reviews до .review-platform {}
-   (строки ~1478-1678 в style.css)
+   REVIEWS — full patch
+   Replaces the block from #reviews to .review-platform {}
+   (lines ~1478-1678 in style.css)
    ═══════════════════════════════════════════════ */
 
 #reviews {
   padding: var(--section-pad) 0 0;
 }
 
-/* Контейнер — через .wrap, как все остальные секции */
+/* Container — uses .wrap like every other section */
 #reviews .wrap {
-  /* наследует max-width: 1440px; padding: 0 var(--side-pad) — уже есть */
+  /* inherits max-width: 1440px; padding: 0 var(--side-pad) — already set */
 }
 
-/* ── Сама сетка ── */
+/* ── The grid itself ── */
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1600,9 +1568,9 @@ section {
   height: 520px;
   overflow: hidden;
   position: relative;
-  /* fade-маска через mask-image — карточки плавно растворяются у краёв,
-     22% сверху и 22% снизу = ~114px на 520px высоте грида.
-     Карточки появляются/уходят незаметно, без резкой границы. */
+  /* fade-mask via mask-image — cards fade out smoothly at the edges,
+     22% top and 22% bottom = ~114px on a 520px-tall grid.
+     Cards appear/disappear gracefully, without a hard edge. */
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -1622,26 +1590,26 @@ section {
 .reviews-grid::before,
 .reviews-grid::after { display: none; }
 
-/* ── Колонка — полоса прокрутки ── */
+/* ── Column — scrolling strip ── */
 .reviews-col {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   will-change: transform;
-  /* overflow-y: auto убран — скролл управляется через JS-drag */
+  /* overflow-y: auto removed — scrolling is driven by JS drag */
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Состояние «захвачено мышью» — курсор меняется через inline-style в JS (col.style.cursor) */
+/* "Grabbed" state — the cursor is changed via inline style in JS (col.style.cursor) */
 
-/* Скролл колонок полностью управляется из script.js через translateY(),
-   с бесшовным wrap по модулю периода. Старая CSS-анимация reviewsUp
-   и связанный с ней pause-on-hover были мёртвым кодом: JS всегда
-   перекрывал их через inline animation:none — убрано, чтобы не путать. */
+/* Column scrolling is fully driven from script.js via translateY(),
+   with a seamless modulo wrap. The old CSS animation reviewsUp
+   and its pause-on-hover were dead code: JS always
+   overrode them with inline animation:none — removed to avoid confusion. */
 
-/* ── Карточка ── */
+/* ── Card ── */
 .review-card {
   background: var(--bg2);
   border: 1px solid var(--b);
@@ -1650,12 +1618,12 @@ section {
   position: relative;
   overflow: hidden;
   transition: border-color .3s;
-  /* min-height — короткие отзывы не «огрызки» */
+  /* min-height — short reviews don't look like stubs */
   min-height: 190px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* запрет на shrink внутри flex-колонки */
+  /* no shrinking inside the flex column */
   flex-shrink: 0;
 }
 
@@ -1667,20 +1635,20 @@ section {
   background: linear-gradient(
     to right,
     transparent,
-    rgba(61, 255, 143, .35),
+    var(--ga-35),
     transparent
   );
   opacity: 0;
   transition: opacity .3s;
 }
 .review-card:hover {
-  border-color: rgba(61, 255, 143, .25);
+  border-color: var(--ga-25);
 }
 .review-card:hover::before {
   opacity: 1;
 }
 
-/* ── Звёзды ── */
+/* ── Stars ── */
 .review-stars {
   color: var(--g);
   font-size: .95rem;
@@ -1688,14 +1656,14 @@ section {
   margin-bottom: 1rem;
 }
 
-/* ── Текст отзыва ── */
+/* ── Review text ── */
 .review-text {
   font-size: .9rem;
   color: var(--m);
   line-height: 1.75;
   font-weight: 300;
   font-style: italic;
-  /* растягиваем чтобы footer всегда внизу карточки */
+  /* stretch so the footer is always at the card bottom */
   flex: 1;
   margin-bottom: 1.4rem;
 }
@@ -1705,24 +1673,24 @@ section {
   font-style: normal;
 }
 
-/* ── Footer карточки ── */
+/* ── Footer cards ── */
 .review-footer {
   display: flex;
   align-items: center;
   gap: .85rem;
   padding-top: 1.1rem;
   border-top: 1px solid var(--b);
-  /* прибит к низу благодаря flex-column + review-text: flex:1 */
+  /* pinned to the bottom via flex-column + review-text: flex:1 */
 }
 
-/* ── Аватар с явным фоном ── */
+/* ── Avatar with a solid background ── */
 .review-avatar {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  /* зелёный фон — инициалы читаются на любом фоне */
-  background: rgba(61, 255, 143, .13);
-  border: 1px solid rgba(61, 255, 143, .25);
+  /* green background — initials stay readable on any backdrop */
+  background: rgba(var(--g-rgb), .13);
+  border: 1px solid var(--ga-25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1734,7 +1702,7 @@ section {
   letter-spacing: .05em;
 }
 
-/* ── Имя и мета ── */
+/* ── Name and meta ── */
 .review-name {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
@@ -1748,7 +1716,7 @@ section {
   line-height: 1.4;
 }
 
-/* ── Бейдж платформы ── */
+/* ── Platform badge ── */
 .review-platform {
   margin-left: auto;
   font-size: .62rem;
@@ -1765,7 +1733,7 @@ section {
 
 /* ══════════ Responsive ══════════ */
 
-/* Планшет — 2 колонки */
+/* Tablet — 2 columns */
 @media (max-width: 1100px) {
   .reviews-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1776,7 +1744,7 @@ section {
   }
 }
 
-/* Мобильный — 1 колонка */
+/* Mobile — 1 column */
 @media (max-width: 640px) {
   .reviews-grid {
     grid-template-columns: 1fr;
@@ -1794,7 +1762,7 @@ section {
     font-size: .85rem;
   }
 }
-/* ── SVG звёзды ── */
+/* ── SVG stars ── */
 .review-stars {
   margin-bottom: 1rem;
   line-height: 1;
@@ -1804,7 +1772,7 @@ section {
   display: block;
   width: 110px;
   height: 20px;
-  overflow: visible; /* чтобы glow-filter не обрезался */
+  overflow: visible; /* so the glow filter isn't clipped */
 }
  
 /* ── Drag hint ── */
@@ -1824,18 +1792,18 @@ section {
   user-select: none;
 }
  
-/* На тач-девайсах hint чуть ярче — он там актуальнее */
+/* On touch devices the hint is a bit brighter — it matters more there */
 @media (hover: none) {
   .reviews-hint {
     opacity: .7;
   }
 }
  
-/* Скрываем hint когда пользователь уже начал взаимодействовать */
+/* Hide the hint once the user has started interacting */
 .reviews-hint.is-hidden {
   opacity: 0;
 }
-/* ── Заголовок секции на мобильном ── */
+/* ── Section heading on mobile ── */
 @media (max-width: 640px) {
   #reviews .sh {
     font-size: clamp(2rem, 10vw, 2.8rem);
@@ -1843,23 +1811,23 @@ section {
   }
 }
 
-/* ── Планшет: 2 колонки ── */
+/* ── Tablet: 2 columns ── */
 @media (max-width: 1100px) {
   .reviews-grid {
     grid-template-columns: repeat(2, 1fr);
-    /* Увеличиваем высоту — 480px было мало */
+    /* Taller — 480px was not enough */
     height: 560px;
   }
 }
 
-/* ── Мобильный: 1 колонка ── */
+/* ── Mobile: 1 column ── */
 @media (max-width: 640px) {
   .reviews-grid {
     grid-template-columns: 1fr;
     height: 500px;
   }
 
-  /* Карточка — меньше паддинг чтобы влезала в 1.5rem wrap */
+  /* Card — smaller padding to fit the 1.5rem wrap */
   .review-card {
     padding: 1.25rem;
     border-radius: var(--r);
@@ -1895,7 +1863,7 @@ section {
     padding: .18rem .5rem;
   }
 
-  /* Hint чуть меньше */
+  /* Hint slightly smaller */
   .reviews-hint {
     font-size: .62rem;
     margin-top: 1rem;
@@ -1931,7 +1899,7 @@ section {
   align-items: center;
   gap: 1rem;
   background: transparent;
-  border: 1px solid rgba(61, 255, 143, .25);
+  border: 1px solid var(--ga-25);
   color: var(--t);
   font-family: 'Syne', sans-serif;
   font-weight: 800;
@@ -1946,7 +1914,7 @@ section {
 }
 
 .reveal-btn:hover {
-  border-color: rgba(61, 255, 143, .5)
+  border-color: var(--ga-50)
 }
 
 .reveal-btn::before {
@@ -1954,7 +1922,7 @@ section {
   position: absolute;
   inset: 0;
   border-radius: var(--r-pill);
-  background: radial-gradient(ellipse at 50% 0%, rgba(61, 255, 143, .08), transparent 70%);
+  background: radial-gradient(ellipse at 50% 0%, var(--ga-08), transparent 70%);
   opacity: 0;
   transition: opacity .4s
 }
@@ -1986,20 +1954,20 @@ section {
 .glow {
   color: var(--g);
   text-shadow:
-    0 0 10px rgba(61,255,143,.85),
-    0 0 28px rgba(61,255,143,.45),
-    0 0 65px rgba(61,255,143,.20),
-    0 0 120px rgba(61,255,143,.08)
+    0 0 10px rgba(var(--g-rgb), .85),
+    0 0 28px rgba(var(--g-rgb), .45),
+    0 0 65px var(--ga-20),
+    0 0 120px var(--ga-08)
 }
 
 /* Wider spread on large display text */
 .sh .glow,
 .hero-name .glow {
   text-shadow:
-    0 0 14px rgba(61,255,143,.90),
-    0 0 35px rgba(61,255,143,.50),
-    0 0 80px rgba(61,255,143,.25),
-    0 0 150px rgba(61,255,143,.10)
+    0 0 14px rgba(var(--g-rgb), .90),
+    0 0 35px var(--ga-50),
+    0 0 80px var(--ga-25),
+    0 0 150px var(--ga-10)
 }
 
 /* ─── CONTACT ─── */
@@ -2007,108 +1975,11 @@ section {
   padding: var(--sticky-inner-pad) 0 var(--section-pad)
 }
 
-.contact-wrap {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: stretch
-}
-
-.contact-l {
-  display: flex;
-  flex-direction: column;
-}
-
-.c-response {
-  margin-top: auto;
-  padding-top: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--fs-micro);
-  letter-spacing: var(--ls-tight);
-  text-transform: uppercase;
-  color: var(--m);
-}
-
-.c-response-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--g);
-  box-shadow: 0 0 8px var(--g);
-  flex-shrink: 0;
-  animation: blink 2s ease-in-out infinite;
-}
-
-.contact-l .sh {
-  margin-bottom: 1.6rem
-}
-
-.contact-l p {
-  color: var(--m);
-  font-size: var(--fs-body);
-  line-height: 1.75;
-  margin-bottom: 2.8rem;
-  font-weight: 300
-}
-
-.c-email {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(.9rem, 2vw, 1.4rem);
-  font-weight: 700;
-  color: var(--g);
-  text-decoration: none;
-  display: block;
-  margin-bottom: 1.2rem;
-  transition: opacity .2s;
-  word-break: break-all
-}
-
-.c-email:hover {
-  opacity: .6
-}
-
-.soc-row {
-  display: flex;
-  gap: .7rem;
-  flex-wrap: wrap
-}
-
 /* form card */
-.cf-card {
-  background: var(--bg2);
-  border: 1px solid var(--b);
-  border-radius: var(--r-md);
-  padding: 1.6rem 1.6rem 1.4rem;
-  position: relative;
-  overflow: hidden;
-}
 
 /* top-line — same pattern as .ab-cv and .review-card */
-.cf-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--g), transparent);
-  opacity: .35;
-}
 
 /* subtle glow — same pattern as other section cards */
-.cf-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, var(--ga-04) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.cf-row2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
 
 .cf-lbl {
   font-size: var(--fs-micro);
@@ -2138,7 +2009,7 @@ section {
 }
 
 .cf-in:focus {
-  border-color: rgba(61, 255, 143, .35)
+  border-color: var(--ga-35)
 }
 
 .cf-in::placeholder {
@@ -2178,7 +2049,7 @@ textarea.cf-in {
   transition: opacity .35s ease
 }
 .cf-sub:hover {
-  box-shadow: 0 8px 40px rgba(61,255,143,.35)
+  box-shadow: 0 8px 40px var(--ga-35)
 }
 .cf-sub:hover::before { opacity: 1 }
 .cf-sub:active { transform: scale(.98) }
@@ -2255,26 +2126,8 @@ footer {
   pointer-events: none;
   bottom: 0; left: 0; right: 0;
   height: 110px;
-  background: radial-gradient(ellipse 90% 80% at 50% 100%, rgba(61, 255, 143, .09) 0%, transparent 65%);
+  background: radial-gradient(ellipse 90% 80% at 50% 100%, rgba(var(--g-rgb), .09) 0%, transparent 65%);
   animation: footBreathe 6s ease-in-out infinite
-}
-
-.foot-glow-line1 {
-  position: absolute;
-  z-index: 2;
-  pointer-events: none;
-  bottom: 48px; left: 8%; right: 8%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(61,255,143,.12), rgba(61,255,143,.30), rgba(61,255,143,.12), transparent)
-}
-
-.foot-glow-line2 {
-  position: absolute;
-  z-index: 2;
-  pointer-events: none;
-  bottom: 46px; left: 22%; right: 22%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(61,255,143,.06), rgba(61,255,143,.14), rgba(61,255,143,.06), transparent)
 }
 
 @keyframes footBreathe {
@@ -2346,7 +2199,7 @@ footer {
 
 .foot-sep {
   height: 1px;
-  background: rgba(61, 255, 143, .08);
+  background: var(--ga-08);
   margin: .7rem 0
 }
 
@@ -2441,7 +2294,7 @@ footer {
 .foot-info-item + .foot-info-item {
   margin-top: .8rem;
   padding-top: .8rem;
-  border-top: 1px solid rgba(61,255,143,.06)
+  border-top: 1px solid var(--ga-06)
 }
 
 .foot-time {
@@ -2510,7 +2363,7 @@ footer {
 .foot-back:hover svg { transform: translateY(-3px) }
 
 /* ─── HAMBURGER + MOBILE NAV ─── */
-/* burger base уже определён выше в nav block */
+/* burger base already defined above in the nav block */
 
 .nav-burger span {
   display: block;
@@ -2525,7 +2378,7 @@ footer {
 .nav-burger span:nth-child(2) { width: 12px }
 .nav-burger span:nth-child(3) { width: 18px }
 
-/* Иконка × при открытом меню */
+/* × icon while the menu is open */
 .nav-burger.open span:nth-child(1) {
   transform: translateY(6.5px) rotate(45deg);
   width: 18px
@@ -2547,7 +2400,7 @@ footer {
   background: rgba(7, 9, 10, .97);
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
-  z-index: 199;
+  z-index: var(--z-nav-menu);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2574,7 +2427,7 @@ footer {
   text-decoration: none;
   letter-spacing: -.02em;
   transition: color .2s, opacity .35s, transform .45s cubic-bezier(.16,1,.3,1);
-  -webkit-text-stroke: 1px rgba(61, 255, 143, .15);
+  -webkit-text-stroke: 1px var(--ga-15);
   opacity: 0;
   transform: translateY(24px);
   padding: .35em 0
@@ -2659,7 +2512,7 @@ footer {
 /* ─── RESPONSIVE ─── */
 
 /* ── 1280px: tighten wide layouts ── */
-@media(max-width:1280px) {
+@media (max-width: 1280px) {
   .foot-inner {
     padding: 2.5rem var(--side-pad) 2rem;
     grid-template-columns: 1.3fr 1fr 1fr 1fr
@@ -2675,7 +2528,7 @@ footer {
 }
 
 /* ── 1100px: tablet landscape ── */
-@media(max-width:1100px) {
+@media (max-width: 1100px) {
   nav#nav {
     padding: 1.4rem 2.5rem
   }
@@ -2730,10 +2583,6 @@ footer {
   }
 
   /* contact */
-  .contact-wrap {
-    grid-template-columns: 1fr;
-    gap: 3rem
-  }
 
   /* footer — 4 cols still, just smaller padding */
   .foot-inner {
@@ -2752,7 +2601,7 @@ footer {
 }
 
 /* ── 768px: tablet portrait ── */
-@media(max-width:768px) {
+@media (max-width: 768px) {
   #hero {
     text-align: left
   }
@@ -2776,22 +2625,6 @@ footer {
   }
 
   /* contact */
-  .soc-row {
-    gap: .4rem
-  }
-
-  .c-email {
-    font-size: var(--fs-body);
-    word-break: break-all
-  }
-
-  .cf-row2 {
-    grid-template-columns: 1fr;
-  }
-
-  .cf-card {
-    padding: 1.4rem;
-  }
 
   /* footer — brand+email left, nav+work 2 cols right, info row below */
   .foot-inner {
@@ -2814,13 +2647,13 @@ footer {
     align-items: flex-start;
     padding: 0;
     padding-top: 1.2rem;
-    border-top: 1px solid rgba(61,255,143,.06)
+    border-top: 1px solid var(--ga-06)
   }
 
   .foot-col--info .foot-info-item {
     flex: 1;
     padding: 0 1.2rem 0 0 !important;
-    border-right: 1px solid rgba(61,255,143,.08) !important;
+    border-right: 1px solid var(--ga-08) !important;
     margin-top: 0 !important;
     padding-top: 0 !important;
     border-top: none !important
@@ -2847,7 +2680,7 @@ footer {
 }
 
 /* ── 640px: large mobile ── */
-@media(max-width:640px) {
+@media (max-width: 640px) {
   nav#nav {
     padding: 1rem 1.5rem
   }
@@ -3017,13 +2850,13 @@ footer {
     align-items: flex-start;
     padding: 0;
     padding-top: 1rem;
-    border-top: 1px solid rgba(61,255,143,.06)
+    border-top: 1px solid var(--ga-06)
   }
 
   .foot-col--info .foot-info-item {
     flex: 1;
     padding: 0 1rem 0 0 !important;
-    border-right: 1px solid rgba(61,255,143,.08) !important;
+    border-right: 1px solid var(--ga-08) !important;
     margin-top: 0 !important;
     padding-top: 0 !important;
     border-top: none !important
@@ -3052,7 +2885,7 @@ footer {
 }
 
 /* ── 390px: small mobile ── */
-@media(max-width:390px) {
+@media (max-width: 390px) {
   #hero {
     padding: 0
   }
@@ -3095,13 +2928,13 @@ footer {
     align-items: flex-start;
     padding: 0;
     padding-top: 1rem;
-    border-top: 1px solid rgba(61,255,143,.06)
+    border-top: 1px solid var(--ga-06)
   }
 
   .foot-col--info .foot-info-item {
     flex: 1;
     padding: 0 .7rem 0 0 !important;
-    border-right: 1px solid rgba(61,255,143,.08) !important;
+    border-right: 1px solid var(--ga-08) !important;
     margin-top: 0 !important;
     padding-top: 0 !important;
     border-top: none !important
@@ -3120,14 +2953,12 @@ footer {
   .foot-divider { margin: 0 1.2rem }
 
   .foot-bottom { padding: .7rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom, 0px)) }
-
-  .foot-soc-row { flex-wrap: wrap }
 }
 /* ─── PAGE TRANSITION (shared across all pages) ─── */
 .pt-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: var(--z-transition);
   background: var(--bg);
   transform: translateY(100%);
   pointer-events: none;
@@ -3163,10 +2994,10 @@ footer {
   width: 0%;
   height: 2px;
   background: var(--g);
-  z-index: 99998;
+  z-index: var(--z-progress);
   pointer-events: none;
   transition: width .1s linear;
-  box-shadow: 0 0 8px rgba(61, 255, 143, .5);
+  box-shadow: 0 0 8px var(--ga-50);
 }
 
 /* ════ BENTO ABOUT — new section styles ════ */
@@ -3209,7 +3040,7 @@ footer {
   box-shadow: 0 2px 8px rgba(0,0,0,.25), 0 1px 2px rgba(0,0,0,.3);
 }
 .ab-card:hover {
-  border-color: rgba(61,255,143,.18);
+  border-color: var(--ga-18);
 }
 
 /* Photo card — most prominent, deepest shadow */
@@ -3217,7 +3048,7 @@ footer {
   box-shadow:
     0 8px 32px rgba(0,0,0,.5),
     0 2px 8px rgba(0,0,0,.4),
-    0 0 0 1px rgba(61,255,143,.06);
+    0 0 0 1px var(--ga-06);
 }
 
 /* Headline — secondary depth */
@@ -3239,8 +3070,8 @@ footer {
 .ab-cv {
   box-shadow:
     0 4px 20px rgba(0,0,0,.35),
-    0 0 0 1px rgba(61,255,143,.08),
-    0 -1px 0 0 rgba(61,255,143,.12);
+    0 0 0 1px var(--ga-08),
+    0 -1px 0 0 var(--ga-12);
 }
  
 /* placements */
@@ -3311,7 +3142,7 @@ footer {
   position: absolute;
   inset: -6px;
   border-radius: var(--r);
-  background: conic-gradient(from 180deg, rgba(61,255,143,.5) 0deg, transparent 90deg, transparent 270deg, rgba(61,255,143,.25) 360deg);
+  background: conic-gradient(from 180deg, var(--ga-50) 0deg, transparent 90deg, transparent 270deg, var(--ga-25) 360deg);
   animation: ringSpinA 16s linear infinite;
   filter: blur(14px);
   z-index: 0;
@@ -3337,8 +3168,8 @@ footer {
   text-transform: uppercase;
   color: var(--g);
   font-weight: 600;
-  background: rgba(61,255,143,.1);
-  border: 1px solid rgba(61,255,143,.2);
+  background: var(--ga-10);
+  border: 1px solid var(--ga-20);
   padding: 5px 12px;
   border-radius: var(--r-pill);
   margin-bottom: 12px;
@@ -3385,7 +3216,7 @@ footer {
   justify-content: center;
   /* subtle green radial in top-right */
   background:
-    radial-gradient(ellipse 60% 60% at 95% 10%, rgba(61,255,143,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 95% 10%, var(--ga-07) 0%, transparent 70%),
     var(--bg2);
 }
 .ab-headline h2 {
@@ -3398,7 +3229,7 @@ footer {
 }
 .ab-headline h2 .glow {
   color: var(--g);
-  text-shadow: 0 0 50px rgba(61,255,143,.45);
+  text-shadow: 0 0 50px rgba(var(--g-rgb), .45);
 }
  
 /* ════════════════════════════════════
@@ -3419,7 +3250,7 @@ footer {
   flex-direction: column;
   justify-content: space-between;
   background:
-    radial-gradient(ellipse 50% 80% at 0% 100%, rgba(61,255,143,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 0% 100%, var(--ga-04) 0%, transparent 60%),
     var(--bg2);
 }
 .ab-bio-content { flex: 1; }
@@ -3451,7 +3282,7 @@ footer {
   border-radius: var(--r-pill);
   transition: color .2s, border-color .2s;
 }
-.ab-bio-platform:hover { color: var(--g); border-color: rgba(61,255,143,.3); }
+.ab-bio-platform:hover { color: var(--g); border-color: var(--ga-30); }
 
 /* ════════════════════════════════════
    RATING CARD
@@ -3462,18 +3293,18 @@ footer {
   position: absolute;
   top: 20px; right: 20px;
   width: 40px; height: 40px;
-  border-top: 1px solid rgba(61,255,143,.2);
-  border-right: 1px solid rgba(61,255,143,.2);
+  border-top: 1px solid var(--ga-20);
+  border-right: 1px solid var(--ga-20);
   border-radius: 0 6px 0 0;
 }
 
 /* ════════════════════════════════════
    RESPONSIVE
-   Логика по брейкпоинтам:
-   1200px+ → десктоп (12 колонок, исходная сетка)
-   1024px  → 3 колонки: фото слева 1 кол. (2 ряда), headline+bio справа
-   860px   → 2 колонки: фото на всю ширину, exp на всю ширину, cv отдельно
-   600px   → 1 колонка: всё друг под другом, фото 3:4 portrait
+   Breakpoint logic:
+   1200px+ → desktop (12 columns, base grid)
+   1024px  → 3 columns: photo left 1 col (2 rows), headline+bio right
+   860px   → 2 columns: full-width photo, full-width exp, cv separate
+   600px   → 1 column: everything stacked, photo 3:4 portrait
 ════════════════════════════════════ */
 
 /* ── 1024px ── */
@@ -3487,7 +3318,7 @@ footer {
     gap: 12px;
   }
 
-  /* фото: левая колонка, оба ряда — растягивается по высоте соседей */
+  /* photo: left column, both rows — stretches to its neighbours' height */
   .ab-photo {
     grid-column: 1 / 2;
     grid-row: 1 / 3;
@@ -3499,15 +3330,15 @@ footer {
   .ab-headline { grid-column: 2 / 4; grid-row: 1 / 2; }
   .ab-bio      { grid-column: 2 / 4; grid-row: 2 / 3; }
 
-  /* exp на 2 колонки, cv на 1 — достаточно места */
+  /* exp spans 2 columns, cv 1 — enough room */
   .ab-exp { grid-column: 1 / 3; grid-row: 3 / 4; }
   .ab-cv  { grid-column: 3 / 4; grid-row: 3 / 4; }
 
   .ab-ph-1, .ab-ph-2 { display: none; }
 }
 
-/* ── 860px: фото слева на два ряда, headline+CV справа ── */
-@media (max-width: 860px) {
+/* ── 860px: photo on the left across two rows, headline+CV on the right ── */
+@media (max-width: 900px) {
   #about .about-bento-inner { padding-left: var(--side-pad); padding-right: var(--side-pad); }
   #about .about-stag-wrap   { padding-left: var(--side-pad); padding-right: var(--side-pad); }
 
@@ -3536,8 +3367,8 @@ footer {
   .ab-ph-1, .ab-ph-2 { display: none; }
 }
 
-/* ── 600px: одна колонка ── */
-@media (max-width: 600px) {
+/* ── 600px: one column ── */
+@media (max-width: 640px) {
   #about .about-bento-inner { padding-left: var(--side-pad); padding-right: var(--side-pad); }
   #about .about-stag-wrap   { padding-left: var(--side-pad); padding-right: var(--side-pad); }
 
@@ -3547,7 +3378,7 @@ footer {
     gap: 8px;
   }
 
-  /* portrait-формат 3:4 — идеально для портрета, фиксированные пропорции */
+  /* portrait-3:4 format — ideal for a portrait, fixed proportions */
   .ab-photo {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
@@ -3555,7 +3386,7 @@ footer {
     min-height: unset;
     aspect-ratio: 3 / 4;
   }
-  /* якорь лица — верхняя треть кадра */
+  /* face anchor — upper third of the frame */
   .ab-photo .ab-photo-img-wrap img {
     object-position: center 20%;
   }
@@ -3567,7 +3398,7 @@ footer {
 
   .ab-ph-1, .ab-ph-2 { display: none; }
 
-  /* experience rows — немного компактнее на мобильном */
+  /* experience rows — slightly more compact on mobile */
   .exp-row { gap: 12px; padding: 11px 0; }
   .exp-yr  { padding: 3px 10px; }
 }
@@ -3578,7 +3409,7 @@ footer {
 .ab-exp {
   padding: 28px 32px;
   background:
-    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(61,255,143,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 100% at 100% 50%, var(--ga-04) 0%, transparent 60%),
     var(--bg2);
 }
 .ab-exp-label {
@@ -3632,8 +3463,8 @@ footer {
 .exp-yr {
   font-size: var(--fs-micro);
   color: var(--g);
-  background: rgba(61,255,143,.08);
-  border: 1px solid rgba(61,255,143,.18);
+  background: var(--ga-08);
+  border: 1px solid var(--ga-18);
   padding: 4px 12px;
   border-radius: var(--r-pill);
   white-space: nowrap;
@@ -3651,9 +3482,9 @@ footer {
   gap: 12px;
   justify-content: space-between;
   background:
-    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(61,255,143,.08) 0%, transparent 65%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, var(--ga-08) 0%, transparent 65%),
     var(--bg2);
-  border-color: rgba(61,255,143,.12);
+  border-color: var(--ga-12);
 }
 .ab-cv::before {
   content: '';
@@ -3680,7 +3511,7 @@ footer {
   margin-bottom: 8px;
 }
 
-/* CV кнопка: на средних экранах растягиваем на всю ширину карточки */
+/* CV button: on medium screens stretch to the full card width */
 @media (max-width: 1100px) {
   .ab-cv .btn-g {
     width: 100%;
@@ -3735,8 +3566,8 @@ footer {
   transform: translateX(-50%);
   width: 800px; height: 600px;
   background: radial-gradient(ellipse 60% 55% at 50% 30%,
-    rgba(61,255,143,.08) 0%,
-    rgba(61,255,143,.025) 50%,
+    var(--ga-08) 0%,
+    rgba(var(--g-rgb), .025) 50%,
     transparent 80%);
   filter: blur(50px);
   opacity: 0;
@@ -3750,7 +3581,7 @@ footer {
   bottom: -100px; right: -80px;
   width: 500px; height: 400px;
   background: radial-gradient(ellipse 50% 50% at 60% 60%,
-    rgba(61,255,143,.045) 0%, transparent 70%);
+    rgba(var(--g-rgb), .045) 0%, transparent 70%);
   filter: blur(70px);
 }
 
@@ -3812,7 +3643,7 @@ footer {
   position: absolute;
   width: 56px; height: 56px;
   border-radius: 50%;
-  border: 1px solid rgba(61,255,143,0);
+  border: 1px solid rgba(var(--g-rgb), 0);
   transform: scale(1);
   top: 0; left: 0; right: 0; bottom: 0;
   margin: auto;
@@ -3824,7 +3655,7 @@ footer {
   width: 56px; height: 56px;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 38%, #172119 0%, #090d0a 100%);
-  border: 1px solid rgba(61,255,143,.18);
+  border: 1px solid var(--ga-18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3833,8 +3664,8 @@ footer {
   transition: border-color .5s, box-shadow .5s;
 }
 .ct-dot-main.lit {
-  border-color: rgba(61,255,143,.42);
-  box-shadow: 0 0 0 1px rgba(61,255,143,.05), 0 0 22px rgba(61,255,143,.1);
+  border-color: rgba(var(--g-rgb), .42);
+  box-shadow: 0 0 0 1px rgba(var(--g-rgb), .05), 0 0 22px var(--ga-10);
 }
 .ct-dot-main svg {
   width: 22px; height: 22px;
@@ -3845,7 +3676,7 @@ footer {
   font-family: 'Syne', sans-serif;
   font-size: 9px; font-weight: 800;
   letter-spacing: .16em;
-  color: rgba(61,255,143,.3);
+  color: var(--ga-30);
   margin-bottom: .2rem;
 }
 
@@ -3903,7 +3734,7 @@ footer {
   transition: opacity 0.3s ease;
 }
 .ct-cta:hover {
-  box-shadow: 0 8px 40px rgba(61,255,143,0.4), 0 2px 12px rgba(61,255,143,0.16);
+  box-shadow: 0 8px 40px var(--ga-40), 0 2px 12px rgba(var(--g-rgb), 0.16);
   transform: translateY(-1px);
 }
 .ct-cta:hover::before { opacity: 1; }
@@ -3934,7 +3765,7 @@ footer {
   align-items: center;
   gap: 10px;
   padding-top: 1.8rem;
-  border-top: 1px solid rgba(61,255,143,.07);
+  border-top: 1px solid var(--ga-07);
   flex-wrap: wrap;
 }
 
@@ -3948,9 +3779,9 @@ footer {
 }
 
 @keyframes ctPulse {
-  0%   { box-shadow: 0 0 0 0   rgba(61,255,143,0.55); }
-  60%  { box-shadow: 0 0 0 8px rgba(61,255,143,0); }
-  100% { box-shadow: 0 0 0 0   rgba(61,255,143,0); }
+  0%   { box-shadow: 0 0 0 0   var(--ga-55); }
+  60%  { box-shadow: 0 0 0 8px rgba(var(--g-rgb), 0); }
+  100% { box-shadow: 0 0 0 0   rgba(var(--g-rgb), 0); }
 }
 
 .ct-avail-text {
@@ -3985,7 +3816,7 @@ footer {
   background: rgba(7,9,10,0.78);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  z-index: 900;
+  z-index: var(--z-drawer-overlay);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
@@ -4004,8 +3835,8 @@ footer {
   top: 0; right: 0; bottom: 0;
   width: min(620px, 95vw);
   background: var(--bg2);
-  border-left: 1px solid rgba(61,255,143,0.07);
-  z-index: 901;
+  border-left: 1px solid var(--ga-07);
+  z-index: var(--z-drawer);
   transform: translateX(100%);
   transition: transform 0.52s cubic-bezier(0.16,1,0.3,1);
   display: flex;
@@ -4014,7 +3845,7 @@ footer {
 }
 .contact-drawer.is-open { transform: translateX(0); }
 
-/* Вся внутренность — flex-колонка, скролл здесь */
+/* Whole inner area is a flex column; scrolling happens here */
 .drawer-inner {
   display: flex;
   flex-direction: column;
@@ -4026,7 +3857,7 @@ footer {
 }
 .drawer-inner::-webkit-scrollbar { width: 3px; }
 .drawer-inner::-webkit-scrollbar-track { background: transparent; }
-.drawer-inner::-webkit-scrollbar-thumb { background: rgba(61,255,143,0.12); border-radius: 2px; }
+.drawer-inner::-webkit-scrollbar-thumb { background: var(--ga-12); border-radius: 2px; }
 
 .drawer-head {
   display: flex;
@@ -4034,7 +3865,7 @@ footer {
   align-items: flex-start;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(61,255,143,0.08);
+  border-bottom: 1px solid var(--ga-08);
   flex-shrink: 0;
 }
 
@@ -4058,7 +3889,7 @@ footer {
 .drawer-close {
   width: 36px; height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(61,255,143,0.12);
+  border: 1px solid var(--ga-12);
   background: transparent;
   color: var(--m);
   cursor: pointer;
@@ -4069,7 +3900,7 @@ footer {
   transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.25s;
 }
 .drawer-close:hover {
-  border-color: rgba(61,255,143,0.4);
+  border-color: var(--ga-40);
   color: var(--g);
   background: var(--gd);
   transform: rotate(90deg);
@@ -4079,7 +3910,7 @@ footer {
    FORM
 ════════════════════════════════════════════════ */
 
-/* Форма занимает всё свободное пространство */
+/* The form fills all remaining space */
 .drawer-form {
   display: flex;
   flex-direction: column;
@@ -4088,7 +3919,7 @@ footer {
   min-height: 0;
 }
 
-/* Обычная группа */
+/* Regular group */
 .cf-g {
   display: flex;
   flex-direction: column;
@@ -4096,7 +3927,7 @@ footer {
   flex-shrink: 0;
 }
 
-/* Группа с textarea */
+/* Group with textarea */
 .cf-g--grow {
   display: flex;
   flex-direction: column;
@@ -4115,7 +3946,7 @@ footer {
 .cf-in {
   width: 100%;
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(61,255,143,0.1);
+  border: 1px solid var(--ga-10);
   border-radius: var(--r);
   color: var(--t);
   font-family: 'Inter', sans-serif;
@@ -4127,14 +3958,14 @@ footer {
   -webkit-appearance: none;
 }
 .cf-in::placeholder { color: rgba(157,191,157,0.25); }
-.cf-in:hover:not(:focus) { border-color: rgba(61,255,143,0.17); }
+.cf-in:hover:not(:focus) { border-color: rgba(var(--g-rgb), 0.17); }
 .cf-in:focus {
-  border-color: rgba(61,255,143,0.42);
-  background: rgba(61,255,143,0.03);
-  box-shadow: 0 0 0 3px rgba(61,255,143,0.06);
+  border-color: rgba(var(--g-rgb), 0.42);
+  background: rgba(var(--g-rgb), 0.03);
+  box-shadow: 0 0 0 3px var(--ga-06);
 }
 
-/* Textarea фиксированная высота */
+/* Textarea fixed height */
 .cf-textarea {
   resize: none;
   height: 110px;
@@ -4171,7 +4002,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   text-transform: none;
   transition: color .2s;
 }
-.cf-counter.ok { color: rgba(61,255,143,.55); }
+.cf-counter.ok { color: var(--ga-55); }
 .cf-lbl { display: flex; align-items: center; }
 
 /* Optional badge */
@@ -4195,7 +4026,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   margin-top: 2px;
 }
 
-/* Валидация — ошибка */
+/* Validation — error */
 .cf-g.has-error .cf-in {
   border-color: rgba(255,80,80,0.55);
   background: rgba(255,80,80,0.03);
@@ -4205,12 +4036,12 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   box-shadow: 0 0 0 3px rgba(255,80,80,0.06);
 }
 
-/* Валидация — успех */
+/* Validation — success */
 .cf-g.is-valid .cf-in {
-  border-color: rgba(61,255,143,0.3);
+  border-color: var(--ga-30);
 }
 
-/* Текст ошибки */
+/* Error text */
 .cf-err {
   font-size: var(--fs-micro);
   color: rgba(255,100,100,0.85);
@@ -4228,7 +4059,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   transform: translateY(0);
 }
 
-/* Submit кнопка */
+/* Submit button */
 .cf-sub {
   display: flex;
   align-items: center;
@@ -4262,14 +4093,14 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   transition: opacity 0.3s;
 }
 .cf-sub:not(:disabled):hover {
-  box-shadow: 0 8px 36px rgba(61,255,143,0.38);
+  box-shadow: 0 8px 36px rgba(var(--g-rgb), 0.38);
   transform: translateY(-1px);
 }
 .cf-sub:not(:disabled):hover::before { opacity: 1; }
 .cf-sub:not(:disabled):active { transform: scale(0.97); }
 .cf-sub:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* Точки загрузки */
+/* Loading dots */
 .cf-sub-dots {
   display: none;
   align-items: center;
@@ -4288,14 +4119,14 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   40%         { transform: scale(1);   opacity: 1; }
 }
 
-/* Состояние загрузки */
+/* Loading state */
 .cf-sub.is-loading .cf-sub-text,
 .cf-sub.is-loading .cf-sub-arrow { display: none; }
 .cf-sub.is-loading .cf-sub-dots  { display: inline-flex; }
 .cf-sub.is-loading { pointer-events: none; }
 
 /* ── Success ── */
-/* Скрыт через класс — НЕ через display:none/hidden */
+/* Hidden via a class — NOT display:none/hidden */
 .drawer-success {
   display: none;
   flex-direction: column;
@@ -4306,7 +4137,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   padding: 2rem 1rem;
   flex: 1;
 }
-/* Показывается только с классом .is-visible */
+/* Shown only with the .is-visible class */
 .drawer-success.is-visible {
   display: flex;
 }
@@ -4314,7 +4145,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 .ds-check {
   width: 64px; height: 64px;
   border-radius: 50%;
-  border: 1px solid rgba(61,255,143,0.25);
+  border: 1px solid var(--ga-25);
   background: var(--gd);
   display: flex;
   align-items: center;
@@ -4362,7 +4193,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   .ct-socials   { width: 100%; margin-left: 0; padding-top: .2rem }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 640px) {
   .ct-actions { flex-direction: column; align-items: flex-start; }
   .ct-avail-row { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
   .drawer-inner {
@@ -4370,7 +4201,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
     padding-bottom: calc(1.8rem + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Timeline компактнее на маленьких экранах */
+  /* Timeline more compact on small screens */
   .ct-timeline { height: 130px; margin-bottom: 2.8rem; }
   .ct-dot-wrap { width: 52px; height: 52px; }
   .ct-dot-main { width: 44px; height: 44px; }
@@ -4379,13 +4210,13 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   .ct-tl-title { white-space: normal; text-align: center; font-size: 10px; }
   .ct-tl-desc  { white-space: normal; text-align: center; font-size: 10px; }
 
-  /* Socials в строку с переносом */
+  /* Socials in a wrapping row */
   .ct-socials {
     flex-wrap: wrap;
     gap: .8rem;
   }
 
-  /* CTA кнопка на всю ширину */
+  /* CTA full-width button */
   .ct-cta { width: 100%; justify-content: center; }
 }
 
@@ -4397,14 +4228,13 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   .ct-pr { width: 38px; height: 38px; }
 }
 
-/* Drawer на landscape-мобиле — уменьшаем шапку чтоб форма влезала */
+/* Drawer on landscape mobile — smaller header so the form fits */
 @media (max-height: 500px) and (max-width: 900px) {
   .drawer-head { margin-bottom: 1rem; padding-bottom: 1rem; }
   .drawer-title { font-size: 1.1rem; }
   .drawer-inner { padding: 1.2rem 1.2rem 1.4rem; }
   .cf-g { gap: 0.25rem; }
   .drawer-form { gap: 0.7rem; }
-  .drawer-foot { margin-top: 0.8rem; padding-top: 0.7rem; }
 }
 /* ════════════════════════════════════
    ABOUT — VISUAL CARDS (ab-ph-1 / ab-ph-2)
@@ -4421,7 +4251,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   position: absolute;
   width: 160px; height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(61,255,143,.35) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--ga-35) 0%, transparent 70%);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   filter: blur(30px);
@@ -4430,7 +4260,7 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   z-index: 0;
 }
 .ab-vc-glow--code {
-  background: radial-gradient(circle, rgba(61,255,143,.45) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(var(--g-rgb), .45) 0%, transparent 65%);
   animation: vcGlowPulse 3s ease-in-out infinite reverse;
 }
 
@@ -4490,8 +4320,8 @@ select.cf-in option { background: #0C1110; color: var(--t); }
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--g);
-  background: rgba(61,255,143,.1);
-  border: 1px solid rgba(61,255,143,.2);
+  background: var(--ga-10);
+  border: 1px solid var(--ga-20);
   padding: 3px 9px;
   border-radius: 99px;
   width: fit-content;
@@ -4505,8 +4335,8 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 
 /* subtle green border glow on hover */
 .ab-visual-card:hover {
-  border-color: rgba(61,255,143,.3) !important;
-  box-shadow: 0 0 28px rgba(61,255,143,.08);
+  border-color: var(--ga-30) !important;
+  box-shadow: 0 0 28px var(--ga-08);
 }
 .ab-visual-card:hover .ab-vc-glow {
   opacity: 1.2;
@@ -4542,3 +4372,23 @@ select.cf-in option { background: #0C1110; color: var(--t); }
     display: none;
   }
 }
+/* ── Legal links (footer + contact form) ── */
+.foot-copy-sep { margin: 0 .35rem; opacity: .5; }
+.foot-legal {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--ga-25);
+  text-underline-offset: 3px;
+  transition: color .2s ease, text-decoration-color .2s ease;
+}
+.foot-legal:hover { color: var(--g); text-decoration-color: var(--g); }
+
+.cf-legal {
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  color: var(--m-60);
+  text-align: center;
+  margin-top: -.2rem;
+}
+.cf-legal a { color: var(--m); text-decoration: underline; text-underline-offset: 2px; }
+.cf-legal a:hover { color: var(--g); }

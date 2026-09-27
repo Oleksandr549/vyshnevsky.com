@@ -63,27 +63,19 @@
   </script>
 
   <!-- ─── Fonts & Styles ─── -->
-  <!-- Preconnect to font origins for faster DNS + TLS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Non-blocking font load -->
-  <link rel="preload" as="style"
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap">
-  </noscript>
+  <link rel="preload" href="fonts/syne-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles/style.css">
   <!-- Preload GSAP (critical for hero animation) -->
-  <link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+  <link rel="preload" as="script" href="script/vendor/gsap.min.js">
 
 
 
   
 </head>
 
-<body>
+<body data-page="home">
 
   <div class="page-content">
 
@@ -131,7 +123,7 @@
       <span class="nav-scrolled-tz">CET · PL</span>
     </div>
 
-    <button class="nav-burger" id="navBurger" aria-label="Menu">
+    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -171,10 +163,10 @@
           <span class="hero-tagline-line"></span>
           Front-End Developer · Est. 2022
         </div>
-        <div class="hero-name">
+        <h1 class="hero-name">
           <span class="line"><span class="inner" id="heroL1">Oleksandr</span></span>
           <span class="line"><span class="inner glow" id="heroL2">Vyshnevskyi</span></span>
-        </div>
+        </h1>
       </div>
       <div class="hero-bottom-right">
         <a href="#contact" class="hero-cta">
@@ -496,53 +488,53 @@
         <!-- Body: left list + right preview -->
         <div class="pjs-body">
 
-          <!-- LEFT — карточки 16:9 -->
+          <!-- LEFT — 16:9 cards -->
           <div class="pjs-left">
             <div class="pjs-list" id="pjsList">
 
-              <div class="pjs-card active"
+              <div tabindex="0" role="button" aria-label="Preview QBL Platform" class="pjs-card active"
                 data-index="0"
                 data-name="QBL Platform"
-                data-type="Web App"
+                data-type="B2B Website"
                 data-year="2024"
-                data-desc="A full-featured web application for queue-based logistics — real-time tracking, user roles, and an admin dashboard built from scratch."
-                data-stack="HTML,CSS,JavaScript,PHP"
+                data-desc="Multi-page B2B website for an industrial storage and shelving manufacturer — product catalogue, references, technology sections and EN/PL support."
+                data-stack="HTML,CSS,JavaScript"
                 data-video="images/projects/qbl.mp4"
                 data-video-webm="images/projects/qbl.webm"
-                data-poster="images/QBL.webp"
-                data-link="project-detail.html?id=4">
+                data-poster="images/projects/qbl-poster.webp"
+                data-link="project-detail.html?id=12">
                 <div class="pjs-card-bar"></div>
                 <div class="pjs-card-thumb">
-                  <img src="images/QBL.webp" alt="QBL Platform" loading="lazy">
+                  <img src="images/projects/qbl-thumb.webp" alt="QBL Platform" width="640" height="360" loading="lazy">
                 </div>
                 <span class="pjs-card-num">01</span>
                 <div class="pjs-card-overlay">
-                  <div class="pjs-card-type">Web App</div>
+                  <div class="pjs-card-type">B2B Website</div>
                   <div class="pjs-card-name">QBL Platform</div>
                   <div class="pjs-card-tags">
-                    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span>
+                    <span>HTML</span><span>CSS</span><span>JavaScript</span>
                   </div>
                 </div>
               </div>
 
-              <div class="pjs-card"
+              <div tabindex="0" role="button" aria-label="Preview Dream Apart" class="pjs-card"
                 data-index="1"
                 data-name="Dream Apart"
-                data-type="Business"
-                data-year="2023"
-                data-desc="Premium real estate landing page with immersive property gallery, filtering system and integrated client inquiry flow."
+                data-type="Booking Platform"
+                data-year="2024"
+                data-desc="Vacation apartment booking platform UI — location and guest search, map view, filters and ski-resort property listings."
                 data-stack="HTML,CSS,JavaScript"
                 data-video="images/projects/dreamapart.mp4"
                 data-video-webm="images/projects/dreamapart.webm"
-                data-poster="images/DreamApart.webp"
-                data-link="project-detail.html?id=3">
+                data-poster="images/projects/dreamapart-poster.webp"
+                data-link="project-detail.html?id=13">
                 <div class="pjs-card-bar"></div>
                 <div class="pjs-card-thumb">
-                  <img src="images/DreamApart.webp" alt="Dream Apart" loading="lazy">
+                  <img src="images/projects/dreamapart-thumb.webp" alt="Dream Apart" width="640" height="360" loading="lazy">
                 </div>
                 <span class="pjs-card-num">02</span>
                 <div class="pjs-card-overlay">
-                  <div class="pjs-card-type">Business</div>
+                  <div class="pjs-card-type">Booking Platform</div>
                   <div class="pjs-card-name">Dream Apart</div>
                   <div class="pjs-card-tags">
                     <span>HTML</span><span>CSS</span><span>JavaScript</span>
@@ -550,20 +542,20 @@
                 </div>
               </div>
 
-              <div class="pjs-card"
+              <div tabindex="0" role="button" aria-label="Preview VR Lounge" class="pjs-card"
                 data-index="2"
                 data-name="VR Lounge"
                 data-type="Landing"
-                data-year="2023"
-                data-desc="High-impact landing page for a VR gaming venue — GSAP-powered entrance animations, parallax layers and smooth scroll-triggered reveals."
+                data-year="2025"
+                data-desc="Conversion-focused landing page for a VR lounge — attractions with pricing, photo gallery, FAQ and a waiver page."
                 data-stack="HTML,CSS,JavaScript,GSAP"
                 data-video="images/projects/vrlounge.mp4"
                 data-video-webm="images/projects/vrlounge.webm"
-                data-poster="images/VRLounge.webp"
-                data-link="project-detail.html?id=1">
+                data-poster="images/projects/vrlounge-poster.webp"
+                data-link="project-detail.html?id=9">
                 <div class="pjs-card-bar"></div>
                 <div class="pjs-card-thumb">
-                  <img src="images/VRLounge.webp" alt="VR Lounge" loading="lazy">
+                  <img src="images/projects/vrlounge-thumb.webp" alt="VR Lounge" width="640" height="360" loading="lazy">
                 </div>
                 <span class="pjs-card-num">03</span>
                 <div class="pjs-card-overlay">
@@ -575,27 +567,27 @@
                 </div>
               </div>
 
-              <div class="pjs-card"
+              <div tabindex="0" role="button" aria-label="Preview Nations on Fire" class="pjs-card"
                 data-index="3"
                 data-name="Nations on Fire"
-                data-type="Platform"
-                data-year="2022"
-                data-desc="Competitive gaming platform with live leaderboards, full user authentication system and complete match history tracking."
-                data-stack="HTML,CSS,JavaScript,PHP"
+                data-type="Multi-page Site"
+                data-year="2024"
+                data-desc="Multi-page website for a Polish missionary movement — video hero, event listings, media gallery and donation flow."
+                data-stack="HTML,CSS,JavaScript,GSAP"
                 data-video="images/projects/nationsfire.mp4"
                 data-video-webm="images/projects/nationsfire.webm"
-                data-poster="images/NationsOnFire.webp"
-                data-link="project-detail.html?id=2">
+                data-poster="images/projects/nationsfire-poster.webp"
+                data-link="project-detail.html?id=1">
                 <div class="pjs-card-bar"></div>
                 <div class="pjs-card-thumb">
-                  <img src="images/NationsOnFire.webp" alt="Nations on Fire" loading="lazy">
+                  <img src="images/projects/nationsfire-thumb.webp" alt="Nations on Fire" width="640" height="360" loading="lazy">
                 </div>
                 <span class="pjs-card-num">04</span>
                 <div class="pjs-card-overlay">
-                  <div class="pjs-card-type">Platform</div>
+                  <div class="pjs-card-type">Multi-page Site</div>
                   <div class="pjs-card-name">Nations on Fire</div>
                   <div class="pjs-card-tags">
-                    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span>
+                    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>GSAP</span>
                   </div>
                 </div>
               </div>
@@ -606,7 +598,7 @@
             </div>
           </div><!-- /pjs-left -->
 
-          <!-- RIGHT — видео превью -->
+          <!-- RIGHT — video preview -->
           <div class="pjs-right">
             <div class="pjs-video-box">
               <div class="pjs-video-ratio">
@@ -617,23 +609,22 @@
                   playsinline
                   loop
                   preload="metadata"
-                  poster="images/QBL.webp">
-                  <source src="images/projects/qbl.webm" type="video/webm">
-                  <source src="images/projects/qbl.mp4" type="video/mp4">
+                  poster="images/projects/qbl-poster.webp">
+                  <!-- sources are set by script.js when the section scrolls into view -->
                 </video>
-                <img class="pjs-poster" id="pjsPoster" src="images/QBL.webp" alt="" aria-hidden="true">
+                <img class="pjs-poster" id="pjsPoster" src="images/projects/qbl-poster.webp" alt="" aria-hidden="true" width="1280" height="720">
                 <div class="pjs-video-overlay"></div>
-                <!-- Info поверх видео -->
+                <!-- Info over the video -->
                 <div class="pjs-info" id="pjsInfo">
                   <div class="pjs-info-left">
                     <div class="pjs-info-meta">
-                      <span class="pjs-info-badge" id="pjsBadge">Web App</span>
+                      <span class="pjs-info-badge" id="pjsBadge">B2B Website</span>
                       <span class="pjs-info-year" id="pjsYear">2024</span>
                     </div>
                     <div class="pjs-info-name" id="pjsName">QBL Platform</div>
-                    <div class="pjs-info-desc" id="pjsDesc">A full-featured web application for queue-based logistics — real-time tracking, user roles, and an admin dashboard built from scratch.</div>
+                    <div class="pjs-info-desc" id="pjsDesc">Multi-page B2B website for an industrial storage and shelving manufacturer — product catalogue, references, technology sections and EN/PL support.</div>
                   </div>
-                  <a class="pjs-info-cta" id="pjsCta" href="project-detail.html?id=4">
+                  <a class="pjs-info-cta" id="pjsCta" href="project-detail.html?id=12">
                     View Project
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </a>
@@ -647,11 +638,11 @@
       </div><!-- /pjs-sticky -->
     </div><!-- /pjs-wrap -->
 
-    <!-- reveal — без изменений -->
+    <!-- reveal — unchanged -->
     <div id="projReveal">
       <canvas class="reveal-canvas" id="revealCanvas"></canvas>
       <span class="reveal-label" id="revealLabel">— Selected Work</span>
-      <a href="projects.html" target="_blank" rel="noopener noreferrer" class="reveal-btn" id="revealBtn">
+      <a href="projects.html" class="reveal-btn" id="revealBtn">
         View All Work
         <span class="rb-arrow">↗</span>
       </a>
@@ -1019,12 +1010,12 @@
       <div class="cf-2col">
         <div class="cf-g" id="grp-name">
           <label class="cf-lbl" for="d-name">Your Name</label>
-          <input id="d-name" type="text" class="cf-in" placeholder="John Doe" autocomplete="name">
+          <input id="d-name" required aria-required="true" type="text" class="cf-in" placeholder="John Doe" autocomplete="name">
           <span class="cf-err" id="err-name"></span>
         </div>
         <div class="cf-g" id="grp-email">
           <label class="cf-lbl" for="d-email">Email</label>
-          <input id="d-email" type="email" class="cf-in" placeholder="john@example.com" autocomplete="email">
+          <input id="d-email" required aria-required="true" type="email" class="cf-in" placeholder="john@example.com" autocomplete="email">
           <span class="cf-err" id="err-email"></span>
         </div>
       </div>
@@ -1033,7 +1024,7 @@
       <div class="cf-2col">
         <div class="cf-g" id="grp-type">
           <label class="cf-lbl" for="d-type">Project Type</label>
-          <select id="d-type" class="cf-in">
+          <select id="d-type" class="cf-in" required aria-required="true">
             <option value="" disabled selected>Select type</option>
             <option>Landing page</option>
             <option>Web app / Platform</option>
@@ -1041,16 +1032,18 @@
             <option>Redesign</option>
             <option>Other</option>
           </select>
+          <span class="cf-err" id="err-type"></span>
         </div>
         <div class="cf-g" id="grp-deadline">
           <label class="cf-lbl" for="d-deadline">Deadline</label>
-          <select id="d-deadline" class="cf-in">
+          <select id="d-deadline" class="cf-in" required aria-required="true">
             <option value="" disabled selected>When do you need it?</option>
             <option>ASAP (1–2 weeks)</option>
             <option>1 month</option>
             <option>2–3 months</option>
             <option>Flexible</option>
           </select>
+          <span class="cf-err" id="err-deadline"></span>
         </div>
       </div>
 
@@ -1058,9 +1051,9 @@
       <div class="cf-g cf-g--grow" id="grp-msg">
         <label class="cf-lbl" for="d-msg">
           Project Brief
-          <span class="cf-counter" id="d-counter">0 / 100+</span>
+          <span class="cf-counter" id="d-counter">0 chars</span>
         </label>
-        <textarea id="d-msg" class="cf-in cf-textarea" placeholder="What's the project? What's the deadline? Do you have a design or references?"></textarea>
+        <textarea id="d-msg" required aria-required="true" class="cf-in cf-textarea" placeholder="What's the project? What's the deadline? Do you have a design or references?"></textarea>
         <span class="cf-err" id="err-msg"></span>
         <span class="cf-hint">More detail → faster and more accurate estimate</span>
       </div>
@@ -1074,6 +1067,12 @@
         <input id="d-messenger" type="text" class="cf-in" placeholder="+48 123 456 789 or @username">
       </div>
 
+      <!-- Honeypot (spam trap) — hidden from humans, Formspree drops submissions where it is filled -->
+      <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+        <label for="d-website">Website</label>
+        <input id="d-website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
       <button type="submit" class="cf-sub" id="drawerSubmit">
         <span class="cf-sub-text">Send Message</span>
         <span class="cf-sub-arrow">→</span>
@@ -1081,6 +1080,7 @@
           <span></span><span></span><span></span>
         </span>
       </button>
+      <p class="cf-legal">Your details are used only to reply to your request. See the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</p>
 
     </form>
 
@@ -1119,7 +1119,7 @@
         <div class="foot-sep"></div>
         <span class="foot-col-label">Contact</span>
         <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="foot-email">
-          oleksandr.vyshnevskyi.work@gmail.com
+          oleksandr.vyshnevskyi<wbr>.work@gmail.com
         </a>
        
       </div>
@@ -1168,7 +1168,7 @@
     <div class="foot-divider"></div>
 
     <div class="foot-bottom">
-      <span class="foot-copy">© <span id="footYear"></span> Oleksandr Vyshnevskyi — Designed &amp; built from scratch.</span>
+      <span class="foot-copy">© <span id="footYear"></span> Oleksandr Vyshnevskyi — Designed &amp; built from scratch. <span class="foot-copy-sep">·</span> <a href="privacy.html" class="foot-legal">Privacy Policy</a></span>
       <a href="#hero" class="foot-back">
         Back to top
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -1179,33 +1179,20 @@
 
   </footer>
 
-  <!-- Unified clock: nav hero, nav scrolled, footer -->
-  <script>
-    (function () {
-      var ids = ['navTime', 'navTimeS', 'footTime', 'nmTime'];
-      function tick() {
-        var t = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Warsaw', hour12: false });
-        ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.textContent = t; });
-      }
-      tick(); setInterval(tick, 1000);
-      var ye = document.getElementById('footYear');
-      if (ye) ye.textContent = new Date().getFullYear();
-    })();
-  </script>
-
   <!-- Three.js + post-processing for globe — all deferred, never block page render -->
   <script>
     /* Load Three.js chain sequentially after page is interactive */
     (function() {
-      var CDN = 'https://cdn.jsdelivr.net/npm/three@0.134.0';
+      /* Three.js r134 — self-hosted in script/vendor/three (no third-party requests) */
+      var V = 'script/vendor/three';
       var scripts = [
-        CDN + '/build/three.min.js',
-        CDN + '/examples/js/shaders/LuminosityHighPassShader.js',
-        CDN + '/examples/js/shaders/CopyShader.js',
-        CDN + '/examples/js/postprocessing/EffectComposer.js',
-        CDN + '/examples/js/postprocessing/RenderPass.js',
-        CDN + '/examples/js/postprocessing/ShaderPass.js',
-        CDN + '/examples/js/postprocessing/UnrealBloomPass.js',
+        V + '/three.min.js',
+        V + '/shaders/LuminosityHighPassShader.js',
+        V + '/shaders/CopyShader.js',
+        V + '/postprocessing/EffectComposer.js',
+        V + '/postprocessing/RenderPass.js',
+        V + '/postprocessing/ShaderPass.js',
+        V + '/postprocessing/UnrealBloomPass.js',
         'script/globe.js'
       ];
       function loadNext(i) {
@@ -1224,9 +1211,10 @@
   </script>
 
   <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="script/vendor/gsap.min.js" defer></script>
+  <script src="script/vendor/ScrollTrigger.min.js" defer></script>
   <script src="script/transition.js" defer></script>
+  <script src="script/common.js" defer></script>
   <script src="script/script.js" defer></script>
 
 

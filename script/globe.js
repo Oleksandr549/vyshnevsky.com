@@ -6,6 +6,10 @@
   const BG        = 0x07090A;
   const RADIUS    = 1;
   const AUTO_ROT  = 0.0008;
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Module-level refs filled in by async loaders below (were window.* globals) */
+  let updateGlow = null;
+  let landGlowMatRef = null;
   const isMobile  = window.innerWidth < 768;
 
   /* ── Round dot sprite ── */
@@ -80,8 +84,7 @@
     glowSprite.scale.set(8.0, 8.0, 1);
     glowSprite.position.set(0, -0.15, -1.8);
     scene.add(glowSprite);
-    window._glowMat = glowMat;
-    window._updateGlow = (t, intro) => {
+    updateGlow = (t, intro) => {
       const base = 0.72 + Math.sin(t * 0.2) * 0.08;
       glowMat.opacity = base * intro;
     };
@@ -176,8 +179,25 @@
   }
 
   /* ── Prefetch both geo files in parallel immediately — single fetch each ── */
-  let _landTopoPromise    = fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json').then(r=>r.json());
-  let _countriesTopoPromise = fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json').then(r=>r.json());
+  /* Mobile: 110m maps (~5× lighter) — the globe is small there, detail difference is invisible */
+  const GEO_RES = isMobile ? '110m' : '50m';
+  /* world-atlas@2 TopoJSON — self-hosted in data/geo.
+     Loaded as <script> (not fetch) so the globe also works when index.html
+     is opened straight from disk (file://), where fetch() is blocked. */
+  function loadGeo(name) {
+    return new Promise((resolve, reject) => {
+      const cached = window.GEO_DATA && window.GEO_DATA[name];
+      if (cached) return resolve(cached);
+      const s = document.createElement('script');
+      s.src = `data/geo/${name}.js`;
+      s.async = true;
+      s.onload  = () => (window.GEO_DATA && window.GEO_DATA[name]) ? resolve(window.GEO_DATA[name]) : reject(new Error('Geo data missing: ' + name));
+      s.onerror = () => reject(new Error('Geo load failed: ' + name));
+      document.head.appendChild(s);
+    });
+  }
+  let _landTopoPromise      = loadGeo(`land-${GEO_RES}`);
+  let _countriesTopoPromise = loadGeo(`countries-${GEO_RES}`);
 
   function fetchLandTopo()      { return _landTopoPromise; }
   function fetchCountriesTopo() { return _countriesTopoPromise; }
@@ -552,7 +572,7 @@
       depthWrite: false, depthTest: true, side: THREE.FrontSide,
     });
     globe.add(new THREE.Mesh(new THREE.SphereGeometry(RADIUS+0.001, isMobile?32:64, isMobile?32:64), landGlowMat));
-    window._landGlowMat = landGlowMat;
+    landGlowMatRef = landGlowMat;
   } catch(e) { console.warn('Land glow failed:', e); }
 
 
@@ -563,7 +583,7 @@
   let isDragging   = false;
   let prevX        = 0;
   let velocityY    = 0;       // inertia accumulator
-  let autoRotSpeed = AUTO_ROT;
+  let autoRotSpeed = REDUCE_MOTION ? 0 : AUTO_ROT; /* still draggable, just no auto-spin */
   let userControlling = false;
 
   const heroEl = document.getElementById('hero');
@@ -686,8 +706,8 @@
     updateArcs(t);
     updateCityPulse(t);
     if (noiseMat)           noiseMat.uniforms.uTime.value = t;
-    if (window._landGlowMat) window._landGlowMat.uniforms.uTime.value = t;
-    if (window._updateGlow)  window._updateGlow(t, introProgress);
+    if (landGlowMatRef) landGlowMatRef.uniforms.uTime.value = t;
+    if (updateGlow)  updateGlow(t, introProgress);
 
     /* Breathing fresnel + bloom */
     fresnelMat.uniforms.uStrength.value = (isMobile ? 2.2 : 1.38) + Math.sin(t * 0.28) * 0.06;

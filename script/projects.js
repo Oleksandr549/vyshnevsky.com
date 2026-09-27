@@ -7,20 +7,7 @@ const PER_PAGE = 6;
 /* ─── STATE ─── */
 let shown = 0;
 
-/* ─── SCROLL PROGRESS BAR ─── */
-(function () {
-  const bar = document.getElementById('scrollProgress');
-  if (!bar) return;
-  window.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
-  }, { passive: true });
-})();
-
-/* ─── NAV SCROLL ─── */
-window.addEventListener('scroll', () =>
-  document.getElementById('nav').classList.toggle('s', scrollY > 60)
-);
+/* Scroll progress, nav state, burger, clock — handled by common.js */
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,8 +48,9 @@ function renderCards(count) {
 }
 
 function buildCard(p, idx) {
-  const card = document.createElement('div');
+  const card = document.createElement('a');
   card.className = 'pg-card';
+  card.href = `project-detail.html?id=${p.id}`;
   card.setAttribute('data-id', p.id);
 
   const mediaEl = p.image
@@ -86,16 +74,8 @@ function buildCard(p, idx) {
     </div>
   `;
 
-  card.setAttribute('role', 'button');
-  card.setAttribute('tabindex', '0');
   card.setAttribute('aria-label', `View project: ${p.title}`);
-  card.addEventListener('click', () => navigateToProject(p.id));
-  card.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      navigateToProject(p.id);
-    }
-  });
+  /* Real <a href> — crawlable, middle-click/new-tab works; transition.js animates the navigation */
   return card;
 }
 

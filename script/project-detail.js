@@ -6,22 +6,7 @@
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ─── SCROLL PROGRESS BAR ─── */
-(function () {
-  const bar = document.getElementById('scrollProgress');
-  if (!bar) return;
-  window.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
-  }, { passive: true });
-})();
-
-/* ─── Nav scroll ─── */
-window.addEventListener('scroll', () =>
-  document.getElementById('nav').classList.toggle('s', window.scrollY > 60)
-);
-
-/* ─── Mobile nav — handled by transition.js ─── */
+/* Scroll progress, nav state, burger, clock — handled by common.js */
 
 /* ─── Read id from URL ─── */
 const params  = new URLSearchParams(window.location.search);
@@ -50,6 +35,19 @@ function renderPage(p) {
   /* ── page title ── */
   document.title = `${p.title} — Oleksandr Vyshnevskyi`;
 
+  /* ── per-project SEO: canonical, description, OG ── */
+  const pageUrl = `https://vyshnevsky.com/project-detail.html?id=${p.id}`;
+  const setAttr = (sel, attr, val) => { const el = document.querySelector(sel); if (el && val) el.setAttribute(attr, val); };
+  setAttr('link[rel="canonical"]', 'href', pageUrl);
+  setAttr('meta[property="og:url"]', 'content', pageUrl);
+  setAttr('meta[property="og:title"]', 'content', document.title);
+  setAttr('meta[name="twitter:title"]', 'content', document.title);
+  if (p.brief) {
+    setAttr('meta[name="description"]', 'content', p.brief);
+    setAttr('meta[property="og:description"]', 'content', p.brief);
+    setAttr('meta[name="twitter:description"]', 'content', p.brief);
+  }
+
   /* ── HERO ── */
   if (p.image) {
     document.getElementById('pdHeroBg').style.backgroundImage = `url(${p.image})`;
@@ -76,7 +74,7 @@ function renderPage(p) {
   if (p.liveUrl && p.liveUrl !== '#') {
     actionsHtml += `
       <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="pd-hero-btn primary">
-        Visit Live Site
+        View Demo
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>`;
   }
@@ -160,7 +158,7 @@ function renderPage(p) {
   if (p.liveUrl && p.liveUrl !== '#') {
     sidebarHtml += `
       <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="pd-live-banner">
-        <span class="pd-live-banner-label">Live Site</span>
+        <span class="pd-live-banner-label">View Demo</span>
         <span class="pd-live-banner-arrow">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
         </span>
@@ -243,7 +241,13 @@ function renderPage(p) {
         <span class="pd-gal-num">${numStr}</span>
       `;
 
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-label', `Open image ${i + 1} of ${allMedia.length}`);
       item.addEventListener('click', () => openLightbox(i));
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
+      });
       grid.appendChild(item);
     });
   }
@@ -309,7 +313,7 @@ function renderPage(p) {
   main.style.opacity = '1';
 
   /* ── prefers-reduced-motion check ── */
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = window.SITE ? window.SITE.REDUCE_MOTION : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── set initial gsap states BEFORE the timeout so elements are hidden from frame 0 ── */
   if (!prefersReduced) {
@@ -390,12 +394,18 @@ function openLightbox(idx) {
   lbIdx = idx;
   renderLb();
   document.getElementById('pdLightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  window.lockScroll && window.lockScroll(); /* shared scroll lock (transition.js) */
+  lbReturnFocus = document.activeElement;
+  document.getElementById('pdLbClose').focus();
 }
 
+let lbReturnFocus = null;
 function closeLightbox() {
-  document.getElementById('pdLightbox').classList.remove('open');
-  document.body.style.overflow = '';
+  const lb = document.getElementById('pdLightbox');
+  if (!lb.classList.contains('open')) return;
+  lb.classList.remove('open');
+  window.unlockScroll && window.unlockScroll();
+  if (lbReturnFocus && lbReturnFocus.focus) lbReturnFocus.focus();
 }
 
 function renderLb() {
@@ -403,7 +413,7 @@ function renderLb() {
   if (!m) return;
   document.getElementById('pdLbMedia').innerHTML = m.type === 'video'
     ? `<video src="${m.src}" controls autoplay></video>`
-    : `<img src="${m.src}" alt="Preview" loading="eager">`;
+    : `<img src="${m.src}" alt="${project.title} — image ${lbIdx + 1}" loading="eager">`;
   document.getElementById('pdLbCounter').textContent = `${lbIdx + 1} / ${lbMedia.length}`;
 }
 

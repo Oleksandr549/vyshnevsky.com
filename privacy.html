@@ -7,29 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ─── Primary SEO ─── -->
-  <!-- Note: title and og:title are updated dynamically via JS based on project data -->
-  <title>Project — Oleksandr Vyshnevskyi · Front-End Developer</title>
-  <meta name="description" id="pdMetaDesc" content="Project case study by Oleksandr Vyshnevskyi — front-end developer with 28+ delivered projects for clients in the US, Canada, and Europe.">
+  <title>Privacy Policy — Oleksandr Vyshnevskyi</title>
+  <meta name="description" content="How vyshnevsky.com handles personal data sent through the contact form.">
   <meta name="author" content="Oleksandr Vyshnevskyi">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" id="pdCanonical" href="https://vyshnevsky.com/projects.html">
-
-  <!-- ─── Open Graph ─── -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" id="pdOgUrl" content="https://vyshnevsky.com/projects.html">
-  <meta property="og:title" content="Project — Oleksandr Vyshnevskyi · Front-End Developer">
-  <meta property="og:description" content="Project case study by Oleksandr Vyshnevskyi — front-end developer with 28+ delivered projects.">
-  <meta property="og:image" content="https://vyshnevsky.com/images/og-preview-1200x630.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:locale" content="en_US">
-  <meta property="og:site_name" content="Oleksandr Vyshnevskyi">
-
-  <!-- ─── Twitter Card ─── -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project — Oleksandr Vyshnevskyi · Front-End Developer">
-  <meta name="twitter:description" content="Project case study by Oleksandr Vyshnevskyi — front-end developer with 28+ delivered projects.">
-  <meta name="twitter:image" content="https://vyshnevsky.com/images/og-preview-1200x630.png">
+  <link rel="canonical" href="https://vyshnevsky.com/privacy.html">
 
   <!-- ─── Favicon ─── -->
   <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -42,11 +24,11 @@
   <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles/style.css">
-  <link rel="stylesheet" href="styles/project-detail.css">
+  <link rel="stylesheet" href="styles/legal.css">
 
 </head>
 
-<body data-page="project">
+<body data-page="privacy">
 
   <div class="page-content">
 
@@ -77,7 +59,7 @@
   <div class="nav-mobile" id="navMobile">
     <a href="index.html#about" class="nm-link">About</a>
     <a href="index.html#skills" class="nm-link">Skills</a>
-    <a href="projects.html" class="nm-link nm-active">Projects</a>
+    <a href="projects.html" class="nm-link">Projects</a>
     <a href="index.html#contact" class="nm-link">Contact</a>
     <div class="nm-time-block">
       <span class="nm-time-label">Local time</span>
@@ -86,77 +68,65 @@
     </div>
   </div>
 
-  <!-- Page enter overlay (slides away on load) -->
-  <!-- ─── 404 state (shown if id not found) ─── -->
-  <div class="pd-404" id="pd404" style="display:none;">
-    <div class="pd-404-inner">
-      <div class="stag">Error</div>
-      <h1>Project not found.</h1>
-      <a href="projects.html" class="pd-back-btn">← Back to Projects</a>
-    </div>
-  </div>
+  <main class="legal wrap">
+    <div class="stag">Legal</div>
+    <h1 class="legal-title">Privacy Policy</h1>
+    <p class="legal-updated">Last updated: <time datetime="2026-09-25">25 September 2026</time></p>
 
-  <!-- ─── MAIN CONTENT (injected by JS) ─── -->
-  <main id="pdMain" style="opacity:0;">
-
-    <!-- HERO -->
-    <section class="pd-hero" id="pdHero">
-      <div class="pd-hero-bg" id="pdHeroBg"></div>
-      <div class="pd-hero-overlay"></div>
-      <div class="pd-hero-content wrap">
-        <a class="pd-breadcrumb" href="projects.html" id="pdBreadcrumb">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          All Projects
-        </a>
-        <div class="pd-hero-meta" id="pdHeroMeta"></div>
-        <h1 class="pd-hero-title" id="pdHeroTitle"></h1>
-        <p class="pd-hero-brief" id="pdHeroBrief"></p>
-        <div class="pd-hero-actions" id="pdHeroActions"></div>
-      </div>
+    <section>
+      <h2>1. Who is responsible for your data</h2>
+      <p>The controller of personal data processed through this website is <strong>Oleksandr Vyshnevskyi</strong>, a freelance front-end developer based in Poland. Contact: <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com">oleksandr.vyshnevskyi.work@gmail.com</a>.</p>
     </section>
 
-    <!-- BODY -->
-    <section class="pd-content-wrap wrap">
-      <div class="pd-content-grid">
-
-        <!-- LEFT — main content -->
-        <div class="pd-left" id="pdLeft"></div>
-
-        <!-- RIGHT — sidebar -->
-        <aside class="pd-sidebar" id="pdSidebar"></aside>
-
-      </div>
+    <section>
+      <h2>2. What data is collected</h2>
+      <p>Only the data you choose to send through the contact form:</p>
+      <ul>
+        <li>name and email address,</li>
+        <li>project type, deadline and project description,</li>
+        <li>optionally — your WhatsApp / Telegram contact.</li>
+      </ul>
+      <p>If you write to me by email, I receive your email address and the content of your message.</p>
     </section>
 
-    <!-- GALLERY -->
-    <section class="pd-gallery-section" id="pdGallerySection" style="display:none;">
-      <div class="pd-gallery-header wrap">
-        <h2 class="pd-gallery-title">Gallery</h2>
-        <span class="pd-gallery-count-label" id="pdGalleryCountLabel"></span>
-      </div>
-      <div class="pd-gallery-grid" id="pdGalleryGrid"></div>
+    <section>
+      <h2>3. Why and on what legal basis</h2>
+      <p>Your data is used only to reply to your enquiry, prepare an estimate and — if we decide to work together — to carry out the project. The legal basis is Art. 6(1)(b) GDPR (steps taken at your request before entering into a contract, and performance of a contract) and Art. 6(1)(f) GDPR (my legitimate interest in replying to messages sent to me).</p>
+      <p>Providing the data is voluntary, but without an email address I can't reply to you.</p>
     </section>
 
-    <!-- LIGHTBOX -->
-    <div class="pd-lightbox" id="pdLightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
-      <button class="pd-lb-close" id="pdLbClose" aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-      <button class="pd-lb-prev" id="pdLbPrev" aria-label="Previous image">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <div class="pd-lb-media" id="pdLbMedia"></div>
-      <button class="pd-lb-next" id="pdLbNext" aria-label="Next image">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
-      <div class="pd-lb-counter" id="pdLbCounter"></div>
-    </div>
+    <section>
+      <h2>4. Who else processes the data</h2>
+      <ul>
+        <li><strong>Formspree, Inc.</strong> (USA) — delivers contact-form messages to my inbox and acts as a data processor. Data transferred outside the EEA is protected by the safeguards described in Formspree's <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">privacy policy</a> and data processing agreement.</li>
+        <li><strong>Google (Gmail)</strong> — my email provider, where replies and messages are stored.</li>
+        <li><strong>GitHub, Inc.</strong> (GitHub Pages) — hosts this website and may log technical data such as your IP address for security purposes.</li>
+      </ul>
+      <p>Your data is never sold or used for marketing.</p>
+    </section>
 
-    <!-- NEXT / PREV PROJECTS -->
-    <section class="pd-nav-projects wrap" id="pdNavProjects"></section>
+    <section>
+      <h2>5. How long it is kept</h2>
+      <p>Enquiries that don't lead to a project are deleted within 12 months. If we work together, correspondence is kept for as long as needed to complete the project and for the period required by law (e.g. tax and accounting rules) or to handle possible claims.</p>
+    </section>
 
+    <section>
+      <h2>6. Your rights</h2>
+      <p>You have the right to access your data, correct it, have it deleted, restrict or object to its processing, and to data portability. To use any of these rights, just email me. You also have the right to lodge a complaint with the Polish supervisory authority — the President of the Personal Data Protection Office (<a href="https://uodo.gov.pl" target="_blank" rel="noopener noreferrer">UODO</a>), ul. Stawki 2, 00-193 Warszawa.</p>
+    </section>
+
+    <section>
+      <h2>7. Cookies and tracking</h2>
+      <p>This website does not use cookies, analytics or any tracking tools. Fonts, scripts and map data are served from this domain — no third-party requests are made while you browse. A request to Formspree is made only when you submit the contact form.</p>
+    </section>
+
+    <section>
+      <h2>8. Changes</h2>
+      <p>If this policy changes, the updated version will be published on this page with a new date.</p>
+    </section>
+
+    <a href="index.html" class="legal-back">← Back to home</a>
   </main>
-
 
   </div><!-- /page-content -->
 
@@ -242,8 +212,6 @@
   <script src="script/vendor/ScrollTrigger.min.js" defer></script>
   <script src="script/transition.js" defer></script>
   <script src="script/common.js" defer></script>
-  <script src="script/projects-data.js" defer></script>
-  <script src="script/project-detail.js" defer></script>
 
 </body>
 </html>
