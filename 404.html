@@ -18,6 +18,7 @@
   <link rel="preload" href="fonts/syne-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/fonts.css">
+  <link rel="stylesheet" href="styles/buttons.css">
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -168,43 +169,6 @@
       flex-wrap: wrap;
     }
 
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--g);
-      color: #040705;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.875rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: var(--r-pill);
-      text-decoration: none;
-      transition: opacity .2s, transform .2s;
-    }
-
-    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      color: var(--t);
-      font-size: 0.875rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: var(--r-pill);
-      border: 1px solid var(--ga-20);
-      text-decoration: none;
-      transition: border-color .2s, color .2s, transform .2s;
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--ga-40);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-
     /* ── FOOTER ── */
     footer {
       padding: 1.5rem clamp(1.5rem, 5vw, 5rem);
@@ -262,12 +226,8 @@
       <h1>Looks like this page<br>doesn't exist.</h1>
       <p class="sub">The page you're looking for may have been moved,<br>deleted, or never existed in the first place.</p>
       <div class="actions">
-        <a href="index.html" class="btn-primary">
-          ← Back to Home
-        </a>
-        <a href="projects.html" class="btn-secondary">
-          View Projects ↗
-        </a>
+        <a href="index.html" class="btn btn--primary btn--icon-left"><span class="btn__icon btn__icon--left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span> Back to Home</a>
+        <a href="projects.html" class="btn btn--secondary">View Projects <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </div>
   </main>

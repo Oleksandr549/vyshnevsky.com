@@ -77,15 +77,10 @@ function renderPage(p) {
   let actionsHtml = '';
   if (p.liveUrl && p.liveUrl !== '#') {
     actionsHtml += `
-      <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="pd-hero-btn primary">
-        View Demo
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>`;
+      <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="pd-hero-btn btn btn--primary">View Demo <span class="btn__icon btn__icon--up-right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></span></a>`;
   }
   actionsHtml += `
-    <a href="index.html?section=contact" class="pd-hero-btn ghost">
-      Start a Similar Project →
-    </a>`;
+    <a href="index.html?section=contact" class="pd-hero-btn btn btn--secondary">Start a Similar Project <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>`;
   heroActions.innerHTML = actionsHtml;
 
   /* ── INFO STRIP — removed, content moved to sidebar ── */
@@ -174,8 +169,8 @@ function renderPage(p) {
     <div class="pd-sb-head">Get in touch</div>
     <div class="pd-sb-body">
       <div class="pd-sb-cta">
-        <a href="index.html?section=contact" class="pd-sb-btn primary">Start a Similar Project →</a>
-        <a href="projects.html" class="pd-sb-btn secondary">← All Projects</a>
+        <a href="index.html?section=contact" class="pd-sb-btn btn btn--primary btn--s">Start a Similar Project <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a href="projects.html" class="pd-sb-btn btn btn--secondary btn--s btn--icon-left"><span class="btn__icon btn__icon--left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span> All Projects</a>
       </div>
     </div>
   </div>`;

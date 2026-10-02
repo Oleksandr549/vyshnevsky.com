@@ -416,8 +416,6 @@ nav#nav.s .nav-scrolled-time {
   pointer-events: none
 }
 
-
-
 /* Film grain */
 
 @keyframes grain {
@@ -480,7 +478,6 @@ nav#nav.s .nav-scrolled-time {
   padding: 0
 }
 
-
 .hero-name .inner {
   display: block;
   font-size: clamp(2.2rem, 5.2vw, 6.2rem);
@@ -503,37 +500,11 @@ nav#nav.s .nav-scrolled-time {
   padding-bottom: .25rem
 }
 
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: .75rem;
-  font-size: var(--fs-small);
-  color: var(--g);
-  letter-spacing: var(--ls-wide);
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: gap .3s
-}
 
-.hero-cta:hover {
-  gap: 1.1rem
-}
-
-.hero-cta-arrow {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--ga-35);
+.hero-ctas {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  transition: background .3s, border-color .3s
-}
-
-.hero-cta:hover .hero-cta-arrow {
-  background: var(--ga-08);
-  border-color: var(--ga-65)
+  gap: .6rem;
+  align-items: center
 }
 
 .hero-stats {
@@ -598,56 +569,7 @@ nav#nav.s .nav-scrolled-time {
   100% { transform: scaleY(0); transform-origin: bottom; opacity: 0 }
 }
 
-/* ─── BUTTON SYSTEM ─── */
-/* Shared base */
-.btn-g {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: var(--fs-micro);
-  letter-spacing: var(--ls-wide);
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: var(--r-pill);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: color .3s ease, border-color .3s ease, box-shadow .3s ease;
-  /* ripple layer */
-  isolation: isolate
-}
-
-/* Shared shimmer pseudo-element */
-.btn-g::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity .35s ease
-}
-
-/* Primary — green fill */
-.btn-g {
-  gap: .7rem;
-  background: var(--g);
-  color: var(--g-btn);
-  padding: .9rem 2.2rem;
-  border: none;
-  box-shadow: 0 0 0 rgba(var(--g-rgb), 0)
-}
-.btn-g::before {
-  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.35) 0%, transparent 65%)
-}
-.btn-g:hover {
-  box-shadow: 0 8px 40px var(--ga-35), 0 0 0 1px var(--ga-20);
-}
-.btn-g:hover::before { opacity: 1 }
-.btn-g:active { transform: scale(.97) }
-
-/* Outline */
+/* ─── BUTTONS → styles/buttons.css ─── */
 
 /* hero-scroll-hint handled in hero section above */
 
@@ -906,7 +828,6 @@ section {
   transition: color .3s;
 }
 .sk-row.open .sk-lvl { color: var(--m); }
-
 
 .sk-plus {
   position: relative;
@@ -1366,38 +1287,6 @@ section {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.pjs-info-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Syne', sans-serif;
-  font-size: var(--fs-micro);
-  font-weight: 700;
-  letter-spacing: var(--ls-wide);
-  text-transform: uppercase;
-  color: var(--g);
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border: 1px solid rgba(var(--g-rgb), 0.22);
-  padding: .55rem 1.1rem;
-  border-radius: var(--r-pill);
-  transition: background .2s, border-color .2s;
-}
-
-.pjs-info-cta:hover {
-  background: var(--ga-07);
-  border-color: rgba(var(--g-rgb), 0.45);
-}
-
-.pjs-info-cta svg {
-  transition: transform .25s;
-}
-
-.pjs-info-cta:hover svg {
-  transform: translateX(4px);
 }
 
 .pjs-info-fade {
@@ -1897,62 +1786,10 @@ section {
   height: 100%
 }
 
-
+/* "View All Work" — look comes from buttons.css; starts hidden, GSAP reveals it */
 .reveal-btn {
-  position: relative;
   z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  background: transparent;
-  border: 1px solid var(--ga-25);
-  color: var(--t);
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(1.1rem, 3vw, 2rem);
-  letter-spacing: -.02em;
-  padding: 1.4rem 3rem;
-  border-radius: var(--r-pill);
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0;
-  transition: border-color .4s
-}
-
-.reveal-btn:hover {
-  border-color: var(--ga-50)
-}
-
-.reveal-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-pill);
-  background: radial-gradient(ellipse at 50% 0%, var(--ga-08), transparent 70%);
-  opacity: 0;
-  transition: opacity .4s
-}
-
-.reveal-btn:hover::before {
-  opacity: 1
-}
-
-.reveal-btn .rb-arrow {
-  display: inline-flex;
-  width: 38px;
-  height: 38px;
-  background: var(--g);
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  color: var(--g-btn);
-  font-size: 1rem;
-  flex-shrink: 0;
-  transition: transform .35s cubic-bezier(.16, 1, .3, 1)
-}
-
-.reveal-btn:hover .rb-arrow {
-  transform: translateX(4px)
+  opacity: 0
 }
 
 /* ─── GLOW TEXT UTILITY ─── */
@@ -2237,8 +2074,6 @@ footer {
 
 .foot-email:hover { color: var(--g) }
 
-
-
 /* nav cols */
 .foot-col-title {
   font-family: 'Syne', sans-serif;
@@ -2512,7 +2347,6 @@ footer {
   line-height: 1.1;
 }
 
-
 .nm-time-tz {
   font-size: 9px;
   letter-spacing: .08em;
@@ -2746,17 +2580,27 @@ footer {
     background: linear-gradient(to top, rgba(7,9,10,.6) 0%, transparent 100%)
   }
 
-  .hero-cta {
+  .hero-ctas {
     width: 100%;
-    margin-bottom: 1.1rem;
-    font-size: 11px;
-    justify-content: space-between
+    margin-bottom: 1.1rem
   }
 
-  .hero-cta-arrow {
-    width: 36px;
-    height: 36px
+  .hero-ctas .btn {
+    --h: 46px;
+    flex: 1;
+    min-width: 0;
+    font-size: 11px
   }
+
+  /* text-only "View work" takes its natural width, the main CTA fills the rest */
+  .hero-ctas .btn--text {
+    flex: none
+  }
+
+  .ct-cta {
+    width: 100%
+  }
+
 
   .hero-stats {
     display: flex;
@@ -2824,17 +2668,6 @@ footer {
   /* projects */
   #projReveal {
     padding: 3rem var(--side-pad) 5rem
-  }
-
-  .reveal-btn {
-    font-size: var(--fs-base);
-    padding: 1rem 1.6rem;
-    gap: .7rem
-  }
-
-  .rb-arrow {
-    width: 32px !important;
-    height: 32px !important
   }
 
   /* footer — 2 col: brand left, nav+work right; info row at bottom */
@@ -3529,14 +3362,10 @@ footer {
 @media (max-width: 1100px) {
   .ab-cv .btn-g {
     width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    justify-content: center;
   }
 }
 
 /* ab-photo-img-wrap styles are defined above in PHOTO CARD section */
-
 
 /* ════════════════════════════════════════════════
    CONTACT SECTION
@@ -3719,46 +3548,6 @@ footer {
   margin-bottom: 2.2rem;
 }
 
-.ct-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  background: var(--g);
-  color: var(--g-btn);
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: var(--fs-base);
-  letter-spacing: var(--ls-tight);
-  text-transform: uppercase;
-  padding: 0.95rem 1.9rem;
-  border-radius: var(--r-pill);
-  border: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-}
-.ct-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.26) 0%, transparent 65%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.ct-cta:hover {
-  box-shadow: 0 8px 40px var(--ga-40), 0 2px 12px rgba(var(--g-rgb), 0.16);
-  transform: translateY(-1px);
-}
-.ct-cta:hover::before { opacity: 1; }
-.ct-cta:active { transform: scale(0.97); }
-.ct-cta-icon {
-  display: flex;
-  align-items: center;
-  transition: transform 0.25s ease;
-}
-.ct-cta:hover .ct-cta-icon { transform: translateX(3px); }
 
 .ct-email {
   display: inline-flex;
@@ -3818,7 +3607,6 @@ footer {
   transition: color 0.2s;
 }
 .ct-socials a:hover { color: var(--g); }
-
 
 /* ════════════════════════════════════════════════
    DRAWER OVERLAY
@@ -4193,7 +3981,6 @@ select.cf-in option { background: #0C1110; color: var(--t); }
 }
 .cf-send-error.is-visible { display: block; }
 
-
 /* ════════════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════════════ */
@@ -4231,8 +4018,6 @@ select.cf-in option { background: #0C1110; color: var(--t); }
     gap: .8rem;
   }
 
-  /* CTA full-width button */
-  .ct-cta { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 390px) {

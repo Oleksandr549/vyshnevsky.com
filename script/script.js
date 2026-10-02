@@ -688,7 +688,12 @@ const unlockScroll = () => window.unlockScroll?.();
   const lbl     = document.getElementById('revealLabel');
   const canvas  = document.getElementById('revealCanvas');
   if (!section || !canvas) return;
-  if (REDUCE_MOTION) { canvas.style.display = 'none'; return; } /* decorative only */
+  if (REDUCE_MOTION) {
+    canvas.style.display = 'none';           /* decorative only */
+    if (btn) btn.style.opacity = '1';        /* CSS starts it hidden for the GSAP reveal */
+    if (lbl) lbl.style.opacity = '1';
+    return;
+  }
 
   const ctx = canvas.getContext('2d');
   let W, H, sparks = [];

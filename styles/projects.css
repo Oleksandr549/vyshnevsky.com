@@ -243,23 +243,7 @@
 }
 
 .pg-card-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  font-family: 'Syne', sans-serif;
-  font-size: .64rem;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--g);
-}
-
-.pg-card-cta svg {
-  transition: transform .25s;
-}
-
-.pg-card:hover .pg-card-cta svg {
-  transform: translateX(5px);
+  align-self: flex-start;
 }
 
 /* keyboard focus */
@@ -304,45 +288,6 @@
   color: var(--m);
   text-align: center;
 }
-
-.pg-load-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: .75rem;
-  background: transparent;
-  color: var(--t);
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: .72rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  padding: .9rem 2.2rem;
-  border-radius: 100px;
-  border: 1px solid var(--b2);
-  cursor: pointer;
-  transition: border-color .3s, color .3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.pg-load-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gd);
-  opacity: 0;
-  transition: opacity .3s;
-}
-
-.pg-load-btn:hover { border-color: var(--ga-35); color: var(--g); }
-.pg-load-btn:hover::before { opacity: 1; }
-
-.pg-load-btn svg {
-  position: relative;
-  transition: transform .3s;
-}
-.pg-load-btn:hover svg { transform: translateY(3px); }
-.pg-load-btn span { position: relative; }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {

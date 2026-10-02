@@ -67,10 +67,7 @@ function buildCard(p, idx) {
     <div class="pg-card-hover">
       <div class="pg-card-title">${p.title}</div>
       ${p.stack?.length ? `<div class="pg-card-stack">${stackTags}</div>` : ''}
-      <div class="pg-card-cta">
-        View Project
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
+      <span class="pg-card-cta btn btn--secondary btn--s">View Project <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
     </div>
   `;
 

@@ -20,3 +20,6 @@ images/*.png
 Thumbs.db
 .vscode/
 *.code-workspace
+
+# ── Claude app outputs (mockups / screenshots) ───────────
+Claude outputs/

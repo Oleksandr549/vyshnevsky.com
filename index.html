@@ -9,7 +9,7 @@
 
   <!-- ─── Primary SEO ─── -->
   <title>Oleksandr Vyshnevskyi — Front-End Developer</title>
-  <meta name="description" content="Front-end developer from Poland: 28+ projects for clients in the US, Canada and Europe. Clean code, pixel-perfect design, on-time delivery, 5.0 rating.">
+  <meta name="description" content="Front-end developer from Poland: 28+ projects for clients in the US, Canada and Europe. Clean code, pixel-perfect design, on-time delivery.">
   <meta name="keywords" content="front-end developer, web developer, freelance developer, HTML CSS JavaScript, Fiverr developer, UpWork developer, landing page, web design, Oleksandr Vyshnevskyi">
   <meta name="author" content="Oleksandr Vyshnevskyi">
   <meta name="robots" content="index, follow">
@@ -19,7 +19,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vyshnevsky.com/">
   <meta property="og:title" content="Oleksandr Vyshnevskyi — Front-End Developer">
-  <meta property="og:description" content="28+ projects delivered for clients across the US, Canada, and Europe. Clean code, pixel-perfect design, on-time delivery. 5.0 rating on Fiverr.">
+  <meta property="og:description" content="28+ projects delivered for clients across the US, Canada, and Europe. Clean code, pixel-perfect design, on-time delivery.">
   <meta property="og:image" content="https://vyshnevsky.com/images/og-preview-1200x630.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -68,6 +68,7 @@
   <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/buttons.css">
   <!-- Preload GSAP (critical for hero animation) -->
   <link rel="preload" as="script" href="script/vendor/gsap.min.js">
 
@@ -173,13 +174,13 @@
         </h1>
       </div>
       <div class="hero-bottom-right">
-        <a href="#contact" class="hero-cta">
-          Get in touch
-          <span class="hero-cta-arrow">→</span>
-        </a>
+        <div class="hero-ctas">
+          <a href="projects.html" class="hero-cta btn btn--secondary btn--text">View work</a>
+          <a href="#contact" class="hero-cta btn btn--primary">Get in touch <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        </div>
         <div class="hero-stats">
           <div class="hero-stat"><div class="hs-n">28+</div><div class="hs-l">Projects</div></div>
-          <div class="hero-stat"><div class="hs-n">5.0</div><div class="hs-l">Rating</div></div>
+          <div class="hero-stat"><div class="hs-n">&lt;12h</div><div class="hs-l">Response</div></div>
           <div class="hero-stat"><div class="hs-n">3+</div><div class="hs-l">Years</div></div>
         </div>
       </div>
@@ -301,14 +302,7 @@
     <div class="ab-card ab-cv">
       <div class="ab-cv-eyebrow">Download</div>
       <div class="ab-cv-title">My full résumé &amp; portfolio</div>
-      <a href="cv/cv.pdf" download class="btn-g">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Download CV
-      </a>
+      <a href="cv/cv.pdf" download class="btn-g btn btn--primary btn--s">Download CV <span class="btn__icon btn__icon--down"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></svg></span></a>
     </div>
 
   </div><!-- /about-bento -->
@@ -628,10 +622,7 @@
                     <div class="pjs-info-name" id="pjsName">QBL Platform</div>
                     <div class="pjs-info-desc" id="pjsDesc">Multi-page B2B website for an industrial storage and shelving manufacturer — product catalogue, references, technology sections and EN/PL support.</div>
                   </div>
-                  <a class="pjs-info-cta" id="pjsCta" href="project-detail.html?id=12">
-                    View Project
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </a>
+                  <a class="pjs-info-cta btn btn--primary btn--s" id="pjsCta" href="project-detail.html?id=12">View Project <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
                 </div>
               </div>
             </div>
@@ -646,10 +637,7 @@
     <div id="projReveal">
       <canvas class="reveal-canvas" id="revealCanvas"></canvas>
       <span class="reveal-label" id="revealLabel">— Selected Work</span>
-      <a href="projects.html" class="reveal-btn" id="revealBtn">
-        View All Work
-        <span class="rb-arrow">↗</span>
-      </a>
+      <a href="projects.html" class="reveal-btn btn btn--secondary btn--xl" id="revealBtn">View All Work <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
     </div>
 
   </section>
@@ -891,7 +879,7 @@
       </h2>
 
       <p class="ct-sub">
-        Drop me a message — I'll review your brief and reply within 24 hours with a clear timeline and fixed price. No vague estimates.
+        Drop me a message — I'll review your brief and reply within 12 hours with a clear timeline and fixed price. No vague estimates.
       </p>
     </div>
 
@@ -929,7 +917,7 @@
         </div>
         <div class="ct-tl-num" id="ctNum2">02</div>
         <div class="ct-tl-title" id="ctTitle2">Get a plan</div>
-        <div class="ct-tl-desc" id="ctDesc2">Fixed price · 24h</div>
+        <div class="ct-tl-desc" id="ctDesc2">Fixed price · 12h</div>
       </div>
 
       <!-- Step 3 -->
@@ -953,14 +941,7 @@
 
     <!-- Actions -->
     <div class="ct-actions" id="ctCta">
-      <button type="button" class="ct-cta" id="drawerOpen" aria-expanded="false" aria-controls="contactDrawer">
-        Start a project
-        <span class="ct-cta-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </span>
-      </button>
+      <button type="button" class="ct-cta btn btn--primary btn--l" id="drawerOpen" aria-expanded="false" aria-controls="contactDrawer">Start a project <span class="btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
       <a href="mailto:oleksandr.vyshnevskyi.work@gmail.com" class="ct-email">
         or email directly
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1098,7 +1079,7 @@
         </svg>
       </div>
       <div class="ds-title">Message sent!</div>
-      <div class="ds-body">I'll get back to you within 24 hours with a clear plan.</div>
+      <div class="ds-body">I'll get back to you within 12 hours with a clear plan.</div>
     </div>
 
 
@@ -1165,7 +1146,7 @@
         </div>
         <div class="foot-info-item">
           <span class="foot-col-label">Response</span>
-          <div class="foot-info-val">within 24h</div>
+          <div class="foot-info-val">within 12h</div>
         </div>
       </div>
 
