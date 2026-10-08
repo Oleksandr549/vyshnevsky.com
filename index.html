@@ -151,7 +151,7 @@
   <section id="hero">
 
     <!-- 3D Globe background -->
-    <canvas id="globeCanvas"></canvas>
+    <canvas id="globeCanvas" aria-hidden="true"></canvas>
 
 
 
@@ -1183,12 +1183,13 @@
         V + '/postprocessing/UnrealBloomPass.js',
         'script/globe.js'
       ];
-      function loadNext(i) {
-        if (i >= scripts.length) return;
-        var s = document.createElement('script');
-        s.src = scripts[i];
-        s.onload = function() { loadNext(i + 1); };
-        document.head.appendChild(s);
+      function loadAll() {
+        scripts.forEach(function (src) {
+          var s = document.createElement('script');
+          s.src = src;
+          s.async = false;
+          document.head.appendChild(s);
+        });
       }
       /* No WebGL (hardware acceleration off, old device) → static globe image,
          and skip downloading Three.js entirely. */
@@ -1204,7 +1205,7 @@
           if (gc) gc.classList.add('globe-fallback');
           return;
         }
-        loadNext(0);
+        loadAll();
       }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', start);

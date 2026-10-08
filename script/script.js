@@ -24,7 +24,10 @@ gsap.registerPlugin(ScrollTrigger);
     line.style.display  = "block";
   });
 
+  const globeIntro = window.__globeIntro = window.__globeIntro || { p: 0 };
+
   if (REDUCE_MOTION) {
+    globeIntro.p = 1;
     gsap.set(["#heroTag","#heroL1","#heroL2",".hero-cta",".hero-stat","#heroScroll","#heroBtns","#globeCanvas"],
       { clearProps: "all" });
   } else {
@@ -36,7 +39,7 @@ gsap.registerPlugin(ScrollTrigger);
     gsap.set(".hero-stat",     { opacity: 0, x: 20 });
     gsap.set("#heroScroll",    { opacity: 0 });
     gsap.set("#heroBtns",      { opacity: 1, y: 0 }); /* heroBtns is just a wrapper, don't animate it */
-    gsap.set("#globeCanvas",   { opacity: 0, scale: 0.6, transformOrigin: "50% 50%" });
+    gsap.set("#globeCanvas",   { opacity: 0 });
   }
 
   function startHeroAnim() {
@@ -60,13 +63,8 @@ gsap.registerPlugin(ScrollTrigger);
     tl.to("#heroScroll", { opacity: 1, duration: 0.5, ease: "power2.out" }, "1.1");
 
     /* 6. Globe — bounces in like a ball, elastic overshoot */
-    tl.to("#globeCanvas", {
-      opacity: 1,
-      scale: 1,
-      duration: 1.8,
-      ease: "elastic.out(1, 0.55)",
-      transformOrigin: "50% 50%"
-    }, "1.4");
+    tl.to("#globeCanvas", { opacity: 1, duration: 1.2, ease: "power2.out" }, "0");
+    tl.to(globeIntro, { p: 1, duration: 1.8, ease: "elastic.out(1, 0.55)" }, "1.4");
   }
 
   /* No video — start hero animation directly (or after page transition overlay) */

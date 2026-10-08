@@ -11,6 +11,7 @@
   let updateGlow = null;
   let landGlowMatRef = null;
   const isMobile  = window.innerWidth < 768;
+  const globeIntro = window.__globeIntro = window.__globeIntro || { p: REDUCE_MOTION ? 1 : 0 };
 
   /* ── Round dot sprite ── */
   function makeCircleTexture(size = 64) {
@@ -30,6 +31,7 @@
 
   /* ── Canvas target: render INTO #globeCanvas ── */
   const canvas = document.getElementById('globeCanvas');
+  const heroEl = document.getElementById('hero');
 
   /* ── Renderer ── */
   /* WebGL can still fail here (context limit, driver blocklist) — fall back to the static image */
@@ -40,12 +42,11 @@
     canvas.classList.add('globe-fallback');
     return;
   }
-  const dpr = isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2);
+  const dpr = isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 1.5);
   renderer.setPixelRatio(dpr);
   renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.NoToneMapping;
-  renderer.domElement.style.opacity = '0';
 
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, canvas.clientWidth / canvas.clientHeight, 0.01, 100);
@@ -66,7 +67,9 @@
 
   /* ── Globe group ── */
   const globe = new THREE.Group();
+  const HOME = { lat: 52.0, lng: 19.4 };
   globe.rotation.x = 0.22;
+  globe.rotation.y = -(HOME.lng + 90) * Math.PI / 180;
   scene.add(globe);
 
   /* ── Back glow ── */
@@ -167,21 +170,46 @@
     return features;
   }
 
-  function featuresToSegments(features, r) {
-    const verts = [];
-    const push = coords => {
-      for(let i=0;i<coords.length-1;i++){
-        const a=ll(coords[i][1],  coords[i][0],  r);
-        const b=ll(coords[i+1][1],coords[i+1][0],r);
-        verts.push(a.x,a.y,a.z, b.x,b.y,b.z);
-      }
-    };
-    for(const f of features){
-      if(f.type==='Polygon')           f.coordinates.forEach(push);
-      else if(f.type==='MultiPolygon') f.coordinates.forEach(p=>p.forEach(push));
+  function decodeArcs(topo) {
+    const sc = topo.transform.scale, tr = topo.transform.translate;
+    return topo.arcs.map(arc => {
+      let x = 0, y = 0;
+      return arc.map(([dx, dy]) => { x += dx; y += dy; return [x * sc[0] + tr[0], y * sc[1] + tr[1]]; });
+    });
+  }
+
+  function arcUsage(topo, key) {
+    const use = new Map();
+    const add = i => { const k = i < 0 ? ~i : i; use.set(k, (use.get(k) || 0) + 1); };
+    for (const g of topo.objects[key].geometries) {
+      if (g.type === 'Polygon') g.arcs.forEach(ring => ring.forEach(add));
+      else if (g.type === 'MultiPolygon') g.arcs.forEach(p => p.forEach(ring => ring.forEach(add)));
     }
+    return use;
+  }
+
+  function arcsToVerts(lines) {
+    let n = 0;
+    for (const l of lines) n += Math.max(0, l.length - 1);
+    const out = new Float32Array(n * 6);
+    let o = 0;
+    for (const l of lines) {
+      let prev = ll(l[0][1], l[0][0], 1);
+      for (let i = 1; i < l.length; i++) {
+        const cur = ll(l[i][1], l[i][0], 1);
+        out[o++] = prev.x; out[o++] = prev.y; out[o++] = prev.z;
+        out[o++] = cur.x;  out[o++] = cur.y;  out[o++] = cur.z;
+        prev = cur;
+      }
+    }
+    return out;
+  }
+
+  function linesGeometry(unitVerts, r) {
+    const v = new Float32Array(unitVerts.length);
+    for (let i = 0; i < v.length; i++) v[i] = unitVerts[i] * r;
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verts), 3));
+    geo.setAttribute('position', new THREE.BufferAttribute(v, 3));
     return geo;
   }
 
@@ -211,9 +239,12 @@
 
   /* ── Countries ── */
   async function loadCountries() {
-    const topo     = await fetchCountriesTopo();
-    const features = topo2geo(topo,'countries');
-    const geo = featuresToSegments(features, RADIUS+0.004);
+    const topo  = await fetchCountriesTopo();
+    const arcs  = decodeArcs(topo);
+    const use   = arcUsage(topo, 'countries');
+    const inner = [];
+    use.forEach((count, k) => { if (count > 1) inner.push(arcs[k]); });
+    const geo = linesGeometry(arcsToVerts(inner), RADIUS+0.004);
     const mat = new THREE.LineBasicMaterial({
       color:GCOL.clone(), transparent:true, opacity:0.55,
       blending:THREE.AdditiveBlending, depthWrite:false
@@ -223,23 +254,22 @@
 
   /* ── Land layers ── */
   async function loadLand() {
-    const topo     = await fetchLandTopo();
-    const features = topo2geo(topo,'land');
+    const topo  = await fetchLandTopo();
+    const arcs  = decodeArcs(topo);
+    const used  = [];
+    arcUsage(topo, 'land').forEach((_, k) => used.push(arcs[k]));
+    const unit  = arcsToVerts(used);
     const layers = isMobile ? [
-      { r: RADIUS+0.004, op: 0.55 },
-      { r: RADIUS+0.000, op: 0.28 },
-      { r: RADIUS-0.016, op: 0.08 },
+      { r: RADIUS+0.004, op: 0.95 },
+      { r: RADIUS-0.010, op: 0.18 },
     ] : [
-      { r: RADIUS+0.004, op: 0.55 },
-      { r: RADIUS+0.002, op: 0.42 },
-      { r: RADIUS+0.000, op: 0.28 },
-      { r: RADIUS-0.006, op: 0.16 },
-      { r: RADIUS-0.016, op: 0.08 },
-      { r: RADIUS-0.032, op: 0.03 },
+      { r: RADIUS+0.004, op: 0.95 },
+      { r: RADIUS+0.000, op: 0.40 },
+      { r: RADIUS-0.010, op: 0.16 },
+      { r: RADIUS-0.028, op: 0.05 },
     ];
     for(const {r, op} of layers){
-      const geo = featuresToSegments(features, r);
-      globe.add(new THREE.LineSegments(geo, lmat(op)));
+      globe.add(new THREE.LineSegments(linesGeometry(unit, r), lmat(op)));
     }
   }
 
@@ -284,9 +314,11 @@
   }
 
   const cityPulseObjs = [];
+  const nearHome = (lat, lng) => Math.abs(lat - HOME.lat) < 3 && Math.abs(lng - HOME.lng) < 4;
   function addCities(){
     const vertsNorm = [], vertsMajor = [];
     CITIES.forEach(([lat,lng,,tier]) => {
+      if (nearHome(lat, lng)) return;
       const v = ll(lat, lng, RADIUS+0.008);
       if(tier) vertsMajor.push(v.x,v.y,v.z);
       else     vertsNorm.push(v.x,v.y,v.z);
@@ -307,8 +339,20 @@
       blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true,
     })));
     CITIES.forEach(([lat,lng,,tier], idx) => {
+      if (nearHome(lat, lng)) return;
       const origin = ll(lat, lng, RADIUS+0.008);
       const segments = 24;
+      const normal = origin.clone().normalize();
+      const up = Math.abs(normal.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
+      const tangent = new THREE.Vector3().crossVectors(normal, up).normalize();
+      const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+      const unitRing = new Float32Array((segments+1)*3);
+      for (let i = 0; i <= segments; i++) {
+        const a = (i/segments)*Math.PI*2, c = Math.cos(a), sn = Math.sin(a);
+        unitRing[i*3]   = tangent.x*c + bitangent.x*sn;
+        unitRing[i*3+1] = tangent.y*c + bitangent.y*sn;
+        unitRing[i*3+2] = tangent.z*c + bitangent.z*sn;
+      }
       const ringVerts = new Float32Array((segments+1)*3);
       const ringGeo = new THREE.BufferGeometry();
       ringGeo.setAttribute('position', new THREE.BufferAttribute(ringVerts, 3));
@@ -318,12 +362,12 @@
       });
       const ring = new THREE.LineLoop(ringGeo, ringMat);
       globe.add(ring);
-      cityPulseObjs.push({ origin, ring, ringGeo, ringMat, segments, offset: idx * 0.4, tier: tier||0, lat });
+      cityPulseObjs.push({ origin, unitRing, ringGeo, ringMat, segments, offset: idx * 0.4, tier: tier||0, lat });
     });
   }
 
   function updateCityPulse(t){
-    cityPulseObjs.forEach(({origin, ringGeo, ringMat, segments, offset, tier, lat}) => {
+    cityPulseObjs.forEach(({origin, unitRing, ringGeo, ringMat, segments, offset, tier, lat}) => {
       if(Math.abs(lat) > 65){ ringMat.opacity = 0; return; }
       const cycle = 3.0;
       const local = (t * 0.8 + offset) % cycle;
@@ -332,20 +376,82 @@
       const peakOpacity = tier ? 0.9 : 0.7;
       const r = progress * maxR;
       ringMat.opacity = Math.sin(progress * Math.PI) * peakOpacity;
-      const normal = origin.clone().normalize();
-      const up = Math.abs(normal.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
-      const tangent = new THREE.Vector3().crossVectors(normal, up).normalize();
-      const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
-      const pos = ringGeo.attributes.position;
+      const arr = ringGeo.attributes.position.array;
       for(let i=0;i<=segments;i++){
-        const a = (i/segments)*Math.PI*2;
-        const p = origin.clone()
-          .addScaledVector(tangent, Math.cos(a)*r)
-          .addScaledVector(bitangent, Math.sin(a)*r);
-        pos.setXYZ(i, p.x, p.y, p.z);
+        arr[i*3]   = origin.x + unitRing[i*3]   * r;
+        arr[i*3+1] = origin.y + unitRing[i*3+1] * r;
+        arr[i*3+2] = origin.z + unitRing[i*3+2] * r;
       }
-      pos.needsUpdate = true;
+      ringGeo.attributes.position.needsUpdate = true;
     });
+  }
+
+  const homeRings = [];
+  let homePos = null, homeLabel = null, homeShown = 0, introDoneAt = 0;
+  const tmpV = new THREE.Vector3();
+  function addHome() {
+    homePos = ll(HOME.lat, HOME.lng, RADIUS + 0.008);
+    const core = new THREE.BufferGeometry();
+    core.setAttribute('position', new THREE.BufferAttribute(new Float32Array([homePos.x, homePos.y, homePos.z]), 3));
+    globe.add(new THREE.Points(core, new THREE.PointsMaterial({
+      color: 0xffffff, size: 0.05, map: dotTex, alphaTest: 0.01, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    })));
+    globe.add(new THREE.Points(core, new THREE.PointsMaterial({
+      color: GCOL.clone(), size: 0.12, map: dotTex, alphaTest: 0.01, transparent: true, opacity: 0.55,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    })));
+    const normal = homePos.clone().normalize();
+    const tangent = new THREE.Vector3().crossVectors(normal, new THREE.Vector3(0, 1, 0)).normalize();
+    const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+    const seg = 48;
+    for (let k = 0; k < 2; k++) {
+      const unit = new Float32Array((seg + 1) * 3);
+      for (let i = 0; i <= seg; i++) {
+        const an = (i / seg) * Math.PI * 2, c = Math.cos(an), sn = Math.sin(an);
+        unit[i * 3] = tangent.x * c + bitangent.x * sn;
+        unit[i * 3 + 1] = tangent.y * c + bitangent.y * sn;
+        unit[i * 3 + 2] = tangent.z * c + bitangent.z * sn;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((seg + 1) * 3), 3));
+      const mat = new THREE.LineBasicMaterial({ color: GCOL.clone(), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+      globe.add(new THREE.LineLoop(geo, mat));
+      homeRings.push({ geo, mat, unit, seg, offset: k * 1.2 });
+    }
+    homeLabel = document.createElement('div');
+    homeLabel.className = 'globe-home';
+    homeLabel.setAttribute('aria-hidden', 'true');
+    homeLabel.textContent = 'Currently in Poland';
+    heroEl.appendChild(homeLabel);
+  }
+
+  function updateHome(t) {
+    if (!homePos) return;
+    for (const r of homeRings) {
+      const pr = ((t + r.offset) % 2.4) / 2.4;
+      const rad = 0.02 + pr * 0.07;
+      r.mat.opacity = Math.sin(pr * Math.PI) * 0.8;
+      const arr = r.geo.attributes.position.array;
+      for (let i = 0; i <= r.seg; i++) {
+        arr[i * 3] = homePos.x + r.unit[i * 3] * rad;
+        arr[i * 3 + 1] = homePos.y + r.unit[i * 3 + 1] * rad;
+        arr[i * 3 + 2] = homePos.z + r.unit[i * 3 + 2] * rad;
+      }
+      r.geo.attributes.position.needsUpdate = true;
+    }
+    tmpV.copy(homePos).applyMatrix4(globe.matrixWorld);
+    const facing = tmpV.clone().normalize().dot(tmpV.clone().sub(camera.position).negate().normalize());
+    if (!introDoneAt && globeIntro.p >= 1) introDoneAt = t;
+    homeShown = introDoneAt && t - introDoneAt > 1.4 ? Math.min(1, homeShown + 0.03) : 0;
+    const vis = Math.max(0, Math.min(1, (facing - 0.25) / 0.2)) * homeShown;
+    tmpV.project(camera);
+    const x = (tmpV.x * 0.5 + 0.5) * canvas.clientWidth;
+    const y = (-tmpV.y * 0.5 + 0.5) * canvas.clientHeight;
+    const left = x + 22 + homeLabel.offsetWidth > canvas.clientWidth - 16;
+    homeLabel.classList.toggle('is-left', left);
+    homeLabel.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)${left ? ' translateX(-100%)' : ''}`;
+    homeLabel.style.opacity = vis.toFixed(3);
   }
 
   /* ── Arcs ── */
@@ -425,7 +531,6 @@
         arc.mat.uniforms.uOpacity.value = 0.9 * Math.sin(progress * Math.PI);
         const hp = arc.pts[head];
         mPos.setXYZ(idx, hp.x, hp.y, hp.z);
-        meteorPoints.material.opacity = 0.95;
       } else {
         arc.geo.setDrawRange(0,0);
         arc.mat.uniforms.uOpacity.value = 0;
@@ -493,7 +598,7 @@
         }
         float fbm3(vec3 p){
           float v=0.0,a=0.5;
-          for(int i=0;i<5;i++){v+=a*vnoise3(p);p=p*2.1+vec3(1.7,9.2,3.4);a*=0.5;}
+          for(int i=0;i<3;i++){v+=a*vnoise3(p);p=p*2.1+vec3(1.7,9.2,3.4);a*=0.5;}
           return v;
         }
         void main(){
@@ -511,17 +616,26 @@
   }
 
   /* ── Load geo ── */
-  try { await Promise.all([loadCountries(), loadLand()]); }
+  let landFeatures = null;
+  try {
+    await Promise.all([loadCountries(), loadLand()]);
+    landFeatures = topo2geo(await fetchLandTopo(), 'land');
+  }
   catch(e) { console.warn('Geo load failed:', e); }
 
   addCities();
   buildArcs();
-  buildNoiseMesh();
+  if (isMobile) {
+    globe.add(new THREE.Mesh(new THREE.SphereGeometry(RADIUS, 32, 32), new THREE.MeshBasicMaterial({ color: 0x0a120d })));
+  } else {
+    buildNoiseMesh();
+  }
+  addHome();
 
   /* ── Land glow — land mask built on idle to avoid blocking main thread ── */
   try {
-    const topo     = await fetchLandTopo();
-    const features = topo2geo(topo,'land');
+    const features = landFeatures;
+    if (!features) throw new Error('no land data');
     const buildWhenIdle = (resolve) => {
       const run = () => resolve(buildLandMask(features));
       if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 2000 });
@@ -560,7 +674,7 @@
         }
         float fbm3(vec3 p){
           float v=0.0,a=0.5;
-          for(int i=0;i<4;i++){v+=a*vnoise3(p);p=p*2.1+vec3(1.7,9.2,3.4);a*=0.5;}
+          for(int i=0;i<${isMobile ? 2 : 3};i++){v+=a*vnoise3(p);p=p*2.1+vec3(1.7,9.2,3.4);a*=0.5;}
           return v;
         }
         void main(){
@@ -591,15 +705,12 @@
   let prevX        = 0;
   let velocityY    = 0;       // inertia accumulator
   let autoRotSpeed = REDUCE_MOTION ? 0 : AUTO_ROT; /* still draggable, just no auto-spin */
-  let userControlling = false;
 
-  const heroEl = document.getElementById('hero');
 
   function onDragStart(x) {
     isDragging      = true;
     prevX           = x;
     velocityY       = 0;
-    userControlling = true;
     heroEl.style.cursor = 'grabbing';
   }
 
@@ -616,8 +727,6 @@
     if (!isDragging) return;
     isDragging = false;
     heroEl.style.cursor = 'grab';
-    /* userControlling stays true while inertia runs;
-       auto-rotation resumes smoothly once velocity dies */
   }
 
   /* Mouse */
@@ -677,9 +786,9 @@
   /* Globe canvas opacity and scale driven by GSAP in script.js */
   /* introProgress tracks canvas opacity for glow sync */
 
-  /* Ramp introProgress 0→1 over ~2s for glow sync with canvas fade-in */
+
   const introStartTime = performance.now();
-  const INTRO_DURATION = 2000; // ms — matches globe elastic duration
+  const INTRO_DURATION = 2000;
 
   (function tick() {
     requestAnimationFrame(tick);
@@ -698,13 +807,14 @@
       velocityY *= FRICTION;
       if (Math.abs(velocityY) <= 0.00005) {
         velocityY = 0;
-        userControlling = false;
       }
     } else {
       /* Auto-rotation — smooth resume */
-      userControlling = false;
       globe.rotation.y += autoRotSpeed;
     }
+
+    globe.visible = globeIntro.p > 0.002;
+    globe.scale.setScalar(Math.max(globeIntro.p, 0.002));
 
     /* Subtle wobble on X — read-only, user cannot change X */
     globe.rotation.x = 0.22 + Math.sin(t * 0.15) * 0.004;
@@ -718,7 +828,10 @@
 
     /* Breathing fresnel + bloom */
     fresnelMat.uniforms.uStrength.value = (isMobile ? 2.2 : 1.38) + Math.sin(t * 0.28) * 0.06;
-    if (!isMobile) bloomPass.strength = 0.73 + Math.sin(t * 0.22) * 0.05;
+    const overshoot = Math.max(1, globeIntro.p);
+    if (!isMobile) bloomPass.strength = (0.73 + Math.sin(t * 0.22) * 0.05) / Math.pow(overshoot, 6);
+
+    updateHome(t);
 
     composer.render();
   })();
