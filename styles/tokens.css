@@ -1,0 +1,105 @@
+:root {
+  /* ── Brand ── */
+  --g:        #3DFF8F;
+  --g-rgb:    61,255,143;  /* same colour as --g, for rgba(var(--g-rgb), a) */
+  --g-btn:    #040705;
+  --bg:       #07090A;
+  --bg2:      #0B0E0C;
+  --t:        #DCE8DC;
+  --t-bright: #ffffff;
+  --m:        #9dbf9d;
+
+  --bg-rgb:  7,9,10;
+  --bg2-rgb: 11,14,12;
+  --t-rgb:   220,232,220;
+  --m-rgb:   157,191,157;
+
+  --ga-04: rgba(var(--g-rgb), .04);
+  --ga-08: rgba(var(--g-rgb), .08);
+  --ga-10: rgba(var(--g-rgb), .10);
+  --ga-15: rgba(var(--g-rgb), .15);
+  --ga-20: rgba(var(--g-rgb), .20);
+  --ga-35: rgba(var(--g-rgb), .35);
+  --ga-50: rgba(var(--g-rgb), .50);
+  --ga-65: rgba(var(--g-rgb), .65);
+
+  --w-03: rgba(255,255,255,.03);
+  --w-05: rgba(255,255,255,.05);
+  --w-08: rgba(255,255,255,.08);
+  --w-12: rgba(255,255,255,.12);
+  --w-20: rgba(255,255,255,.20);
+  --w-40: rgba(255,255,255,.40);
+  --w-70: rgba(255,255,255,.70);
+
+  --m-70: rgba(var(--m-rgb), .70);
+  --m-80: rgba(var(--m-rgb), .80);
+
+  --err-rgb:    255,100,100;
+  --err:        rgba(var(--err-rgb), .85);
+  --fiverr:     #1DBF73;
+  --fiverr-rgb: 29,191,115;
+  --upwork:     #6FDA44;
+  --upwork-rgb: 111,218,68;
+
+  --dur-fast: .2s;
+  --dur:      .3s;
+  --dur-slow: .45s;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  /* ── Layers (z-index scale) — use these instead of magic numbers ── */
+  --z-nav-menu:       190;
+  --z-nav:            200;
+  --z-drawer-overlay: 300;
+  --z-drawer:         310;
+  --z-progress:       500;
+  --z-lightbox:       600;
+  --z-transition:     1000;
+
+  /* ── Breakpoints (reference — CSS vars can't be used in @media) ──
+     390 xs · 640 sm (mobile) · 768 md · 900 · 1024 lg (JS layout switch) · 1100 xl · 1280
+     JS mirror: window.SITE.BP in script/common.js */
+
+  /* ── Spacing ── */
+  --section-pad:      clamp(5rem, 9vw, 9rem);
+  --side-pad:         clamp(1.5rem, 5vw, 5rem);
+  --sticky-inner-pad: clamp(1rem, 1.5vw, 1.4rem); /* top/bottom padding inside sticky headers */
+
+  /* ── Border-radius scale ── */
+  --r-xs:    4px;
+  --r-sm:    8px;
+  --r:      14px;
+  --r-lg:   20px;
+  --r-pill: 100px;
+
+  --sp-4:   .25rem;
+  --sp-8:   .5rem;
+  --sp-12:  .75rem;
+  --sp-16:  1rem;
+  --sp-24:  1.5rem;
+  --sp-32:  2rem;
+  --sp-48:  3rem;
+  --sp-64:  4rem;
+  --sp-96:  6rem;
+  --sp-128: 8rem;
+
+  --fs-label: 0.75rem;
+  --fs-small: clamp(0.8125rem, 0.7893rem + 0.0952vw, 0.875rem);
+  --fs-body-sm: clamp(0.875rem, 0.8518rem + 0.0952vw, 0.9375rem);
+  --fs-body: clamp(1rem, 0.9768rem + 0.0952vw, 1.0625rem);
+  --fs-lead: clamp(1.125rem, 1.0786rem + 0.1905vw, 1.25rem);
+  --fs-h4: clamp(1.25rem, 1.1571rem + 0.3810vw, 1.5rem);
+  --fs-h3: clamp(1.5rem, 1.3143rem + 0.7619vw, 2rem);
+  --fs-h2: clamp(2rem, 1.7214rem + 1.1429vw, 2.75rem);
+  --fs-h1: clamp(2.5rem, 1.9429rem + 2.2857vw, 4rem);
+  --fs-display: clamp(3rem, 2.0714rem + 3.8095vw, 5.5rem);
+
+  --lh-display: .95;
+  --lh-heading: 1.1;
+  --lh-ui:      1.3;
+  --lh-body:    1.65;
+
+  --ls-display: -.04em;
+  --ls-heading: -.02em;
+  --ls-ui:      .04em;
+  --ls-label:   .14em;
+}
