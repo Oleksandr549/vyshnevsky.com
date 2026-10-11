@@ -64,7 +64,7 @@ gsap.registerPlugin(ScrollTrigger);
 
     /* 6. Globe — bounces in like a ball, elastic overshoot */
     tl.to("#globeCanvas", { opacity: 1, duration: 1.2, ease: "power2.out" }, "0");
-    tl.to(globeIntro, { p: 1, duration: 1.8, ease: "elastic.out(1, 0.55)" }, "1.4");
+    globeIntro.heroAt = performance.now();
   }
 
   /* No video — start hero animation directly (or after page transition overlay) */

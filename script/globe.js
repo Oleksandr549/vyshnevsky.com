@@ -11,7 +11,8 @@
   let updateGlow = null;
   let landGlowMatRef = null;
   const isMobile  = window.innerWidth < 768;
-  const globeIntro = window.__globeIntro = window.__globeIntro || { p: REDUCE_MOTION ? 1 : 0 };
+  const globeIntro = window.__globeIntro = window.__globeIntro || { p: 0 };
+  if (REDUCE_MOTION) globeIntro.p = 1;
 
   /* ── Round dot sprite ── */
   function makeCircleTexture(size = 64) {
@@ -77,14 +78,18 @@
     const glowCanvas = document.createElement('canvas');
     glowCanvas.width = glowCanvas.height = 512;
     const gctx = glowCanvas.getContext('2d');
-    const grad = gctx.createRadialGradient(256,256,0, 256,256,256);
-    grad.addColorStop(0,   'rgba(61,255,143,0.10)');
-    grad.addColorStop(0.2, 'rgba(61,255,143,0.1)');
-    grad.addColorStop(0.3,'rgba(61,255,143,0.1)');
-    grad.addColorStop(0.7, 'rgba(61,255,143,0.015)');
-    grad.addColorStop(1,   'rgba(61,255,143,0)');
-    gctx.fillStyle = grad;
-    gctx.fillRect(0,0,512,512);
+    const img = gctx.createImageData(512, 512);
+    for (let y = 0; y < 512; y++) {
+      for (let x = 0; x < 512; x++) {
+        const r = Math.hypot(x - 255.5, y - 255.5) / 256;
+        const k = Math.min(1, Math.max(0, (r - 0.15) / 0.85));
+        const a = r >= 1 ? 0 : 0.1 * Math.pow(1 - k * k * (3 - 2 * k), 1.6);
+        const i = (y * 512 + x) * 4;
+        img.data[i] = 61; img.data[i + 1] = 255; img.data[i + 2] = 143;
+        img.data[i + 3] = Math.max(0, Math.min(255, Math.round(a * 255 + Math.random() - 0.5)));
+      }
+    }
+    gctx.putImageData(img, 0, 0);
     const glowTex = new THREE.CanvasTexture(glowCanvas);
     const glowMat = new THREE.SpriteMaterial({
       map: glowTex, transparent: true,
@@ -789,6 +794,19 @@
 
   const introStartTime = performance.now();
   const INTRO_DURATION = 2000;
+
+  function startPop() {
+    if (REDUCE_MOTION || !window.gsap) { globeIntro.p = 1; return; }
+    let tries = 0;
+    const wait = () => {
+      if (globeIntro.heroAt == null && ++tries < 40) return setTimeout(wait, 100);
+      if (globeIntro.heroAt == null) globeIntro.heroAt = performance.now() - 1400;
+      const delay = Math.max(0.5, (globeIntro.heroAt + 1400 - performance.now()) / 1000);
+      gsap.to(globeIntro, { p: 1, duration: 1.8, delay, ease: 'elastic.out(1, 0.55)' });
+    };
+    wait();
+  }
+  startPop();
 
   (function tick() {
     requestAnimationFrame(tick);
