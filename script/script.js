@@ -439,6 +439,7 @@ const unlockScroll = () => window.unlockScroll?.();
 
   let activeIdx  = 0;
   let switchTimer = null;
+  let _initialised = false;
 
   function setActive(idx, fromScroll) {
     /* Skip only if this card is already active AND its video is already loaded.
@@ -548,7 +549,7 @@ const unlockScroll = () => window.unlockScroll?.();
   }
 
   function updateVideo(src, poster, srcWebm) {
-    if (!src || src === _currentSrc) return;
+    if (!_initialised || !src || src === _currentSrc) return;
     clearTimeout(switchTimer);
     clearTimeout(_playTm);
 
@@ -664,7 +665,6 @@ const unlockScroll = () => window.unlockScroll?.();
   // Delay initial video load until the section is actually visible.
   // Calling video.play() before the user has scrolled to the section
   // gets blocked by browser autoplay policy — the video stays invisible.
-  let _initialised = false;
   const _sectionObserver = new IntersectionObserver((entries) => {
     if (!entries[0].isIntersecting || _initialised) return;
     _initialised = true;
