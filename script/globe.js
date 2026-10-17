@@ -392,7 +392,7 @@
   }
 
   const homeRings = [];
-  let homePos = null, homeLabel = null, homeShown = 0, introDoneAt = 0;
+  let homePos = null, homeLabel = null, homeShown = 0, introDoneAt = 0, homeLeft = false, homeSideFade = 1;
   const tmpV = new THREE.Vector3();
   function addHome() {
     homePos = ll(HOME.lat, HOME.lng, RADIUS + 0.008);
@@ -453,10 +453,17 @@
     tmpV.project(camera);
     const x = (tmpV.x * 0.5 + 0.5) * canvas.clientWidth;
     const y = (-tmpV.y * 0.5 + 0.5) * canvas.clientHeight;
-    const left = x + 22 + homeLabel.offsetWidth > canvas.clientWidth - 16;
-    homeLabel.classList.toggle('is-left', left);
-    homeLabel.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)${left ? ' translateX(-100%)' : ''}`;
-    homeLabel.style.opacity = vis.toFixed(3);
+    const room = canvas.clientWidth - 16 - (x + 22 + homeLabel.offsetWidth);
+    const wantLeft = homeLeft ? room < 40 : room < 0;
+    if (wantLeft !== homeLeft) {
+      homeSideFade = Math.max(0, homeSideFade - 0.12);
+      if (homeSideFade === 0) homeLeft = wantLeft;
+    } else {
+      homeSideFade = Math.min(1, homeSideFade + 0.08);
+    }
+    homeLabel.classList.toggle('is-left', homeLeft);
+    homeLabel.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)${homeLeft ? ' translateX(-100%)' : ''}`;
+    homeLabel.style.opacity = (vis * homeSideFade).toFixed(3);
   }
 
   /* ── Arcs ── */

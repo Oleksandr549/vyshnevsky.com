@@ -2474,16 +2474,7 @@ footer {
   }
 }
 
-/* ── 640px: large mobile ── */
-@media (max-width: 640px) {
-  nav#nav {
-    padding: var(--sp-16) var(--sp-24)
-  }
-
-  nav#nav.s {
-    padding: var(--sp-12) var(--sp-24)
-  }
-
+@media (max-width: 900px) {
   #hero {
     height: 100svh;
     justify-content: flex-end;
@@ -2538,15 +2529,9 @@ footer {
     font-size: var(--fs-label)
   }
 
-  /* text-only "View work" takes its natural width, the main CTA fills the rest */
   .hero-ctas .btn--text {
     flex: none
   }
-
-  .ct-cta {
-    width: 100%
-  }
-
 
   .hero-stats {
     display: flex;
@@ -2570,6 +2555,21 @@ footer {
 
   .hero-stat:not(:first-child):not(:last-child) {
     padding-left: var(--sp-16)
+  }
+}
+
+/* ── 640px: large mobile ── */
+@media (max-width: 640px) {
+  nav#nav {
+    padding: var(--sp-16) var(--sp-24)
+  }
+
+  nav#nav.s {
+    padding: var(--sp-12) var(--sp-24)
+  }
+
+  .ct-cta {
+    width: 100%
   }
 
 
