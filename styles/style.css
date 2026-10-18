@@ -2519,18 +2519,13 @@ footer {
 
   .hero-ctas {
     width: 100%;
+    flex-wrap: wrap;
     margin-bottom: var(--sp-16)
   }
 
   .hero-ctas .btn {
     --h: 46px;
-    flex: 1;
-    min-width: 0;
     font-size: var(--fs-label)
-  }
-
-  .hero-ctas .btn--text {
-    flex: none
   }
 
   .hero-stats {

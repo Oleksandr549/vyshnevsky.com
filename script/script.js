@@ -110,18 +110,22 @@ gsap.registerPlugin(ScrollTrigger);
   // All cards animate bottom-up only — consistent, calm entrance
   // Staggered by column: col1 (photo) → col2 (headline/bio) → col3 (ph1/ph2) → row3 (exp/cv)
   const cards = [
-    { el: photo,    from: 0.00, to: 0.18, opacity: [0,1], y: [40,0] },
-    { el: headline, from: 0.06, to: 0.22, opacity: [0,1], y: [36,0] },
-    { el: ph1,      from: 0.10, to: 0.26, opacity: [0,1], y: [36,0] },
-    { el: bio,      from: 0.10, to: 0.26, opacity: [0,1], y: [36,0] },
-    { el: ph2,      from: 0.14, to: 0.30, opacity: [0,1], y: [36,0] },
-    { el: exp,      from: 0.60, to: 0.76, opacity: [0,1], y: [40,0] },
-    { el: cv,       from: 0.64, to: 0.80, opacity: [0,1], y: [40,0] },
+    { el: photo,    from: 0.00, to: 0.24, opacity: [0,1], y: [40,0] },
+    { el: headline, from: 0.08, to: 0.32, opacity: [0,1], y: [36,0] },
+    { el: ph1,      from: 0.14, to: 0.38, opacity: [0,1], y: [36,0] },
+    { el: bio,      from: 0.14, to: 0.38, opacity: [0,1], y: [36,0] },
+    { el: ph2,      from: 0.20, to: 0.44, opacity: [0,1], y: [36,0] },
   ].filter(c => c.el);
 
-  // ── Photo transition window in scroll progress ──
-  const PHOTO_FROM = 0.18;
-  const PHOTO_TO   = 0.76;
+  const bottomCards = [
+    { el: exp, from: 0.40, to: 0.62, opacity: [0,1], y: [40,0] },
+    { el: cv,  from: 0.46, to: 0.68, opacity: [0,1], y: [40,0] },
+  ].filter(c => c.el);
+  let bottomObserver = null;
+  let bottomScrub = false;
+
+  const PHOTO_FROM = 0.30;
+  const PHOTO_TO   = 0.92;
 
   function lerpCl(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }
   function prog(val, from, to) { return Math.max(0, Math.min(1, (val - from) / (to - from))); }
@@ -187,10 +191,20 @@ gsap.registerPlugin(ScrollTrigger);
 
   // ── Desktop: stickyWrap gets height, bentoInner is sticky ──
   function setupDesktop() {
-    const extra = Math.max(1800, bentoInner.offsetHeight * 1.4);
+    const extra = 1100;
     stickyWrap.style.height  = (window.innerHeight + extra) + 'px';
     bentoInner.style.position  = 'sticky';
     bentoInner.style.top       = '0px';
+    const innerTop = bentoInner.getBoundingClientRect().top;
+    const fits = bottomCards.every(c => {
+      const r = c.el.getBoundingClientRect();
+      const top = r.top - innerTop - gsap.getProperty(c.el, 'y');
+      return top + r.height * 0.6 <= window.innerHeight;
+    });
+    if (fits !== bottomScrub) {
+      bottomScrub = fits;
+      initBottomCards();
+    }
   }
 
   function teardownDesktop() {
@@ -217,6 +231,13 @@ gsap.registerPlugin(ScrollTrigger);
     });
 
     // Scale + Fade photo transition — scroll-driven, works forward & backward
+    if (bottomScrub) {
+      bottomCards.forEach(c => {
+        const t = eio(prog(p, c.from, c.to));
+        gsap.set(c.el, { opacity: lerpCl(0, 1, t), y: lerpCl(40, 0, t) });
+      });
+    }
+
     const photoP = prog(p, PHOTO_FROM, PHOTO_TO);
     renderPhotoTx(photoP);
   }
@@ -251,8 +272,29 @@ gsap.registerPlugin(ScrollTrigger);
     }
   }
 
+  function initBottomCards() {
+    const els = bottomCards.map(c => c.el);
+    if (bottomObserver) { bottomObserver.disconnect(); bottomObserver = null; }
+    gsap.killTweensOf(els);
+    gsap.set(els, { opacity: 0, y: 40 });
+    if (!isMobile() && bottomScrub) return;
+    bottomObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const i = els.indexOf(entry.target);
+        if (entry.isIntersecting) {
+          gsap.to(entry.target, { opacity: 1, y: 0, duration: 0.65, delay: i * 0.08, ease: 'power2.out', overwrite: true });
+        } else if (!isMobile() && entry.boundingClientRect.top >= window.innerHeight * 0.5) {
+          gsap.to(entry.target, { opacity: 0, y: 40, duration: 0.3, ease: 'power2.out', overwrite: true });
+        }
+      });
+    }, { threshold: isMobile() ? 0.15 : 0.6 });
+    els.forEach(el => bottomObserver.observe(el));
+  }
+
   function init() {
     initPhotoTx();
+    bottomScrub = false;
+    initBottomCards();
     if (isMobile()) {
       initMobile();
     } else {
@@ -1790,7 +1832,7 @@ const unlockScroll = () => window.unlockScroll?.();
   // ── CSS sticky scroll ────────────────────────────────────────
   const ctScroll = document.getElementById('ctScroll');
 
-  const SCROLL_MULT = 2.2; // viewport height multiplier = scroll length
+  const SCROLL_MULT = 1.4; // viewport height multiplier = scroll length
 
   function setScrollHeight() {
     if (!ctScroll) return;
