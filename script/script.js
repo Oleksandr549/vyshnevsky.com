@@ -632,7 +632,7 @@ const unlockScroll = () => window.unlockScroll?.();
   cards.forEach((card, i) => {
     card.addEventListener('mouseenter', () => { if (!isMobile()) setActive(i, false); });
     /* Keyboard: Tab focuses & previews, Enter/Space opens the project */
-    card.addEventListener('focus', () => setActive(i, false));
+    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) setActive(i, false); });
     card.addEventListener('keydown', e => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       e.preventDefault();
