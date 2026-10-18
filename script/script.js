@@ -666,8 +666,8 @@ const unlockScroll = () => window.unlockScroll?.();
     if (scrolled < 0) { setActive(0, true); return; }
     const totalScroll = wrap.offsetHeight - window.innerHeight;
     if (totalScroll <= 0) return;
-    const step = totalScroll / (COUNT - 1);
-    setActive(Math.min(COUNT - 1, Math.round(scrolled / step)), true);
+    const step = totalScroll / COUNT;
+    setActive(Math.min(COUNT - 1, Math.floor(scrolled / step)), true);
   }
 
   /* Mobile: horizontal card strip — the card closest to the left edge becomes active */
@@ -687,7 +687,7 @@ const unlockScroll = () => window.unlockScroll?.();
   }
 
   function applyLayout() {
-    wrap.style.height = isMobile() ? '' : (COUNT * 100) + 'vh';
+    wrap.style.height = isMobile() ? '' : (100 + (COUNT - 1) * 60) + 'vh';
   }
 
   window.addEventListener('scroll', onDesktopScroll, { passive: true });
